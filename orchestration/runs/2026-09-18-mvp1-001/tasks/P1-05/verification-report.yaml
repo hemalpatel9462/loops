@@ -1,0 +1,57 @@
+schemaVersion: "1.0"
+artifactType: verification-report
+taskId: "P1-05"
+verdict: PASS
+scopeReviewed:
+  - "apps/web-game/src/app/**"
+  - "apps/web-game/src/styles/**"
+  - "apps/web-game/src/main.tsx"
+  - "apps/web-game/dist/**"
+acceptanceCriteria:
+  - id: AC-1
+    verdict: PASS
+    evidence:
+      - "apps/web-game/src/main.tsx imports AppShell and global.css, validates the root element, and renders the React app under StrictMode."
+      - "npm run dev --workspace @loops/web-game -- --host 127.0.0.1 --port 4175 started Vite 7.3.6 and reported http://127.0.0.1:4175/; curl --fail to that URL returned the app HTML with /src/main.tsx."
+      - "npm run build exited 0 and emitted apps/web-game/dist/index.html plus hashed CSS and JavaScript assets."
+  - id: AC-2
+    verdict: PASS
+    evidence:
+      - "apps/web-game/src/app/AppShell.tsx provides semantic header/nav, hero content, appearance controls, feature cards, and footer."
+      - "apps/web-game/src/styles/global.css defines the flex shell, bounded content columns, hero grid, feature grid, footer, and a max-width: 720px layout that collapses the hero/features and footer for narrow viewports."
+      - "The built asset set contains the shell CSS and JS, confirming the scoped entry is bundled."
+  - id: AC-3
+    verdict: PASS
+    evidence:
+      - "apps/web-game/src/styles/tokens.css defines color roles, --space-* spacing tokens, font and text/leading tokens, --edge-width/--edge-width-fixed/--edge-dash edge tokens, radii, shadows, and transition tokens."
+      - "apps/web-game/src/styles/global.css consumes the variables for shell layout, typography, controls, surfaces, borders, focus, loop preview, and motion."
+      - "The compiled dist CSS retains color, surface, ink, accent, loop, high-contrast, and reduced-motion token/mode rules."
+  - id: AC-4
+    verdict: PASS
+    evidence:
+      - "AppShell stores a VisualMode union and sets data-visual-mode to light, dark, or high-contrast; the mode buttons expose aria-pressed state and update it."
+      - "tokens.css provides default light tokens plus structural .app-shell[data-visual-mode='dark'] and .app-shell[data-visual-mode='high-contrast'] color-scheme and token overrides."
+      - "global.css includes :focus-visible styling and a prefers-reduced-motion media rule."
+  - id: AC-5
+    verdict: PASS
+    evidence:
+      - "AppShell.tsx contains presentation, navigation, placeholder preview, and appearance state only; no clue validation, edge transitions, connectivity checks, solver calls, or game-engine imports are present."
+      - "The only rule-related UI content is illustrative copy/SVG preview; production game logic remains outside the reviewed UI shell."
+checksPerformed:
+  - command: "npm run typecheck"
+    exitCode: 0
+  - command: "npm run build"
+    exitCode: 0
+  - command: "npm run lint"
+    exitCode: 0
+findings:
+  - severity: LOW
+    description: "The shell's hero actions, settings button, and illustrative preview are structural placeholders; later feature/accessibility tasks must connect them to real puzzle and persisted preference state."
+    file: "apps/web-game/src/app/AppShell.tsx"
+requiredRemediation: []
+conclusion: |
+  Independent inspection confirms all five P1-05 acceptance criteria. Vite starts
+  and serves the app, the responsive semantic shell is bundled, the design-token
+  and light/dark/high-contrast structures are present, and the UI scope contains no
+  duplicated production game rules. Typecheck, production build, and lint all pass.
+  Verdict: PASS.

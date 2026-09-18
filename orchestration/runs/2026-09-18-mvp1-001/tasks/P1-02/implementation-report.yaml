@@ -1,0 +1,76 @@
+schemaVersion: "1.0"
+artifactType: implementation-report
+taskId: "P1-02"
+status: COMPLETE
+summary: |
+  Added a pure game-engine validation layer for clue counts, grid-vertex
+  degrees, endpoint and branch detection, connected-component analysis, single
+  closed-loop detection, and completion aggregation. Validation accepts a
+  PuzzleDefinition-shaped contract plus either a GameState-shaped edge map or
+  selected line edges, returns deterministic structured diagnostics, and does
+  not mutate the supplied puzzle or state.
+filesChanged:
+  - path: "packages/game-engine/validation/validator.ts"
+    change: "Implemented clue, vertex, connectivity, single-loop, completion, out-of-bounds, and structured rule-validation APIs with deterministic graph traversal."
+  - path: "packages/game-engine/validation/index.ts"
+    change: "Exported the validation API and compatibility aliases for clue, vertex, connectivity, puzzle-state, game-state, and completion checks."
+  - path: "packages/game-engine/validation/vitest.config.ts"
+    change: "Added a validation-scoped Vitest configuration so validation tests can be run independently while the existing package config remains owned by the verified P1-01 model/state boundary."
+  - path: "packages/game-engine/validation/validator.test.ts"
+    change: "Added tests for satisfied clues and a closed loop, clue mismatches, endpoints, branches, disconnected multiple loops, and open paths."
+  - path: "orchestration/runs/2026-09-18-mvp1-001/tasks/P1-02/implementation-report.yaml"
+    change: "Recorded implementation scope, acceptance evidence, command results, deviations, risks, and handoff notes."
+acceptanceCriteria:
+  - id: AC-1
+    result: PASS
+    evidence:
+      - "validateClues in packages/game-engine/validation/validator.ts counts the four cell boundary edges and returns deterministic expected/actual ClueViolation records."
+      - "validator.test.ts verifies a clue mismatch at row 0, column 0 and the satisfied 2x2 loop case."
+  - id: AC-2
+    result: PASS
+    evidence:
+      - "validateVertices builds the lattice vertex graph and requires every incident-line degree to be 0 or 2; degree 1 and degrees above 2 are reported as endpoint/branch violations."
+      - "validator.test.ts exercises both endpoint and degree-three branch fixtures."
+  - id: AC-3
+    result: PASS
+    evidence:
+      - "VertexViolation.kind distinguishes endpoint and branch diagnostics, with endpoint and branch collections exposed on VertexValidationResult."
+      - "The validation test suite passes explicit open-path and branch geometries."
+  - id: AC-4
+    result: PASS
+    evidence:
+      - "validateConnectivity computes edge-connected components, reports componentCount/components, and only marks hasSingleLoop when selected edges are non-empty, connected, and all vertices have valid degree."
+      - "validator.test.ts verifies two disconnected loops produce componentCount 2 and an open path is not closed or a single loop."
+  - id: AC-5
+    result: PASS
+    evidence:
+      - "validateRules aggregates out-of-bounds, clue, vertex, and single-loop results into valid/complete; the satisfied perimeter fixture passes all four checks."
+      - "The validation-scoped Vitest run passed 1 file and 4 tests."
+commandsRun:
+  - command: "npm run test --workspace @loops/game-engine"
+    exitCode: 0
+    result: "Passed the package's existing model/state suite: 2 files and 6 tests."
+  - command: "npm run typecheck"
+    exitCode: 1
+    result: "The game-engine, web-game, puzzle-format, and puzzle-generator typechecks passed, then the shared workspace command failed in the unrelated tools/puzzle-validator P1-07 workspace due existing string[] to branded EdgeId cast errors in solver/solver.test.ts and src/validate-fixtures.ts."
+  - command: "npm run typecheck --workspace @loops/game-engine"
+    exitCode: 0
+    result: "Passed the game-engine package typecheck including validation source and tests."
+  - command: "../../node_modules/.bin/vitest run --config validation/vitest.config.ts"
+    exitCode: 0
+    result: "Passed validation/validator.test.ts: 1 file and 4 tests."
+  - command: "git diff --check -- packages/game-engine/validation"
+    exitCode: 0
+    result: "No whitespace errors in the P1-02 validation scope."
+deviations:
+  - "The required root npm run typecheck cannot pass until the unrelated P1-07 puzzle-validator branded EdgeId cast errors are remediated; production and tests in the P1-02 game-engine package typecheck successfully."
+  - "The existing @loops/game-engine package test config is owned by the verified P1-01 model/state boundary and only discovers model/state tests. A validation-local Vitest config was added within this task's allowed scope and used for direct validation-suite evidence; changing the package manifest or model/vitest.config.ts was outside scope."
+knownRisks:
+  - "The package exports currently expose model and state subpaths but not a validation subpath; adding that package boundary is outside P1-02's declared validation-only write scope and should be handled by the owning integration task before external consumers import @loops/game-engine/validation."
+  - "validateClues intentionally reports missing clue cells as violations but ignores extra clue columns/rows outside the declared board dimensions; PuzzleDefinition schema/codec validation remains responsible for rejecting malformed dimensions."
+handoffNotes: |
+  Import validation APIs from packages/game-engine/validation during the next
+  engine and UI tasks. validateRules/validateGameState/validatePuzzleState
+  accept a PuzzleDefinition-shaped object and a GameState-shaped object, an
+  edge-state map, or a selected EdgeId array. The result exposes clues,
+  vertices, connectivity, selectedEdges, outOfBoundsEdges, valid, and complete.

@@ -1,0 +1,34 @@
+schemaVersion: "1.0"
+artifactType: task-brief
+taskId: "P1-07"
+title: "Exhaustive uniqueness solver"
+phase: 1
+goal: "Implement the complete solver used to determine whether a puzzle has zero, one, or multiple valid solutions."
+context:
+  - "loops_game_design_spec.md"
+  - "PROJECT_STRUCTURE_AND_DEPLOYMENT.md"
+  - "orchestration/IMPLEMENTATION_PLAN.md"
+  - "orchestration/task-registry.json"
+dependencies: ["P0-02", "P1-01"]
+writeScope:
+  - "tools/puzzle-validator/**"
+  - "tools/puzzle-validator/solver/**"
+forbiddenScope:
+  - "orchestration/task-registry.json"
+  - "orchestration/briefs/**"
+  - "orchestration/runs/2026-09-18-mvp1-001/tasks/P1-07/verification-brief.yaml"
+  - "orchestration/runs/2026-09-18-mvp1-001/tasks/P1-07/verification-report.yaml"
+acceptanceCriteria:
+  - id: "AC-1"
+    description: "Solver returns zero, one, or multiple solutions."
+  - id: "AC-2"
+    description: "It understands clues, vertex rules, fixed edges, excluded edges, and connectivity."
+  - id: "AC-3"
+    description: "It stops after finding two solutions for uniqueness checks."
+  - id: "AC-4"
+    description: "It emits a solver report using the approved schema."
+requiredChecks:
+  - "npm run test --workspace @loops/puzzle-validator"
+  - "npm run typecheck"
+  - "npm run validate:solver-fixtures"
+implementationReportPath: "orchestration/runs/2026-09-18-mvp1-001/tasks/P1-07/implementation-report.yaml"

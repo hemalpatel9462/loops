@@ -1,0 +1,24 @@
+schemaVersion: "1.0"
+artifactType: remediation-brief
+taskId: "P1-01"
+remediationAttempt: 1
+trigger: "Original implementation was BLOCKED because the @loops/game-engine workspace manifest and package TypeScript wiring were absent. The orchestrator added the missing package boundary and the required workspace checks now run."
+resolvedDependency:
+  - "packages/game-engine/package.json"
+  - "packages/game-engine/tsconfig.json"
+requiredCorrections:
+  - "Re-run npm run test --workspace @loops/game-engine and record exit 0."
+  - "Re-run npm run typecheck and record exit 0."
+  - "Write a schema-conformant remediation implementation report that references the original report and records the resolved dependency."
+writeScope:
+  - "orchestration/runs/2026-09-18-mvp1-001/tasks/P1-01/implementation-report-remediation-1.yaml"
+forbiddenScope:
+  - "packages/game-engine/**"
+  - "orchestration/task-registry.json"
+  - "orchestration/briefs/**"
+  - "orchestration/runs/2026-09-18-mvp1-001/tasks/P1-01/verification-brief.yaml"
+  - "orchestration/runs/2026-09-18-mvp1-001/tasks/P1-01/verification-report.yaml"
+requiredChecks:
+  - "npm run test --workspace @loops/game-engine"
+  - "npm run typecheck"
+remediationReportPath: "orchestration/runs/2026-09-18-mvp1-001/tasks/P1-01/implementation-report-remediation-1.yaml"

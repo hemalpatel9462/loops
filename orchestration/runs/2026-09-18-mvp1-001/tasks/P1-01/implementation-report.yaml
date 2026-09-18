@@ -1,0 +1,88 @@
+schemaVersion: "1.0"
+artifactType: implementation-report
+taskId: "P1-01"
+status: BLOCKED
+summary: |
+  Implemented the platform-independent game-engine model and state transition
+  logic within the declared model/state scope. The code represents unknown,
+  line, and x states; initializes fixed starting edges; enforces immutable
+  fixed-edge behavior; cycles editable edges deterministically; and supports
+  undo/redo history without mutating prior state snapshots. In-scope direct
+  TypeScript and Vitest checks pass, but the required npm workspace test is
+  blocked because packages/game-engine/package.json is absent and is outside
+  this task's declared write scope.
+filesChanged:
+  - path: "packages/game-engine/model/edge-state.ts"
+    change: "Defined EdgeState and immutable EdgeStateMap plus the Unknown-to-Line-to-X-to-Unknown cycle helper."
+  - path: "packages/game-engine/model/board.ts"
+    change: "Added board dimensions, complete grid-edge enumeration, edge bounds checks, starting-edge normalization, and unknown edge-map creation."
+  - path: "packages/game-engine/model/index.ts"
+    change: "Re-exported the board and edge-state model APIs."
+  - path: "packages/game-engine/model/edge-state.test.ts"
+    change: "Tested the complete three-state edge cycle."
+  - path: "packages/game-engine/model/vitest.config.ts"
+    change: "Added scoped Vitest configuration for model and state tests pending the package-level workspace manifest."
+  - path: "packages/game-engine/state/history.ts"
+    change: "Added immutable edge transition records and past/future history helpers for push, undo, and redo."
+  - path: "packages/game-engine/state/game-state.ts"
+    change: "Added immutable GameState initialization, fixed-edge protection, direct and cyclic edge updates, undo/redo, and history availability queries."
+  - path: "packages/game-engine/state/index.ts"
+    change: "Re-exported game-state and history APIs."
+  - path: "packages/game-engine/state/game-state.test.ts"
+    change: "Tested initial fixed/unknown states, fixed-edge no-op behavior, state cycling, deterministic history, undo/redo branching, and invalid-edge rejection."
+  - path: "orchestration/runs/2026-09-18-mvp1-001/tasks/P1-01/implementation-report.yaml"
+    change: "Recorded implementation scope, acceptance evidence, required-check results, blocker, and risks."
+acceptanceCriteria:
+  - id: AC-1
+    result: PASS
+    evidence:
+      - "packages/game-engine/model/edge-state.ts defines the exact unknown, line, and x EdgeState union."
+      - "createInitialGameState creates an explicit unknown state for every board edge and line state for fixed starting edges."
+      - "Scoped Vitest tests passed the initial-state and cycle cases."
+  - id: AC-2
+    result: PASS
+    evidence:
+      - "GameState.fixedEdges is an immutable readonly edge list initialized from normalized startingEdges."
+      - "setEdgeState returns the original state for fixed edges, so cycleEdge and direct updates cannot change starting lines or append history."
+      - "state/game-state.test.ts verifies fixed-edge updates are no-ops and preserve the line state."
+  - id: AC-3
+    result: PASS
+    evidence:
+      - "cycleEdgeState implements unknown → line → x → unknown in model/edge-state.ts."
+      - "state/game-state.test.ts verifies all three successive transitions on an editable edge."
+  - id: AC-4
+    result: PASS
+    evidence:
+      - "All transition functions create new frozen state/maps/history values and never mutate their input state."
+      - "The direct strict TypeScript compile completed successfully for all model/state source and test files."
+      - "Tests verify the original state remains unknown after later transitions and invalid-edge calls leave history untouched."
+  - id: AC-5
+    result: PASS
+    evidence:
+      - "HistoryState stores immutable past and future EdgeTransition arrays; push clears redo history, undo moves the latest transition to future, and redo restores it."
+      - "canUndo/canRedo expose availability and a new edit after undo invalidates redo history."
+      - "Scoped Vitest run passed 2 test files and 6 tests."
+commandsRun:
+  - command: "npm run test --workspace @loops/game-engine"
+    exitCode: 1
+  - command: "npm run typecheck"
+    exitCode: 0
+  - command: "./node_modules/.bin/tsc --noEmit --target ES2022 --module ESNext --moduleResolution Bundler --strict --skipLibCheck --allowImportingTsExtensions packages/game-engine/model/edge-state.ts packages/game-engine/model/board.ts packages/game-engine/model/index.ts packages/game-engine/state/history.ts packages/game-engine/state/game-state.ts packages/game-engine/state/index.ts packages/game-engine/model/edge-state.test.ts packages/game-engine/state/game-state.test.ts"
+    exitCode: 0
+  - command: "./node_modules/.bin/vitest run --config packages/game-engine/model/vitest.config.ts"
+    exitCode: 0
+deviations:
+  - "The required npm run test --workspace @loops/game-engine command could not execute because the repository has no packages/game-engine/package.json; creating that manifest is outside the explicit model/** and state/** write scope."
+  - "A scoped model/vitest.config.ts was added within the allowed model/** scope so the implementation tests can run independently until the orchestrator adds or assigns the package manifest."
+  - "The root npm run typecheck does not include game-engine because no package-level tsconfig or workspace manifest exists within this task's allowed scope; an equivalent strict direct tsc command passed for all implementation files."
+knownRisks:
+  - "The task cannot be consumed through npm workspace resolution until packages/game-engine/package.json and its package-level typecheck/test wiring are created by an authorized integration/remediation step."
+  - "The root package-lock.json already has a known missing-workspace issue from P0-02 and also does not record this future game-engine workspace; lockfile regeneration must occur in its owning scope before clean npm ci."
+  - "The state model stores all board edges in a frozen string-keyed record; future serialization/UI layers should preserve canonical EdgeId strings when crossing package boundaries."
+handoffNotes: |
+  Public model exports are available from packages/game-engine/model and state
+  exports from packages/game-engine/state. The package-level manifest should
+  point its test script at model/vitest.config.ts (or an equivalent package
+  config), expose model/state exports, and include a tsconfig covering both
+  directories. Once that authorized setup exists, rerun the required workspace
+  test and root typecheck before verification.

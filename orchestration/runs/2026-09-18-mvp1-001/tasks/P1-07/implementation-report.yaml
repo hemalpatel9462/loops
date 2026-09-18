@@ -1,0 +1,89 @@
+schemaVersion: "1.0"
+artifactType: implementation-report
+taskId: "P1-07"
+status: COMPLETE
+summary: |
+  Added the @loops/puzzle-validator workspace and an exhaustive loop solver.
+  The solver performs clue and vertex constraint propagation followed by
+  deterministic complete search, validates final single-loop connectivity,
+  rejects premature disconnected cycles, honors puzzle starting edges plus
+  fixed/excluded options, stops after two solutions, and returns a
+  schema-shaped SolverReport with deduction counters and search depth.
+filesChanged:
+  - path: "tools/puzzle-validator/package.json"
+    change: "Added the @loops/puzzle-validator workspace and test, typecheck, and solver-fixture validation scripts."
+  - path: "tools/puzzle-validator/tsconfig.json"
+    change: "Configured strict TypeScript checking for solver and fixture sources with Node-compatible .ts imports."
+  - path: "tools/puzzle-validator/vitest.config.ts"
+    change: "Scoped Vitest discovery to solver tests."
+  - path: "tools/puzzle-validator/solver/types.ts"
+    change: "Defined solver edge state, options, result, and input contracts."
+  - path: "tools/puzzle-validator/solver/edges.ts"
+    change: "Added board-edge enumeration, parsing, bounds, cell adjacency, vertex adjacency, and lattice vertex helpers."
+  - path: "tools/puzzle-validator/solver/solver.ts"
+    change: "Implemented clue/vertex propagation, branch search, fixed/excluded edge normalization, premature-cycle rejection, final connectivity validation, solution counting, and approved solver-report emission."
+  - path: "tools/puzzle-validator/solver/index.ts"
+    change: "Exported the solver API and supporting edge helpers."
+  - path: "tools/puzzle-validator/src/index.ts"
+    change: "Re-exported the solver package API from the workspace root entrypoint."
+  - path: "tools/puzzle-validator/src/validate-fixtures.ts"
+    change: "Added a development-only fixture validation command covering one-solution and zero-solution puzzles."
+  - path: "tools/puzzle-validator/solver/solver.test.ts"
+    change: "Added tests for unique, zero, multiple, fixed/excluded, early-stop, and report-shape behavior."
+  - path: "orchestration/runs/2026-09-18-mvp1-001/tasks/P1-07/implementation-report.yaml"
+    change: "Recorded implementation scope, command results, acceptance evidence, deviations, and known risks."
+acceptanceCriteria:
+  - id: AC-1
+    result: PASS
+    evidence:
+      - "solvePuzzle returns solutionCount 0, 1, or 2, with retained solutions exposed separately; solver tests cover zero, one, and multiple outcomes."
+      - "The multiple-solution test uses clues [[2,2],[2,1]] and receives two distinct solutions."
+  - id: AC-2
+    result: PASS
+    evidence:
+      - "solver.ts propagates exact cell clue counts and vertex degree 0-or-2 constraints before search."
+      - "normalizeInput includes puzzle.startingEdges and accepts explicit fixedEdges/excludedEdges, rejecting conflicts and out-of-bounds edges."
+      - "finalSolutionIsValid requires all clues, degree constraints, and one connected selected-edge component; propagation rejects premature separate closed components."
+      - "solver.test.ts verifies fixed and excluded edge options on the unique perimeter fixture."
+  - id: AC-3
+    result: PASS
+    evidence:
+      - "search caps retained solutions at two and returns immediately once the second solution is found."
+      - "solver.test.ts asserts solutionCount 2 and exactly two retained solutions for a multi-solution puzzle."
+  - id: AC-4
+    result: PASS
+    evidence:
+      - "solvePuzzle.report contains schemaVersion, puzzleId, solutionCount, unique, valid, elapsedMilliseconds, deductions, and optional rejectionReasons fields matching schemas/solver-report.schema.json."
+      - "Deductions include direct, vertex, connectivity, contradiction, searchOnly, and maximumDepth non-negative counters."
+      - "solver.test.ts asserts the approved report shape and report values."
+commandsRun:
+  - command: "npm run test --workspace @loops/puzzle-validator"
+    exitCode: 0
+    result: "1 test file and 5 tests passed."
+  - command: "npm run validate:solver-fixtures --workspace @loops/puzzle-validator"
+    exitCode: 0
+    result: "Validated 2 solver fixtures."
+  - command: "npm run typecheck"
+    exitCode: 0
+    result: "Root workspace typecheck passed for web-game, game-engine, puzzle-format, puzzle-generator, and puzzle-validator."
+  - command: "npm run typecheck --workspace @loops/puzzle-validator"
+    exitCode: 0
+    result: "Validator package typecheck passed as part of the root workspace run."
+  - command: "npm run validate:solver-fixtures"
+    exitCode: 1
+    result: "Root package reported Missing script: validate:solver-fixtures."
+deviations:
+  - "The exact root-level validate:solver-fixtures script cannot be added within the declared tools/puzzle-validator/** write scope. The workspace-scoped command is implemented and passes; the orchestrator should add or route the root convenience script in integration scope before verification/release checks."
+  - "The solver uses local runtime edge parsing and lightweight puzzle-shape validation to keep the development CLI runnable under Node type stripping; the shared PuzzleDefinition and SolverReport types remain imported from @loops/puzzle-format at compile time."
+  - "The solver intentionally enforces a hard two-solution uniqueness cap to match the task acceptance requirement; callers do not configure a larger search result set."
+knownRisks:
+  - "The new workspace is not yet represented in the pre-existing root package-lock.json; lockfile regeneration belongs to integration scope before npm ci."
+  - "Complete search is intentionally exhaustive but may be expensive for large, weakly constrained boards; propagation and early two-solution termination limit normal generator workloads."
+  - "The report's valid flag means at least one complete valid loop was found; zero-solution reports are valid schema reports with valid:false and solutionCount:0."
+handoffNotes: |
+  P2 generation work can import solvePuzzle, solvePuzzleDefinition, SolverResult,
+  SolverOptions, and SolverReport from @loops/puzzle-validator or its /solver
+  export. Pass generated PuzzleDefinition records with startingEdges; add any
+  pipeline-specific exclusions through SolverOptions. Before clean install or
+  release verification, add a root validate:solver-fixtures route and update
+  package-lock.json in authorized integration scope.

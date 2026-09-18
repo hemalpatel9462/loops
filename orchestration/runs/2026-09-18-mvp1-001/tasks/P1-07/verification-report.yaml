@@ -1,0 +1,61 @@
+schemaVersion: "1.0"
+artifactType: verification-report
+taskId: "P1-07"
+verdict: PASS
+scopeReviewed:
+  - "tools/puzzle-validator/**"
+  - "schemas/solver-report.schema.json"
+  - "package.json"
+  - "package-lock.json"
+  - "orchestration/runs/2026-09-18-mvp1-001/tasks/P1-07/implementation-report.yaml"
+acceptanceCriteria:
+  - id: AC-1
+    verdict: PASS
+    evidence:
+      - "tools/puzzle-validator/solver/solver.ts:258-304 returns solutionCount 0, 1, or 2 based on retained complete solutions and exposes those solutions separately."
+      - "tools/puzzle-validator/solver/solver.test.ts covers one solution (perimeter), zero solutions (all-zero clues with fixed line), and multiple solutions (clues [[2,2],[2,1]]); all 5 package tests passed."
+      - "Independent runtime exercise returned one=1, zero=0, multiple=2 with retained=2."
+  - id: AC-2
+    verdict: PASS
+    evidence:
+      - "tools/puzzle-validator/solver/solver.ts:134-188 propagates exact cell clue counts and vertex degree 0-or-2 constraints, while finalSolutionIsValid rechecks every clue and vertex."
+      - "tools/puzzle-validator/solver/solver.ts:218-248 normalizes puzzle.startingEdges plus explicit fixedEdges/excludedEdges, validates board bounds, and rejects fixed/excluded conflicts."
+      - "tools/puzzle-validator/solver/solver.ts:83-111 builds selected-edge components; finalSolutionIsValid requires exactly one component, and propagation rejects premature closed components when more than one component exists."
+      - "Independent runtime exercise confirmed a fixed edge is present and an excluded edge absent in the unique result; package tests also cover this case."
+  - id: AC-3
+    verdict: PASS
+    evidence:
+      - "tools/puzzle-validator/solver/solver.ts:252-255 sets maxSolutions=2; search returns immediately when two solutions are retained at lines 260 and 284-290."
+      - "The multiple-solution package test asserts exactly two retained solutions and solutionCount 2; independent runtime exercise confirmed retained=2."
+  - id: AC-4
+    verdict: PASS
+    evidence:
+      - "tools/puzzle-validator/solver/solver.ts:295-312 emits schemaVersion, puzzleId, solutionCount, unique, valid, elapsedMilliseconds, deductions, and optional rejectionReasons with no unapproved fields."
+      - "schemas/solver-report.schema.json requires the same report fields, permits solutionCount 0/1/2/'2+', and requires non-negative direct, vertex, connectivity, contradiction, searchOnly, and maximumDepth counters."
+      - "tools/puzzle-validator/solver/solver.test.ts test 'emits the approved report shape' passed; independent runtime report keys and non-negative deduction counters matched the approved contract."
+checksPerformed:
+  - command: "npm run test --workspace @loops/puzzle-validator"
+    exitCode: 0
+    result: "Vitest reported 1 test file and 5 tests passed."
+  - command: "npm run typecheck"
+    exitCode: 0
+    result: "Workspace typecheck passed for web-game, game-engine, puzzle-format, puzzle-generator, and puzzle-validator."
+  - command: "npm run validate:solver-fixtures"
+    exitCode: 0
+    result: "Root integration route delegated to @loops/puzzle-validator and printed 'Validated 2 solver fixtures.'; only Node's expected experimental type-stripping warning was emitted."
+  - command: "node --experimental-strip-types --input-type=module -e '<zero/one/multiple, fixed/excluded, and report-shape assertions>'"
+    exitCode: 0
+    result: "Independent runtime assertions passed: one=1, zero=0, multiple=2, retained=2, constrained=1; report keys matched the approved shape."
+findings:
+  - severity: LOW
+    description: "The implementation report records the root validate:solver-fixtures route and lockfile integration as pending. The current inspected project state has since added the root route and package-lock workspace link; the exact required root command now passes."
+    file: "orchestration/runs/2026-09-18-mvp1-001/tasks/P1-07/implementation-report.yaml"
+  - severity: LOW
+    description: "The fixture CLI uses Node 22 experimental type stripping and emits a warning; it is development-only and not part of the browser bundle."
+    file: "tools/puzzle-validator/src/validate-fixtures.ts"
+requiredRemediation: []
+conclusion: |
+  Independent inspection confirms all four P1-07 acceptance criteria. The solver
+  returns zero, one, or two solutions, applies clues, vertex, fixed, excluded, and
+  connectivity constraints, stops after two solutions, and emits a report matching
+  the approved schema. All required commands exited 0. Verdict: PASS.

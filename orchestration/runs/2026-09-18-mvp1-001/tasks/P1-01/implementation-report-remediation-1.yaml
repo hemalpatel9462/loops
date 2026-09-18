@@ -1,0 +1,75 @@
+schemaVersion: "1.0"
+artifactType: implementation-report
+taskId: "P1-01"
+status: COMPLETE
+summary: |
+  Remediation 1 re-ran the previously blocked P1-01 workspace checks after the
+  orchestrator added the @loops/game-engine package boundary. The original
+  model/state implementation remains unchanged and its required workspace test
+  and root typecheck now both pass. See the original BLOCKED report at
+  orchestration/runs/2026-09-18-mvp1-001/tasks/P1-01/implementation-report.yaml.
+filesChanged:
+  - path: "packages/game-engine/model/edge-state.ts"
+    change: "Original implementation file retained unchanged; defines unknown, line, and x states plus deterministic cycling."
+  - path: "packages/game-engine/model/board.ts"
+    change: "Original implementation file retained unchanged; defines board edge enumeration, bounds checks, and fixed-edge normalization."
+  - path: "packages/game-engine/model/index.ts"
+    change: "Original implementation file retained unchanged; exports the model API."
+  - path: "packages/game-engine/model/edge-state.test.ts"
+    change: "Original implementation test retained unchanged; covers the state cycle."
+  - path: "packages/game-engine/model/vitest.config.ts"
+    change: "Original in-scope test configuration retained unchanged; scopes model/state tests."
+  - path: "packages/game-engine/state/history.ts"
+    change: "Original implementation file retained unchanged; provides immutable past/future transition history."
+  - path: "packages/game-engine/state/game-state.ts"
+    change: "Original implementation file retained unchanged; provides immutable state transitions and fixed-edge protection."
+  - path: "packages/game-engine/state/index.ts"
+    change: "Original implementation file retained unchanged; exports state and history APIs."
+  - path: "packages/game-engine/state/game-state.test.ts"
+    change: "Original implementation test retained unchanged; covers fixed edges, cycling, undo/redo, and invalid edges."
+  - path: "packages/game-engine/package.json"
+    change: "Orchestrator-added package boundary that resolved the original workspace-command blocker; not modified by this remediation."
+  - path: "packages/game-engine/tsconfig.json"
+    change: "Orchestrator-added package TypeScript wiring that resolved the original root-typecheck coverage blocker; not modified by this remediation."
+  - path: "orchestration/runs/2026-09-18-mvp1-001/tasks/P1-01/implementation-report-remediation-1.yaml"
+    change: "Recorded the resolved dependency, re-run checks, acceptance evidence, and remaining risks."
+acceptanceCriteria:
+  - id: AC-1
+    result: PASS
+    evidence:
+      - "The unchanged original model/edge-state.ts defines unknown, line, and x."
+      - "npm run test --workspace @loops/game-engine exited 0 with 2 test files and 6 tests passed."
+  - id: AC-2
+    result: PASS
+    evidence:
+      - "The unchanged original state/game-state.ts protects fixedEdges by returning the original state for fixed-edge actions."
+      - "The fixed-edge tests passed in the workspace test run."
+  - id: AC-3
+    result: PASS
+    evidence:
+      - "The unchanged original model/edge-state.ts implements unknown → line → x → unknown."
+      - "The workspace test run passed the complete cycle test."
+  - id: AC-4
+    result: PASS
+    evidence:
+      - "The unchanged original transition implementation freezes state, edge maps, and history snapshots without mutating inputs."
+      - "npm run typecheck exited 0 after the orchestrator-added package TypeScript wiring included packages/game-engine."
+  - id: AC-5
+    result: PASS
+    evidence:
+      - "The unchanged original history.ts implements immutable past/future transition stacks with undo/redo branching behavior."
+      - "The workspace test run passed the undo/redo and redo-invalidation tests."
+commandsRun:
+  - command: "npm run test --workspace @loops/game-engine"
+    exitCode: 0
+  - command: "npm run typecheck"
+    exitCode: 0
+deviations:
+  - "No production files were changed during remediation; this report only records re-verification after the orchestrator resolved the package boundary."
+  - "The package.json and tsconfig.json entries above are integration prerequisites added by the orchestrator, not implementation-worker changes."
+knownRisks:
+  - "The root package-lock.json must remain synchronized with all workspace manifests before a clean npm ci/release gate; this remediation did not modify the lockfile."
+handoffNotes: |
+  The original P1-01 BLOCKED condition is resolved. The model/state code is
+  independently covered by the workspace test and root typecheck, and the
+  orchestrator-added package boundary is now available for downstream P1 tasks.

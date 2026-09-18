@@ -1,0 +1,55 @@
+schemaVersion: "1.0"
+artifactType: verification-report
+taskId: "P1-04"
+verdict: PASS
+scopeReviewed:
+  - "tests/unit/**"
+  - "test-fixtures/**"
+  - "vitest.config.ts"
+  - "package.json"
+  - "packages/puzzle-format/src/codecs.ts"
+  - "packages/puzzle-format/src/schemas.ts"
+acceptanceCriteria:
+  - id: AC-1
+    verdict: PASS
+    evidence:
+      - "vitest.config.ts defines a repository-root Node test harness with deterministic include patterns for tests/unit/**/*.test.ts and apps/web-game/src/**/*.test.ts and passWithNoTests: false."
+      - "npm ci --dry-run exited 0, confirming the checked-out dependency graph is installable without changing files."
+      - "npm run test exited 0; the workspace run passed the web-game suite (2 files, 5 tests), game-engine suite (2 files, 6 tests), puzzle-format suite (2 files, 7 tests), and puzzle-generator suite (1 file, 4 tests)."
+  - id: AC-2
+    verdict: PASS
+    evidence:
+      - "test-fixtures/puzzles.ts exports validLoopPuzzle, branchPuzzle, openPathPuzzle, multipleLoopsPuzzle, and clueErrorPuzzle; the valid fixture array contains the four structural cases and invalidFixtures contains clueError."
+      - "The inspected edge sets independently represent a closed 2x2 perimeter, a degree-three branch, an open path with endpoints, and two disconnected cell loops; clueErrorPuzzle sets clues[0][0] to 4."
+      - "tests/unit/puzzle-fixtures.test.ts asserts the canonical valid fixture ordering/IDs, validates every valid fixture, and asserts clueError is rejected at clues[0][0]."
+  - id: AC-3
+    verdict: PASS
+    evidence:
+      - "tests/unit/puzzle-fixtures.test.ts imports approvedSchemas and checks all ten approved Draft 2020-12 object schemas during the repository unit run."
+      - "npm run validate:schemas exited 0; packages/puzzle-format/src/schema-validation.test.ts passed both schema integration tests, including loading every checked-in schema and puzzle-definition contract alignment."
+  - id: AC-4
+    verdict: PASS
+    evidence:
+      - "test-fixtures/puzzles.ts uses static fixture IDs, seeds, edge arrays, and ordering with no clock, random source, or external input."
+      - "tests/unit/puzzle-fixtures.test.ts asserts canonical fixture ordering and IDs; two independent npm run test executions both exited 0 with the same test-file and test-count results."
+checksPerformed:
+  - command: "npm run test"
+    exitCode: 0
+    result: "All workspace suites passed: web-game 2 files/5 tests, game-engine 2 files/6 tests, puzzle-format 2 files/7 tests, puzzle-generator 1 file/4 tests."
+  - command: "npm run validate:schemas"
+    exitCode: 0
+    result: "The puzzle-format schema-validation suite passed 1 file and 2 tests."
+  - command: "npm ci --dry-run"
+    exitCode: 0
+    result: "The checked-out workspace dependency graph resolved successfully in dry-run mode."
+findings:
+  - severity: LOW
+    description: "The deterministic fixture test's self-serialization assertion is tautological, but determinism is independently supported by static fixture constants and identical results across two complete npm run test executions."
+    file: "tests/unit/puzzle-fixtures.test.ts"
+requiredRemediation: []
+conclusion: |
+  Independent inspection confirms all four P1-04 acceptance criteria. The repository
+  test harness is configured and runs successfully, the fixtures cover valid loops,
+  branches, open paths, multiple disconnected loops, and clue errors, schema loading
+  is exercised during unit tests, and repeated test runs produce stable results.
+  Verdict: PASS.

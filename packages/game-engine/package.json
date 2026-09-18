@@ -1,0 +1,23 @@
+{
+  "name": "@loops/game-engine",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./model": "./model/index.ts",
+    "./state": "./state/index.ts",
+    "./validation": "./validation/index.ts",
+    "./hints": "./hints/index.ts"
+  },
+  "scripts": {
+    "test": "vitest run --config model/vitest.config.ts && vitest run --config validation/vitest.config.ts && vitest run --config hints/vitest.config.ts",
+    "typecheck": "tsc --noEmit -p tsconfig.json"
+  },
+  "dependencies": {
+    "@loops/puzzle-format": "0.1.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.2",
+    "vitest": "^3.2.4"
+  }
+}

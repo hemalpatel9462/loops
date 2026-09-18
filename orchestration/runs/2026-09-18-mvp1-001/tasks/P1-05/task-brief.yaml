@@ -1,0 +1,37 @@
+schemaVersion: "1.0"
+artifactType: task-brief
+taskId: "P1-05"
+title: "Web app shell and design tokens"
+phase: 1
+goal: "Create the responsive React application shell and initial visual design-token foundation."
+context:
+  - "loops_game_design_spec.md"
+  - "PROJECT_STRUCTURE_AND_DEPLOYMENT.md"
+  - "orchestration/IMPLEMENTATION_PLAN.md"
+  - "orchestration/task-registry.json"
+dependencies: ["P0-01", "P0-02"]
+writeScope:
+  - "apps/web-game/src/app/**"
+  - "apps/web-game/src/styles/**"
+  - "apps/web-game/src/main.tsx"
+forbiddenScope:
+  - "orchestration/task-registry.json"
+  - "orchestration/briefs/**"
+  - "orchestration/runs/2026-09-18-mvp1-001/tasks/P1-05/verification-brief.yaml"
+  - "orchestration/runs/2026-09-18-mvp1-001/tasks/P1-05/verification-report.yaml"
+acceptanceCriteria:
+  - id: "AC-1"
+    description: "The app starts with Vite."
+  - id: "AC-2"
+    description: "A responsive application shell exists."
+  - id: "AC-3"
+    description: "CSS variables define colors, spacing, typography, and edge styles."
+  - id: "AC-4"
+    description: "Light, dark, and high-contrast modes are structurally supported."
+  - id: "AC-5"
+    description: "No production game rules are duplicated in UI components."
+requiredChecks:
+  - "npm run typecheck"
+  - "npm run build"
+  - "npm run lint"
+implementationReportPath: "orchestration/runs/2026-09-18-mvp1-001/tasks/P1-05/implementation-report.yaml"

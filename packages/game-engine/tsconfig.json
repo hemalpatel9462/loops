@@ -1,0 +1,12 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "noEmit": true
+  },
+  "include": ["model/**/*.ts", "state/**/*.ts", "validation/**/*.ts", "hints/**/*.ts"],
+  "exclude": [
+    "model/vitest.config.ts",
+    "validation/vitest.config.ts",
+    "hints/vitest.config.ts"
+  ]
+}

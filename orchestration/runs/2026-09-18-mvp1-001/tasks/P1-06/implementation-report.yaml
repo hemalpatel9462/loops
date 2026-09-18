@@ -1,0 +1,93 @@
+schemaVersion: "1.0"
+artifactType: implementation-report
+taskId: "P1-06"
+status: COMPLETE
+summary: |
+  Added the @loops/puzzle-generator workspace package for development-only
+  candidate lattice-loop generation. Candidates are deterministic for a seed
+  and configuration, use h/v lattice edge identifiers, and are structurally
+  validated for degree-two vertices, connectivity, bounds, and full-cell
+  four-edge enclosures. CandidateLoop is intentionally separate from the
+  shared PuzzleDefinition contract and contains no clues or validated-puzzle
+  fields. A Node type-stripping CLI emits deterministic candidate-loop sets
+  for smoke generation.
+filesChanged:
+  - path: "tools/puzzle-generator/package.json"
+    change: "Added the @loops/puzzle-generator workspace package and test, typecheck, and candidate-generation scripts."
+  - path: "tools/puzzle-generator/tsconfig.json"
+    change: "Configured strict TypeScript checking and Node-compatible .ts imports for the generator source and CLI."
+  - path: "tools/puzzle-generator/vitest.config.ts"
+    change: "Scoped Vitest discovery to puzzle-generator tests."
+  - path: "tools/puzzle-generator/src/types.ts"
+    change: "Defined candidate-loop configuration, artifact, vertex, metrics, and validation result contracts separate from PuzzleDefinition."
+  - path: "tools/puzzle-generator/src/random.ts"
+    change: "Added a deterministic seed-derived xorshift PRNG and stable Fisher-Yates shuffle."
+  - path: "tools/puzzle-generator/src/geometry.ts"
+    change: "Added lattice edge/vertex conversion, full-cell enclosure detection, cycle connectivity, metrics, and structural candidate validation."
+  - path: "tools/puzzle-generator/src/generator.ts"
+    change: "Added bounded deterministic DFS generation of simple closed lattice cycles, configurable dimensions/length/coverage/budget, and batch generation."
+  - path: "tools/puzzle-generator/src/index.ts"
+    change: "Exported the candidate generator, geometry validator, deterministic random helper, and candidate types."
+  - path: "tools/puzzle-generator/src/cli.ts"
+    change: "Added generate:test-candidates CLI outputting candidate-loop-set JSON without validated puzzle data."
+  - path: "tools/puzzle-generator/src/generator.test.ts"
+    change: "Added tests for deterministic generation, candidate/puzzle-output separation, invalid geometry rejection, enclosure detection, and deterministic batches."
+  - path: "orchestration/runs/2026-09-18-mvp1-001/tasks/P1-06/implementation-report.yaml"
+    change: "Recorded implementation scope, command results, acceptance evidence, deviation, and risks."
+acceptanceCriteria:
+  - id: AC-1
+    result: PASS
+    evidence:
+      - "generateCandidateLoop in tools/puzzle-generator/src/generator.ts emits CandidateLoop artifacts with h/v lattice edge IDs and explicit board dimensions."
+      - "The generator test and CLI smoke run produced valid 4x4 candidates; a 100-seed smoke sweep succeeded for 2x2, 3x3, 4x4, 5x5, 7x7, and 10x10 boards."
+  - id: AC-2
+    result: PASS
+    evidence:
+      - "DFS tracks each lattice vertex once before closure, so generated cycles cannot branch or cross through an occupied vertex."
+      - "validateCandidateLoop checks every selected vertex has degree two and checks that all selected edges are connected."
+      - "src/generator.test.ts rejects a branch and a disconnected edge collection."
+  - id: AC-3
+    result: PASS
+    evidence:
+      - "hasFullCellEnclosure in src/geometry.ts rejects a cell whose top, bottom, left, and right edges are all selected."
+      - "validateCandidateLoop invokes enclosure rejection, and the test suite covers explicit four-edge enclosure detection."
+  - id: AC-4
+    result: PASS
+    evidence:
+      - "SeededRandom uses a deterministic FNV-1a-derived xorshift state and deterministic shuffle; attempt seeds include the configured seed and attempt index."
+      - "Repeated generation with the same configuration and repeated batch generation produce deep-equal outputs in src/generator.test.ts."
+  - id: AC-5
+    result: PASS
+    evidence:
+      - "CandidateLoop has artifactType candidate-loop, version, seed, dimensions, edges, and vertices only; it intentionally has no clues, solutionEdges, startingEdges, or PuzzleDefinition metadata."
+      - "The CLI emits candidate-loop-set JSON and never invokes clue derivation, puzzle validation, or validated-puzzle output."
+commandsRun:
+  - command: "npm run test --workspace @loops/puzzle-generator"
+    exitCode: 0
+    result: "1 test file and 4 tests passed."
+  - command: "npm run generate:test-candidates --workspace @loops/puzzle-generator -- --width 4 --height 4 --seed smoke --count 2"
+    exitCode: 0
+    result: "Emitted two candidate-loop artifacts as JSON; Node emitted only its expected experimental type-stripping warning."
+  - command: "npm run typecheck"
+    exitCode: 0
+    result: "Root workspace typecheck passed for web-game, puzzle-format, and puzzle-generator."
+  - command: "npm run typecheck --workspace @loops/puzzle-generator"
+    exitCode: 0
+    result: "Generator package typecheck passed."
+  - command: "npm run generate:test-candidates"
+    exitCode: 1
+    result: "Root package reported Missing script: generate:test-candidates."
+deviations:
+  - "The exact root-level generate:test-candidates script cannot be added within the declared tools/puzzle-generator/** write scope. The workspace-scoped command is implemented and passes; the orchestrator should add or route the root convenience script in its integration scope before verification/release checks."
+  - "The generator uses a bounded randomized DFS over lattice vertices rather than a separate polyomino boundary algorithm; structural validation remains the acceptance gate for every returned candidate."
+knownRisks:
+  - "The new workspace is not yet represented in the pre-existing root package-lock.json; lockfile regeneration belongs to integration scope before npm ci."
+  - "Very restrictive custom minLoopLength/maxLoopLength/coverage/searchBudget combinations can exhaust the configured attempt budget and throw, by design; callers should tune profiles or increase maxAttempts/searchBudget."
+  - "The CLI uses Node 22's experimental type stripping and emits an experimental warning; it is development-only and not part of the browser bundle."
+handoffNotes: |
+  P2 generation work can import generateCandidateLoop, generateCandidates,
+  validateCandidateLoop, CandidateLoop, CandidateLoopConfig, and geometry
+  helpers from @loops/puzzle-generator. Candidate artifacts must be converted
+  into clues and PuzzleDefinition only in the later pipeline after solver and
+  quality validation. Add a root generate:test-candidates route and regenerate
+  package-lock.json in the owning integration scope.

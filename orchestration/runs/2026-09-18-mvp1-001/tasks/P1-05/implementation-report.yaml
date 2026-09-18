@@ -1,0 +1,59 @@
+schemaVersion: "1.0"
+artifactType: implementation-report
+taskId: "P1-05"
+status: COMPLETE
+summary: >-
+  Implemented the responsive React application shell and scoped visual design
+  token foundation for the Loops web app. The app entry point now renders the
+  shell from src/app, with tokenized global styles and structural light, dark,
+  and high-contrast appearance modes.
+filesChanged:
+  - path: "apps/web-game/src/app/AppShell.tsx"
+    change: "Added the semantic responsive application shell, navigation, hero, feature cards, footer, and appearance-mode controls."
+  - path: "apps/web-game/src/styles/tokens.css"
+    change: "Added color, spacing, typography, edge-style, radius, shadow, and transition design tokens with light, dark, and high-contrast overrides."
+  - path: "apps/web-game/src/styles/global.css"
+    change: "Added responsive shell layout, component styling, SVG preview styling, focus states, and reduced-motion behavior using the design tokens."
+  - path: "apps/web-game/src/main.tsx"
+    change: "Wired the Vite entry point to AppShell and the scoped global stylesheet."
+acceptanceCriteria:
+  - id: "AC-1"
+    result: PASS
+    evidence:
+      - "Vite dev server started successfully with npm run dev --workspace @loops/web-game -- --host 127.0.0.1 --port 4175."
+      - "A curl request to http://127.0.0.1:4175/ returned the app HTML successfully."
+  - id: "AC-2"
+    result: PASS
+    evidence:
+      - "AppShell provides semantic header/navigation, responsive hero content, appearance controls, feature cards, and footer."
+      - "global.css includes a narrow-viewport media query that collapses the hero and feature layout for phone widths."
+  - id: "AC-3"
+    result: PASS
+    evidence:
+      - "tokens.css defines color roles, spacing scale, typography roles, edge widths/dash style, radii, shadows, and transitions."
+  - id: "AC-4"
+    result: PASS
+    evidence:
+      - "AppShell exposes data-visual-mode values light, dark, and high-contrast."
+      - "tokens.css supplies structural color-scheme and design-token overrides for each mode."
+  - id: "AC-5"
+    result: PASS
+    evidence:
+      - "The shell contains presentation and appearance state only; no clue validation, edge transitions, loop checks, or production game rules are implemented in UI components."
+commandsRun:
+  - command: "npm run typecheck"
+    exitCode: 0
+  - command: "npm run build"
+    exitCode: 0
+  - command: "npm run lint"
+    exitCode: 0
+  - command: "npm run dev --workspace @loops/web-game -- --host 127.0.0.1 --port 4175"
+    exitCode: 0
+deviations: []
+knownRisks:
+  - "The visual shell currently uses placeholder hero content and an illustrative preview; later feature tasks must replace or connect these controls to real puzzle data and engine state."
+  - "The settings button is structural only until the accessibility/settings task wires it to persisted preferences."
+handoffNotes: >-
+  Existing root-level src/App.tsx and src/styles.css were left untouched.
+  No forbidden orchestration files or verification artifacts were modified.
+  The report is ready for independent verification.

@@ -1,0 +1,35 @@
+schemaVersion: "1.0"
+artifactType: task-brief
+taskId: "P1-06"
+title: "Candidate loop generator"
+phase: 1
+goal: "Create deterministic candidate lattice-loop generation with structural rejection of invalid geometry."
+context:
+  - "loops_game_design_spec.md"
+  - "PROJECT_STRUCTURE_AND_DEPLOYMENT.md"
+  - "orchestration/IMPLEMENTATION_PLAN.md"
+  - "orchestration/task-registry.json"
+dependencies: ["P0-02"]
+writeScope:
+  - "tools/puzzle-generator/**"
+forbiddenScope:
+  - "orchestration/task-registry.json"
+  - "orchestration/briefs/**"
+  - "orchestration/runs/2026-09-18-mvp1-001/tasks/P1-06/verification-brief.yaml"
+  - "orchestration/runs/2026-09-18-mvp1-001/tasks/P1-06/verification-report.yaml"
+acceptanceCriteria:
+  - id: "AC-1"
+    description: "The generator creates candidate lattice loops."
+  - id: "AC-2"
+    description: "Candidates have no crossings, branches, or disconnected segments."
+  - id: "AC-3"
+    description: "Full-cell four-edge enclosures are rejected."
+  - id: "AC-4"
+    description: "Generation is deterministic for a given seed and configuration."
+  - id: "AC-5"
+    description: "Candidate output is separate from validated puzzle output."
+requiredChecks:
+  - "npm run test --workspace @loops/puzzle-generator"
+  - "npm run generate:test-candidates"
+  - "npm run typecheck"
+implementationReportPath: "orchestration/runs/2026-09-18-mvp1-001/tasks/P1-06/implementation-report.yaml"

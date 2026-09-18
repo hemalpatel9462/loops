@@ -1,0 +1,28 @@
+schemaVersion: "1.0"
+artifactType: verification-brief
+taskId: "P1-03"
+implementationReportPath: "orchestration/runs/2026-09-18-mvp1-001/tasks/P1-03/implementation-report.yaml"
+scopeReviewed:
+  - "packages/game-engine/hints/**"
+  - "packages/game-engine/package.json"
+  - "packages/game-engine/tsconfig.json"
+acceptanceCriteria:
+  - id: "AC-1"
+    description: "Hints expose highlight, explanation, and reveal levels."
+  - id: "AC-2"
+    description: "Deductions identify direct-clue, vertex, connectivity, or contradiction types."
+  - id: "AC-3"
+    description: "A move is described as forced only with supporting evidence."
+  - id: "AC-4"
+    description: "Hints do not mutate game state until applied by the caller."
+requiredChecks:
+  - command: "npm run test --workspace @loops/game-engine"
+    purpose: "Verify the task acceptance criteria and detect regressions."
+  - command: "npm run typecheck"
+    purpose: "Verify the task acceptance criteria and detect regressions."
+constraints:
+  - "Do not modify production code."
+  - "Treat the implementation report as a claim and verify it against the files."
+  - "Check every acceptance criterion independently."
+  - "Record evidence with file paths, test names, or command output."
+verificationReportPath: "orchestration/runs/2026-09-18-mvp1-001/tasks/P1-03/verification-report.yaml"

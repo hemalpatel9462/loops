@@ -1,0 +1,57 @@
+schemaVersion: "1.0"
+artifactType: verification-report
+taskId: "P1-03"
+verdict: PASS
+scopeReviewed:
+  - "packages/game-engine/hints/**"
+  - "packages/game-engine/package.json"
+  - "packages/game-engine/tsconfig.json"
+  - "orchestration/runs/2026-09-18-mvp1-001/tasks/P1-03/implementation-report.yaml"
+acceptanceCriteria:
+  - id: AC-1
+    verdict: PASS
+    evidence:
+      - "packages/game-engine/hints/hint-engine.ts:33-76 defines HintLevel 1/2/3, HintHighlight, RuntimeHint explanation and reveal fields; toRuntimeHint at lines 516-539 only populates explanation at level 2+ and reveal at level 3."
+      - "packages/game-engine/hints/hint-engine.test.ts test 'exposes highlight, explanation, and reveal levels' passed, confirming progressive level behavior."
+  - id: AC-2
+    verdict: PASS
+    evidence:
+      - "packages/game-engine/hints/hint-engine.ts:6 defines the approved DeductionType union direct-clue | vertex | connectivity | contradiction."
+      - "findDeductions at lines 492-510 combines directClueDeductions, vertexDeductions, connectivityDeductions, and contradictionDeductions in deterministic order."
+      - "packages/game-engine/hints/hint-engine.test.ts test 'supports vertex, connectivity, and contradiction deduction categories' passed, alongside direct-clue coverage in the evidence test."
+  - id: AC-3
+    verdict: PASS
+    evidence:
+      - "packages/game-engine/hints/hint-engine.ts:299-421 attaches rule-specific HintEvidence with forced=true, relatedEdges, reason, and explicit allowed/disallowed alternatives for direct-clue and vertex moves."
+      - "Connectivity deductions at lines 424-462 evaluate line and x alternatives with partialChecks and only emit a forced result when the line alternative fails connectivity while x remains valid. Contradiction deductions explicitly use forced=false at lines 465-490."
+      - "packages/game-engine/hints/hint-engine.test.ts asserts direct-clue alternatives and forced=true; source inspection confirms every actionable direct-clue, vertex, and connectivity deduction carries related edges and an allowed/disallowed alternative set."
+  - id: AC-4
+    verdict: PASS
+    evidence:
+      - "normalizeState at packages/game-engine/hints/hint-engine.ts:92-111 constructs a canonical copy; cloneWithMove at lines 154-163 creates a new state for alternative checks, so computeHint/findDeductions do not write to caller state."
+      - "applyHintToEdgeStates at lines 567-576 is the explicit reveal operation and returns a new frozen map when a reveal exists; without a reveal it leaves the caller map untouched."
+      - "packages/game-engine/hints/hint-engine.test.ts test 'does not mutate state until a caller applies a reveal' passed and directly verifies caller-applied reveal leaves the original map unchanged."
+checksPerformed:
+  - command: "npm run test --workspace @loops/game-engine"
+    exitCode: 0
+    result: "Package script ran model, validation, and hints Vitest configs: 3 test files and 14 tests passed (6 model/state, 4 validation, 4 hints)."
+  - command: "npm run typecheck"
+    exitCode: 0
+    result: "Workspace typecheck exited 0 for web-game, game-engine, puzzle-format, puzzle-generator, and puzzle-validator."
+  - command: "node --experimental-strip-types --input-type=module -e '<forced evidence and purity assertions>'"
+    exitCode: 1
+    result: "The ad hoc direct-Node import could not resolve the existing extensionless ../model/board import; this is not a required verification command and does not affect the Vite/Vitest package checks."
+findings:
+  - severity: LOW
+    description: "The implementation report records package test wiring and workspace typecheck as pending/failing, but the current package.json includes hints/vitest.config.ts and the exact required commands now pass after integration changes."
+    file: "orchestration/runs/2026-09-18-mvp1-001/tasks/P1-03/implementation-report.yaml"
+  - severity: LOW
+    description: "Direct Node ESM execution of the source entrypoint does not resolve extensionless local imports; the package is currently verified through Vite/Vitest tooling, which resolves those TypeScript imports."
+    file: "packages/game-engine/hints/hint-engine.ts"
+requiredRemediation: []
+conclusion: |
+  Independent inspection confirms all four P1-03 acceptance criteria. Runtime hints
+  expose progressive highlight, explanation, and reveal levels; deduction categories
+  and evidence-backed forced alternatives are implemented; and hint computation is
+  non-mutating with explicit reveal application. The exact required package test and
+  workspace typecheck exited 0. Verdict: PASS.

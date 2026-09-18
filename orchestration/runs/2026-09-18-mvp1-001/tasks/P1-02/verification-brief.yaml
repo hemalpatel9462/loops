@@ -1,0 +1,28 @@
+schemaVersion: "1.0"
+artifactType: verification-brief
+taskId: "P1-02"
+implementationReportPath: "orchestration/runs/2026-09-18-mvp1-001/tasks/P1-02/implementation-report.yaml"
+scopeReviewed:
+  - "packages/game-engine/validation/**"
+acceptanceCriteria:
+  - id: "AC-1"
+    description: "Clue counts are validated."
+  - id: "AC-2"
+    description: "Vertex degree 0 or 2 is enforced."
+  - id: "AC-3"
+    description: "Loose endpoints and branches are detected."
+  - id: "AC-4"
+    description: "Multiple loops and disconnected fragments are rejected."
+  - id: "AC-5"
+    description: "A valid completion requires one closed connected loop and satisfied clues."
+requiredChecks:
+  - command: "npm run test --workspace @loops/game-engine"
+    purpose: "Verify the task acceptance criteria and detect regressions."
+  - command: "npm run typecheck"
+    purpose: "Verify the task acceptance criteria and detect regressions."
+constraints:
+  - "Do not modify production code."
+  - "Treat the implementation report as a claim and verify it against the files."
+  - "Check every acceptance criterion independently."
+  - "Record evidence with file paths, test names, or command output."
+verificationReportPath: "orchestration/runs/2026-09-18-mvp1-001/tasks/P1-02/verification-report.yaml"

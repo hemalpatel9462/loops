@@ -1,0 +1,34 @@
+schemaVersion: "1.0"
+artifactType: task-brief
+taskId: "P1-02"
+title: "Core rule validation"
+phase: 1
+goal: "Implement clue, vertex, connectivity, branch, endpoint, and completion validation for a Loops game state."
+context:
+  - "loops_game_design_spec.md"
+  - "PROJECT_STRUCTURE_AND_DEPLOYMENT.md"
+  - "orchestration/IMPLEMENTATION_PLAN.md"
+  - "orchestration/task-registry.json"
+dependencies: ["P1-01"]
+writeScope:
+  - "packages/game-engine/validation/**"
+forbiddenScope:
+  - "orchestration/task-registry.json"
+  - "orchestration/briefs/**"
+  - "orchestration/runs/2026-09-18-mvp1-001/tasks/P1-02/verification-brief.yaml"
+  - "orchestration/runs/2026-09-18-mvp1-001/tasks/P1-02/verification-report.yaml"
+acceptanceCriteria:
+  - id: "AC-1"
+    description: "Clue counts are validated."
+  - id: "AC-2"
+    description: "Vertex degree 0 or 2 is enforced."
+  - id: "AC-3"
+    description: "Loose endpoints and branches are detected."
+  - id: "AC-4"
+    description: "Multiple loops and disconnected fragments are rejected."
+  - id: "AC-5"
+    description: "A valid completion requires one closed connected loop and satisfied clues."
+requiredChecks:
+  - "npm run test --workspace @loops/game-engine"
+  - "npm run typecheck"
+implementationReportPath: "orchestration/runs/2026-09-18-mvp1-001/tasks/P1-02/implementation-report.yaml"

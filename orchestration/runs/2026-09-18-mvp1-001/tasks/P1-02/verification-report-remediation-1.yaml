@@ -1,0 +1,61 @@
+schemaVersion: "1.0"
+artifactType: verification-report
+taskId: "P1-02"
+verdict: PASS
+scopeReviewed:
+  - "packages/game-engine/validation/**"
+  - "packages/game-engine/tsconfig.json"
+  - "packages/game-engine/package.json"
+  - "orchestration/runs/2026-09-18-mvp1-001/tasks/P1-02/implementation-report-remediation-1.yaml"
+  - "orchestration/runs/2026-09-18-mvp1-001/tasks/P1-02/implementation-report.yaml"
+  - "orchestration/runs/2026-09-18-mvp1-001/tasks/P1-02/verification-report.yaml"
+acceptanceCriteria:
+  - id: AC-1
+    verdict: PASS
+    evidence:
+      - "The remediation changes only EdgeInput narrowing and dimension-only normalization signatures; validateClues still counts each cell's four boundaries and emits deterministic mismatch diagnostics."
+      - "validation/validator.test.ts passed the satisfied-loop and clue-mismatch tests in the integrated package run."
+  - id: AC-2
+    verdict: PASS
+    evidence:
+      - "validateVertices in packages/game-engine/validation/validator.ts retains the degree-1 endpoint and non-0/non-2 branch checks; the remediation does not alter vertex graph logic."
+      - "The integrated package run passed the endpoint/branch test, including the degree-three branch assertion."
+  - id: AC-3
+    verdict: PASS
+    evidence:
+      - "VertexValidationResult still exposes endpoints and branches and VertexViolation.kind still distinguishes endpoint versus branch diagnostics."
+      - "validation/validator.test.ts passed the explicit branch and open-path endpoint coverage after remediation."
+  - id: AC-4
+    verdict: PASS
+    evidence:
+      - "validateConnectivity still computes edge-connected components and requires non-empty selected edges, one component, and valid vertex degrees for hasSingleLoop; graph traversal was not changed by the remediation."
+      - "The integrated package run passed the disconnected-loop and open-path rejection test."
+  - id: AC-5
+    verdict: PASS
+    evidence:
+      - "validateRules still requires no out-of-bounds edges, valid clues, valid vertices, and connectivity.valid, so completion remains one closed connected loop with satisfied clues."
+      - "The integrated package run passed the valid completion test; root typecheck also passed after the remediation."
+  - id: AC-6
+    verdict: PASS
+    evidence:
+      - "packages/game-engine/validation/validator.ts now guards object/null/array inputs and verifies an object-valued edgeStates property before narrowing EdgeInput; the selected-map branch uses an explicit EdgeStateMap cast."
+      - "normalizeEdges now accepts Pick<ValidationPuzzle, 'width' | 'height'>, matching its callers that require only dimensions."
+      - "packages/game-engine/tsconfig.json includes validation/**/*.ts and excludes only Vitest config files; npx tsc --noEmit -p packages/game-engine/tsconfig.json --listFiles listed validation/validator.ts and validation/index.ts."
+checksPerformed:
+  - command: "npm run test --workspace @loops/game-engine"
+    exitCode: 0
+    result: "The package script ran model, validation, and hints Vitest configs; 3 files and 14 tests passed (6 model/state, 4 validation, 4 hints)."
+  - command: "npm run typecheck"
+    exitCode: 0
+    result: "The root workspace typecheck passed web-game, game-engine, puzzle-format, puzzle-generator, and puzzle-validator."
+  - command: "npx tsc --noEmit -p packages/game-engine/tsconfig.json --listFiles | rg '/packages/game-engine/(validation/validator\\.ts|validation/index\\.ts|hints/)'"
+    exitCode: 0
+    result: "The typecheck file list included packages/game-engine/validation/validator.ts and validation/index.ts, confirming production validator sources are in the checked TypeScript program."
+findings: []
+requiredRemediation: []
+conclusion: |
+  Independent remediation verification confirms the original five P1-02 criteria
+  remain satisfied and the type-safety defect is corrected. Validator production
+  sources are included in the game-engine TypeScript program, and both required
+  commands exited 0. Original implementation and verification reports remain
+  preserved. Verdict: PASS.

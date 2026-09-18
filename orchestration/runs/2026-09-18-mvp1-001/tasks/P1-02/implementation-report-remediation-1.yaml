@@ -1,0 +1,57 @@
+schemaVersion: "1.0"
+artifactType: implementation-report
+taskId: "P1-02"
+status: COMPLETE
+summary: |
+  Remediation attempt 1 corrected the real TypeScript errors exposed after the
+  validation sources were included in the game-engine package boundary. The
+  validator now narrows EdgeInput safely before reading edgeStates and accepts
+  width/height-only inputs wherever only dimensions are required. Runtime
+  validation behavior is unchanged. The original P1-02 implementation report
+  and PASS verification report remain preserved alongside this remediation;
+  those reports are the historical acceptance record for the remediation.
+filesChanged:
+  - path: "packages/game-engine/validation/validator.ts"
+    change: "Added a runtime/type-safe EdgeInput state guard and explicit EdgeStateMap cast for the selected-edge-map branch; changed normalizeEdges to accept width/height-only puzzle inputs, preserving validator behavior."
+  - path: "orchestration/runs/2026-09-18-mvp1-001/tasks/P1-02/implementation-report-remediation-1.yaml"
+    change: "Recorded remediation scope, command results, acceptance evidence, deviations, risks, and handoff notes."
+acceptanceCriteria:
+  - id: AC-1
+    result: PASS
+    evidence:
+      - "The original P1-02 verification report established clue-count validation; this remediation changes only type narrowing and the dimension-only normalizeEdges signature."
+      - "npm run test --workspace @loops/game-engine passed all model, validation, and hint tests after the correction."
+  - id: AC-2
+    result: PASS
+    evidence:
+      - "The original P1-02 verification report established 0/2 vertex enforcement; no vertex runtime logic was changed by remediation."
+      - "The required game-engine test command passed 10 tests, including endpoint/branch validation coverage."
+  - id: AC-3
+    result: PASS
+    evidence:
+      - "The original P1-02 verification report established endpoint and branch diagnostics; remediation preserves validateVertices behavior and only allows normalizeEdges to receive dimension-only inputs."
+      - "The required package tests passed the existing validator endpoint/branch cases."
+  - id: AC-4
+    result: PASS
+    evidence:
+      - "The original P1-02 verification report established disconnected-component and single-loop rejection; remediation does not alter graph traversal or connectivity logic."
+      - "The required package test command passed the disconnected-loop/open-path coverage."
+  - id: AC-5
+    result: PASS
+    evidence:
+      - "The original P1-02 verification report established completion aggregation; remediation leaves validateRules and validateConnectivity runtime logic unchanged."
+      - "The required package tests and root typecheck both exited 0 after remediation."
+commandsRun:
+  - command: "npm run test --workspace @loops/game-engine"
+    exitCode: 0
+  - command: "npm run typecheck"
+    exitCode: 0
+deviations: []
+knownRisks:
+  - "The remediation intentionally did not alter runtime validator semantics; future contract changes should preserve the dimension-only signatures and explicit EdgeInput guard."
+handoffNotes: |
+  P1-02 remediation is complete. The validation package now typechecks as part
+  of the root workspace boundary. The original implementation and verification
+  reports remain the historical acceptance record at their task-folder paths;
+  this report records only the corrective validator changes and their required
+  command evidence.

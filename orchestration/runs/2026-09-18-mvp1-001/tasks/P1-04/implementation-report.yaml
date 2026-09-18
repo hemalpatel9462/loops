@@ -1,0 +1,59 @@
+schemaVersion: "1.0"
+artifactType: implementation-report
+taskId: "P1-04"
+status: COMPLETE
+summary: |
+  Added a repository-level Vitest harness and deterministic, reusable puzzle
+  fixtures for valid loops, branches, open paths, multiple disconnected loops,
+  and invalid clue values. The unit suite loads all approved Draft 2020-12
+  schemas and validates the fixture contracts through the shared puzzle-format
+  validator. The existing workspace test command discovers the new unit suite
+  alongside the web-game and puzzle-format tests.
+filesChanged:
+  - path: "vitest.config.ts"
+    change: "Added the repository-level Vitest configuration with Node environment, workspace package aliasing, and deterministic unit/web test discovery."
+  - path: "test-fixtures/puzzles.ts"
+    change: "Added typed valid-loop, branch, open-path, multiple-loop, and clue-error fixtures with reusable selected-edge sets."
+  - path: "tests/unit/puzzle-fixtures.test.ts"
+    change: "Added deterministic fixture coverage and approved-schema loading/contract validation tests."
+  - path: "orchestration/runs/2026-09-18-mvp1-001/tasks/P1-04/implementation-report.yaml"
+    change: "Recorded implementation scope, command results, acceptance evidence, deviations, and known risks."
+acceptanceCriteria:
+  - id: AC-1
+    result: PASS
+    evidence:
+      - "npm run test exited 0; the root workspace run passed apps/web-game smoke tests, the new tests/unit/puzzle-fixtures.test.ts suite (4 tests), and the puzzle-format package tests (7 tests)."
+      - "vitest.config.ts scopes repository-level discovery to tests/unit/**/*.test.ts and apps/web-game/src/**/*.test.ts, so the harness runs from the root workspace command."
+  - id: AC-2
+    result: PASS
+    evidence:
+      - "test-fixtures/puzzles.ts exports validLoopPuzzle, branchPuzzle, openPathPuzzle, multipleLoopsPuzzle, and clueErrorPuzzle; puzzleFixtures exposes the four structurally valid geometry cases and invalidFixtures exposes clueError."
+      - "tests/unit/puzzle-fixtures.test.ts validates all four structurally valid fixtures and asserts the clue-error fixture is rejected at clues[0][0]."
+  - id: AC-3
+    result: PASS
+    evidence:
+      - "tests/unit/puzzle-fixtures.test.ts imports approvedSchemas and checks all ten approved Draft 2020-12 object schemas during npm run test execution."
+      - "npm run validate:schemas exited 0 and passed the shared puzzle-format schema-validation suite (2 tests)."
+  - id: AC-4
+    result: PASS
+    evidence:
+      - "Fixture IDs, ordering, seeds, and edge lists are static constants; the unit suite asserts the canonical fixture ordering and IDs, with no clock, random source, or external input."
+      - "Repeated npm run test execution produced the same test-file/test-count results: 2 repository-level files and 2 puzzle-format files, 12 tests total."
+commandsRun:
+  - command: "npm run test"
+    exitCode: 0
+    result: "Passed web-game smoke + P1-04 unit suite (2 files, 5 tests) and puzzle-format suite (2 files, 7 tests)."
+  - command: "npm run validate:schemas"
+    exitCode: 0
+    result: "Passed puzzle-format schema validation (1 file, 2 tests)."
+deviations:
+  - "The repository's npm test script delegates to workspace test scripts; the root Vitest config is consumed by @loops/web-game's test command, while @loops/puzzle-format retains its package-scoped Vitest config."
+knownRisks:
+  - "The custom puzzle-format validator checks schema-aligned runtime structure; full JSON Schema evaluation remains owned by the schema/tooling work."
+  - "The root npm lockfile still has the previously reported clean-install mismatch for the newly added workspace package; this task does not own package-lock.json and did not modify it."
+handoffNotes: |
+  Later engine and solver tests can import the reusable fixtures from
+  test-fixtures/puzzles.ts. The selectedEdges arrays intentionally model the
+  semantic geometry cases independently of each fixture's schema-valid puzzle
+  record, allowing rule validators to test branches, open paths, and multiple
+  loops without changing production code.

@@ -1,0 +1,18 @@
+schemaVersion: "1.0"
+artifactType: remediation-brief
+taskId: "P1-02"
+remediationAttempt: 1
+trigger: "Full game-engine typecheck exposed validator narrowing/signature errors when validation sources were included in the package boundary. The prior acceptance verification remains preserved; this remediation makes the required typecheck independently sound."
+requiredCorrections:
+  - "Fix EdgeInput narrowing in getEdgeStates without changing runtime behavior."
+  - "Allow dimension-only puzzle inputs in normalizeEdges/validateVertices/validateConnectivity signatures."
+  - "Run npm run test --workspace @loops/game-engine and npm run typecheck after the fix."
+writeScope:
+  - "packages/game-engine/validation/**"
+  - "orchestration/runs/2026-09-18-mvp1-001/tasks/P1-02/implementation-report-remediation-1.yaml"
+forbiddenScope:
+  - "orchestration/task-registry.json"
+  - "orchestration/briefs/**"
+  - "orchestration/runs/2026-09-18-mvp1-001/tasks/P1-02/verification-brief.yaml"
+  - "orchestration/runs/2026-09-18-mvp1-001/tasks/P1-02/verification-report.yaml"
+remediationReportPath: "orchestration/runs/2026-09-18-mvp1-001/tasks/P1-02/implementation-report-remediation-1.yaml"

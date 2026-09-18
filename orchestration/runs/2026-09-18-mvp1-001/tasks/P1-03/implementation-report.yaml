@@ -1,0 +1,72 @@
+schemaVersion: "1.0"
+artifactType: implementation-report
+taskId: "P1-03"
+status: COMPLETE
+summary: |
+  Added a pure runtime hint-deduction layer with deterministic direct-clue,
+  vertex, connectivity, and contradiction deductions. Hints expose progressive
+  highlight, explanation, and reveal levels, carry explicit evidence and
+  alternative-state checks for forced moves, and never mutate the supplied
+  edge-state map. Reveal application is an explicit caller operation that
+  returns a new frozen map.
+filesChanged:
+  - path: "packages/game-engine/hints/hint-engine.ts"
+    change: "Implemented state normalization, partial clue/vertex/connectivity consistency checks, evidence-backed deduction discovery, progressive runtime hint construction, and pure reveal application."
+  - path: "packages/game-engine/hints/index.ts"
+    change: "Exported the runtime hint API."
+  - path: "packages/game-engine/hints/vitest.config.ts"
+    change: "Added a hints-scoped Vitest configuration for focused hint-suite execution."
+  - path: "packages/game-engine/hints/hint-engine.test.ts"
+    change: "Added tests for highlight/explanation/reveal levels, direct-clue evidence, non-mutating application, vertex deductions, connectivity deductions, and supported deduction categories."
+  - path: "orchestration/runs/2026-09-18-mvp1-001/tasks/P1-03/implementation-report.yaml"
+    change: "Recorded implementation scope, acceptance evidence, command results, deviations, risks, and handoff notes."
+acceptanceCriteria:
+  - id: AC-1
+    result: PASS
+    evidence:
+      - "RuntimeHint exposes hintLevel 1/2/3, highlight, explanation, and reveal fields; computeHint only populates explanation at level 2+ and reveal at level 3."
+      - "hints/hint-engine.test.ts verifies all three levels and the corresponding field behavior."
+  - id: AC-2
+    result: PASS
+    evidence:
+      - "DeductionType is the approved direct-clue | vertex | connectivity | contradiction union, and findDeductions classifies each generated deduction accordingly."
+      - "Focused hint tests exercise direct-clue and vertex deductions, a premature-loop connectivity deduction, and the contradiction fallback category."
+  - id: AC-3
+    result: PASS
+    evidence:
+      - "Every actionable forced deduction includes HintEvidence with forced=true, a rule-specific reason, related edges, and explicit allowed/disallowed alternatives; contradiction diagnostics are explicitly forced=false."
+      - "Direct-clue tests assert the line/x alternatives and forced evidence, while connectivity deductions are emitted only when the line alternative fails connectivity and the x alternative remains valid."
+  - id: AC-4
+    result: PASS
+    evidence:
+      - "computeHint/findDeductions clone normalized state data and applyHintToEdgeStates returns a new frozen edge map only when explicitly called; no hint computation writes to the input."
+      - "hints/hint-engine.test.ts compares the original serialized map before/after computeHint and verifies caller-applied reveal leaves the original state unchanged."
+commandsRun:
+  - command: "npm run test --workspace @loops/game-engine"
+    exitCode: 0
+    result: "Passed the currently wired model/state and validation suites: 3 files and 10 tests."
+  - command: "npm run typecheck"
+    exitCode: 1
+    result: "The shared workspace typecheck failed in the existing P1-02 validation scope: validation/validator.ts has EdgeInput narrowing and puzzle-shape errors, and validation/vitest.config.ts lacks node type declarations. No errors were reported from hint-engine.ts."
+  - command: "./node_modules/.bin/tsc --noEmit --target ES2022 --module ESNext --moduleResolution Bundler --strict --skipLibCheck --resolveJsonModule --allowImportingTsExtensions packages/game-engine/hints/hint-engine.ts packages/game-engine/hints/index.ts"
+    exitCode: 0
+    result: "Passed focused strict TypeScript compilation for the hint implementation and public index."
+  - command: "../../node_modules/.bin/vitest run --config hints/vitest.config.ts"
+    exitCode: 0
+    result: "Passed hints/hint-engine.test.ts: 1 file and 4 tests."
+  - command: "git diff --check -- packages/game-engine/hints"
+    exitCode: 0
+    result: "No whitespace errors in the P1-03 hints scope."
+deviations:
+  - "The required root npm run typecheck is currently non-zero because the shared workspace reaches pre-existing P1-02 validation/type-config errors outside this task's forbidden validation/** scope; focused hint compilation passes."
+  - "The existing @loops/game-engine package test script currently wires model and validation configs but not hints; the hints suite was run explicitly through hints/vitest.config.ts. Updating package.json is outside this task's declared write scope and should be handled by the orchestrator's package integration step."
+knownRisks:
+  - "The hint engine uses partial clue, vertex, and premature-cycle consistency checks rather than the future exhaustive solver; the solver-backed integration task should replace or augment search-only deductions when available."
+  - "The package export and test/typecheck wiring must retain the ./hints subpath and include hints/**/*.ts before downstream consumers rely on package-level imports."
+  - "Contradiction hints are diagnostic and intentionally forced=false because neither candidate state is supported; callers should present them as a board inconsistency rather than an actionable move."
+handoffNotes: |
+  Import from packages/game-engine/hints during UI integration. computeHint
+  accepts a PuzzleDefinition-shaped puzzle and either a GameState-shaped object
+  or an EdgeStateMap. Use hint.highlight for level one, hint.explanation for
+  explanatory level two, and hint.reveal only at level three. Apply a reveal
+  explicitly with applyHintToEdgeStates; hint computation itself is pure.
