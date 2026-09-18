@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://loops.game/schemas/player-statistics.schema.json",
+  "title": "Loops Player Statistics",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "totalCompleted", "totalStarted", "totalHintsUsed", "byDifficulty"],
+  "properties": {
+    "schemaVersion": { "type": "string", "const": "1.0" },
+    "totalCompleted": { "type": "integer", "minimum": 0 },
+    "totalStarted": { "type": "integer", "minimum": 0 },
+    "totalHintsUsed": { "type": "integer", "minimum": 0 },
+    "bestOverallTimeSeconds": { "type": "integer", "minimum": 0 },
+    "currentDailyStreak": { "type": "integer", "minimum": 0 },
+    "longestDailyStreak": { "type": "integer", "minimum": 0 },
+    "byDifficulty": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["beginner", "easy", "medium", "hard", "expert"],
+      "properties": {
+        "beginner": { "$ref": "#/$defs/difficultyStats" },
+        "easy": { "$ref": "#/$defs/difficultyStats" },
+        "medium": { "$ref": "#/$defs/difficultyStats" },
+        "hard": { "$ref": "#/$defs/difficultyStats" },
+        "expert": { "$ref": "#/$defs/difficultyStats" }
+      }
+    }
+  },
+  "$defs": {
+    "difficultyStats": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["started", "completed", "hintsUsed"],
+      "properties": {
+        "started": { "type": "integer", "minimum": 0 },
+        "completed": { "type": "integer", "minimum": 0 },
+        "hintsUsed": { "type": "integer", "minimum": 0 },
+        "bestTimeSeconds": { "type": "integer", "minimum": 0 },
+        "averageTimeSeconds": { "type": "number", "minimum": 0 }
+      }
+    }
+  }
+}

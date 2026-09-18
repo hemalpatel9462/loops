@@ -1,0 +1,37 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://loops.game/schemas/orchestration/task-brief.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "artifactType", "taskId", "title", "goal", "context", "dependencies", "writeScope", "acceptanceCriteria", "requiredChecks", "implementationReportPath", "instructions"],
+  "properties": {
+    "schemaVersion": { "const": "1.0" },
+    "artifactType": { "const": "task-brief" },
+    "taskId": { "type": "string", "minLength": 1 },
+    "title": { "type": "string", "minLength": 1 },
+    "phase": { "type": "integer", "minimum": 0 },
+    "goal": { "type": "string" },
+    "context": { "type": "array", "items": { "type": "string" } },
+    "dependencies": { "type": "array", "items": { "type": "string" } },
+    "writeScope": { "type": "array", "items": { "type": "string" } },
+    "forbiddenScope": { "type": "array", "items": { "type": "string" } },
+    "acceptanceCriteria": { "$ref": "#/$defs/criteria" },
+    "requiredChecks": { "type": "array", "items": { "type": "string" } },
+    "implementationReportPath": { "type": "string" },
+    "instructions": { "type": "array", "items": { "type": "string" } }
+  },
+  "$defs": {
+    "criteria": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "description"],
+        "properties": {
+          "id": { "type": "string" },
+          "description": { "type": "string" }
+        }
+      }
+    }
+  }
+}

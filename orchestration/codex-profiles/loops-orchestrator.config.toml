@@ -1,0 +1,6 @@
+# Opt-in profile for the primary Loops Orchestrator session.
+# Use with: codex --profile loops-orchestrator --cd /Users/hemalpatel/Development/loops
+model = "gpt-5.6-luna"
+model_reasoning_effort = "xhigh"
+sandbox_mode = "workspace-write"
+approval_policy = "on-request"

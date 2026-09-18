@@ -1,0 +1,38 @@
+schemaVersion: "1.0"
+artifactType: verification-brief
+taskId: "P4-01"
+implementationReportPath: "runs/<run-id>/tasks/P4-01/implementation-report.yaml"
+scopeReviewed:
+  - "orchestration/runs/<run-id>/RUN-SUMMARY.md"
+  - "orchestration/runs/<run-id>/release-checks/**"
+acceptanceCriteria:
+  - id: "AC-1"
+    description: "All task verification reports are PASS."
+  - id: "AC-2"
+    description: "Clean install, type check, unit tests, browser tests, and production build pass."
+  - id: "AC-3"
+    description: "No critical accessibility or gameplay issue remains."
+  - id: "AC-4"
+    description: "Release summary is written under the run folder."
+requiredChecks:
+  - command: "npm ci"
+    purpose: "Verify the task acceptance criteria and detect regressions."
+  - command: "npm run typecheck"
+    purpose: "Verify the task acceptance criteria and detect regressions."
+  - command: "npm run test"
+    purpose: "Verify the task acceptance criteria and detect regressions."
+  - command: "npm run test:e2e"
+    purpose: "Verify the task acceptance criteria and detect regressions."
+  - command: "npm run build"
+    purpose: "Verify the task acceptance criteria and detect regressions."
+  - command: "npm run validate:puzzles"
+    purpose: "Verify the task acceptance criteria and detect regressions."
+  - command: "npm run validate:catalog"
+    purpose: "Verify the task acceptance criteria and detect regressions."
+constraints:
+  - "Do not modify production code."
+  - "Treat the implementation report as a claim and verify it against the files."
+  - "Check every acceptance criterion independently."
+  - "Record evidence with file paths, test names, or command output."
+verificationReportPath: "runs/<run-id>/tasks/P4-01/verification-report.yaml"
+

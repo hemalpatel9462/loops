@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://loops.game/schemas/orchestration/implementation-report.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "artifactType", "taskId", "status", "summary", "filesChanged", "acceptanceCriteria", "commandsRun", "deviations", "knownRisks", "handoffNotes"],
+  "properties": {
+    "schemaVersion": { "const": "1.0" },
+    "artifactType": { "const": "implementation-report" },
+    "taskId": { "type": "string" },
+    "status": { "enum": ["COMPLETE", "PARTIAL", "BLOCKED"] },
+    "summary": { "type": "string" },
+    "filesChanged": { "$ref": "#/$defs/files" },
+    "acceptanceCriteria": { "$ref": "#/$defs/results" },
+    "commandsRun": { "$ref": "#/$defs/commands" },
+    "deviations": { "type": "array", "items": { "type": "string" } },
+    "knownRisks": { "type": "array", "items": { "type": "string" } },
+    "handoffNotes": { "type": "string" }
+  },
+  "$defs": {
+    "files": { "type": "array", "items": { "type": "object", "required": ["path", "change"], "properties": { "path": { "type": "string" }, "change": { "type": "string" } }, "additionalProperties": false } },
+    "results": { "type": "array", "items": { "type": "object", "required": ["id", "result", "evidence"], "properties": { "id": { "type": "string" }, "result": { "enum": ["PASS", "PARTIAL", "FAIL"] }, "evidence": { "type": "array", "items": { "type": "string" } } }, "additionalProperties": false } },
+    "commands": { "type": "array", "items": { "type": "object", "required": ["command", "exitCode"], "properties": { "command": { "type": "string" }, "exitCode": { "type": "integer" }, "outputFile": { "type": "string" } }, "additionalProperties": false } }
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://loops.game/schemas/orchestration/verification-brief.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "artifactType", "taskId", "implementationReportPath", "scopeReviewed", "acceptanceCriteria", "requiredChecks", "constraints", "verificationReportPath"],
+  "properties": {
+    "schemaVersion": { "const": "1.0" },
+    "artifactType": { "const": "verification-brief" },
+    "taskId": { "type": "string" },
+    "implementationReportPath": { "type": "string" },
+    "scopeReviewed": { "type": "array", "items": { "type": "string" } },
+    "acceptanceCriteria": { "type": "array", "items": { "type": "object", "required": ["id", "description"], "properties": { "id": { "type": "string" }, "description": { "type": "string" } }, "additionalProperties": false } },
+    "requiredChecks": { "type": "array", "items": { "type": "object", "required": ["command", "purpose"], "properties": { "command": { "type": "string" }, "purpose": { "type": "string" } }, "additionalProperties": false } },
+    "constraints": { "type": "array", "items": { "type": "string" } },
+    "verificationReportPath": { "type": "string" }
+  }
+}

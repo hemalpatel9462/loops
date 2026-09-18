@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://loops.game/schemas/generator-config.schema.json",
+  "title": "Loops Generator Configuration",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "generatorVersion", "seed", "difficultyProfiles"],
+  "properties": {
+    "schemaVersion": { "type": "string", "const": "1.0" },
+    "generatorVersion": { "type": "string", "minLength": 1 },
+    "seed": { "type": "string", "minLength": 1 },
+    "difficultyProfiles": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["beginner", "easy", "medium", "hard", "expert"],
+      "properties": {
+        "beginner": { "$ref": "#/$defs/profile" },
+        "easy": { "$ref": "#/$defs/profile" },
+        "medium": { "$ref": "#/$defs/profile" },
+        "hard": { "$ref": "#/$defs/profile" },
+        "expert": { "$ref": "#/$defs/profile" }
+      }
+    }
+  },
+  "$defs": {
+    "profile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["boardSizes", "startingEdgeRatio", "minCoverageRatio", "minRegionalCoverage"],
+      "properties": {
+        "boardSizes": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["width", "height"],
+            "properties": {
+              "width": { "type": "integer", "minimum": 2 },
+              "height": { "type": "integer", "minimum": 2 }
+            }
+          }
+        },
+        "startingEdgeRatio": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["min", "max"],
+          "properties": {
+            "min": { "type": "number", "minimum": 0, "maximum": 1 },
+            "max": { "type": "number", "minimum": 0, "maximum": 1 }
+          }
+        },
+        "minCoverageRatio": { "type": "number", "minimum": 0, "maximum": 1 },
+        "minRegionalCoverage": { "type": "integer", "minimum": 1 },
+        "maxTurns": { "type": "integer", "minimum": 0 },
+        "minTurns": { "type": "integer", "minimum": 0 },
+        "maxDensity": { "type": "number", "minimum": 0, "maximum": 1 },
+        "rejectSymmetry": { "type": "boolean", "default": false }
+      }
+    }
+  }
+}

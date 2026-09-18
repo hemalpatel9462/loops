@@ -1,0 +1,41 @@
+schemaVersion: "1.0"
+artifactType: task-brief
+taskId: "P0-02"
+title: "Shared puzzle contracts"
+phase: 0
+goal: "Implement the shared TypeScript puzzle types, edge identifiers, JSON codecs, and schema integration used by the game and tools."
+context:
+  - "loops_game_design_spec.md"
+  - "PROJECT_STRUCTURE_AND_DEPLOYMENT.md"
+  - "orchestration/IMPLEMENTATION_PLAN.md"
+  - "orchestration/task-registry.json"
+dependencies: ["P0-01"]
+writeScope:
+  - "packages/puzzle-format/**"
+  - "schemas/**"
+forbiddenScope:
+  - "orchestration/task-registry.json"
+  - "orchestration/briefs/**"
+  - "orchestration/runs/2026-09-18-mvp1-001/tasks/P0-02/verification-brief.yaml"
+  - "orchestration/runs/2026-09-18-mvp1-001/tasks/P0-02/verification-report.yaml"
+acceptanceCriteria:
+  - id: "AC-1"
+    description: "TypeScript types match the approved JSON schemas."
+  - id: "AC-2"
+    description: "Edge IDs follow h:row:column and v:row:column."
+  - id: "AC-3"
+    description: "Puzzle dimensions and edge collections are represented consistently."
+  - id: "AC-4"
+    description: "Malformed puzzle definitions are rejected."
+  - id: "AC-5"
+    description: "Valid and invalid examples have tests."
+requiredChecks:
+  - "npm run test --workspace @loops/puzzle-format"
+  - "npm run typecheck"
+  - "npm run validate:schemas"
+implementationReportPath: "orchestration/runs/2026-09-18-mvp1-001/tasks/P0-02/implementation-report.yaml"
+instructions:
+  - "Read the task brief and all listed context before editing."
+  - "Modify only the assigned write scope and preserve unrelated work."
+  - "Run the required checks or record why a check is unavailable."
+  - "Write the implementation report before returning."

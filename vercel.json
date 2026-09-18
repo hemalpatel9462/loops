@@ -1,0 +1,6 @@
+{
+  "buildCommand": "npm run build",
+  "outputDirectory": "apps/web-game/dist",
+  "installCommand": "npm ci",
+  "framework": "vite"
+}

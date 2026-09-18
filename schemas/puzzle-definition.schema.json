@@ -1,0 +1,85 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://loops.game/schemas/puzzle-definition.schema.json",
+  "title": "Loops Puzzle Definition",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "id",
+    "seed",
+    "generatorVersion",
+    "width",
+    "height",
+    "difficulty",
+    "clues",
+    "solutionEdges",
+    "startingEdges",
+    "metadata"
+  ],
+  "properties": {
+    "schemaVersion": { "type": "string", "const": "1.0" },
+    "id": { "type": "string", "pattern": "^loop-[A-Za-z0-9._-]+$" },
+    "seed": { "type": "string", "minLength": 1 },
+    "generatorVersion": { "type": "string", "minLength": 1 },
+    "width": { "type": "integer", "minimum": 2 },
+    "height": { "type": "integer", "minimum": 2 },
+    "difficulty": { "$ref": "#/$defs/difficulty" },
+    "clues": {
+      "type": "array",
+      "minItems": 2,
+      "items": {
+        "type": "array",
+        "minItems": 2,
+        "items": { "type": "integer", "minimum": 0, "maximum": 3 }
+      }
+    },
+    "solutionEdges": {
+      "type": "array",
+      "minItems": 4,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/edgeId" }
+    },
+    "startingEdges": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/edgeId" }
+    },
+    "metadata": { "$ref": "#/$defs/puzzleMetadata" }
+  },
+  "$defs": {
+    "difficulty": {
+      "type": "string",
+      "enum": ["beginner", "easy", "medium", "hard", "expert"]
+    },
+    "edgeId": {
+      "type": "string",
+      "pattern": "^[hv]:[0-9]+:[0-9]+$"
+    },
+    "puzzleMetadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "loopLength",
+        "complexityScore",
+        "difficultyScore",
+        "turnCount",
+        "regionalCoverage",
+        "startingEdgeRatio"
+      ],
+      "properties": {
+        "loopLength": { "type": "integer", "minimum": 4 },
+        "complexityScore": { "type": "number", "minimum": 0, "maximum": 1 },
+        "difficultyScore": { "type": "number", "minimum": 0, "maximum": 1 },
+        "turnCount": { "type": "integer", "minimum": 0 },
+        "regionalCoverage": { "type": "integer", "minimum": 1 },
+        "startingEdgeRatio": { "type": "number", "minimum": 0, "maximum": 1 },
+        "boundingBoxWidthRatio": { "type": "number", "minimum": 0, "maximum": 1 },
+        "boundingBoxHeightRatio": { "type": "number", "minimum": 0, "maximum": 1 },
+        "rowsUsed": { "type": "integer", "minimum": 1 },
+        "columnsUsed": { "type": "integer", "minimum": 1 },
+        "estimatedSolveTimeSeconds": { "type": "integer", "minimum": 0 }
+      }
+    }
+  }
+}

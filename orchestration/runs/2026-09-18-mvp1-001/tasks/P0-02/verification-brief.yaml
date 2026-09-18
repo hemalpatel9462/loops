@@ -1,0 +1,31 @@
+schemaVersion: "1.0"
+artifactType: verification-brief
+taskId: "P0-02"
+implementationReportPath: "orchestration/runs/2026-09-18-mvp1-001/tasks/P0-02/implementation-report.yaml"
+scopeReviewed:
+  - "packages/puzzle-format/**"
+  - "schemas/**"
+acceptanceCriteria:
+  - id: "AC-1"
+    description: "TypeScript types match the approved JSON schemas."
+  - id: "AC-2"
+    description: "Edge IDs follow h:row:column and v:row:column."
+  - id: "AC-3"
+    description: "Puzzle dimensions and edge collections are represented consistently."
+  - id: "AC-4"
+    description: "Malformed puzzle definitions are rejected."
+  - id: "AC-5"
+    description: "Valid and invalid examples have tests."
+requiredChecks:
+  - command: "npm run test --workspace @loops/puzzle-format"
+    purpose: "Verify the task acceptance criteria and detect regressions."
+  - command: "npm run typecheck"
+    purpose: "Verify the task acceptance criteria and detect regressions."
+  - command: "npm run validate:schemas"
+    purpose: "Verify the task acceptance criteria and detect regressions."
+constraints:
+  - "Do not modify production code."
+  - "Treat the implementation report as a claim and verify it against the files."
+  - "Check every acceptance criterion independently."
+  - "Record evidence with file paths, test names, or command output."
+verificationReportPath: "orchestration/runs/2026-09-18-mvp1-001/tasks/P0-02/verification-report.yaml"

@@ -1,0 +1,17 @@
+schemaVersion: "1.0"
+artifactType: verification-brief
+taskId: "{{TASK_ID}}"
+implementationReportPath: "runs/<run-id>/tasks/<task-id>/implementation-report.yaml"
+scopeReviewed:
+  - "{{FILE_OR_PACKAGE_SCOPE}}"
+acceptanceCriteria:
+  - id: AC-1
+    description: "{{ACCEPTANCE_CRITERION}}"
+requiredChecks:
+  - command: "{{COMMAND}}"
+    purpose: "{{CHECK_PURPOSE}}"
+constraints:
+  - Do not modify production code.
+  - Treat the implementation report as a claim and verify it against the files.
+  - Write evidence for every acceptance criterion.
+verificationReportPath: "runs/<run-id>/tasks/<task-id>/verification-report.yaml"

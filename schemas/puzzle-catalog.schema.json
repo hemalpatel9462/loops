@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://loops.game/schemas/puzzle-catalog.schema.json",
+  "title": "Loops Puzzle Catalog",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "catalogVersion", "generatedAt", "puzzles"],
+  "properties": {
+    "schemaVersion": { "type": "string", "const": "1.0" },
+    "catalogVersion": { "type": "string", "minLength": 1 },
+    "generatedAt": { "type": "string", "format": "date-time" },
+    "puzzles": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/catalogEntry" }
+    }
+  },
+  "$defs": {
+    "catalogEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "difficulty", "width", "height", "path"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^loop-[A-Za-z0-9._-]+$" },
+        "difficulty": { "enum": ["beginner", "easy", "medium", "hard", "expert"] },
+        "width": { "type": "integer", "minimum": 2 },
+        "height": { "type": "integer", "minimum": 2 },
+        "path": { "type": "string", "minLength": 1 },
+        "tags": { "type": "array", "items": { "type": "string" }, "uniqueItems": true }
+      }
+    }
+  }
+}

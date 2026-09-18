@@ -1,0 +1,44 @@
+schemaVersion: "1.0"
+artifactType: task-brief
+taskId: "P4-01"
+title: "Final release verification"
+phase: 4
+goal: "Perform the final release gate across code, data, tests, accessibility, and deployment packaging."
+context:
+  - "loops_game_design_spec.md"
+  - "PROJECT_STRUCTURE_AND_DEPLOYMENT.md"
+  - "orchestration/IMPLEMENTATION_PLAN.md"
+  - "orchestration/task-registry.json"
+dependencies: ["P3-02","P3-03","P3-04"]
+writeScope:
+  - "orchestration/runs/<run-id>/RUN-SUMMARY.md"
+  - "orchestration/runs/<run-id>/release-checks/**"
+forbiddenScope:
+  - "orchestration/task-registry.json"
+  - "orchestration/briefs/**"
+  - "orchestration/runs/<run-id>/tasks/<task-id>/verification-brief.yaml"
+  - "orchestration/runs/<run-id>/tasks/<task-id>/verification-report.yaml"
+acceptanceCriteria:
+  - id: "AC-1"
+    description: "All task verification reports are PASS."
+  - id: "AC-2"
+    description: "Clean install, type check, unit tests, browser tests, and production build pass."
+  - id: "AC-3"
+    description: "No critical accessibility or gameplay issue remains."
+  - id: "AC-4"
+    description: "Release summary is written under the run folder."
+requiredChecks:
+  - "npm ci"
+  - "npm run typecheck"
+  - "npm run test"
+  - "npm run test:e2e"
+  - "npm run build"
+  - "npm run validate:puzzles"
+  - "npm run validate:catalog"
+implementationReportPath: "runs/<run-id>/tasks/P4-01/implementation-report.yaml"
+instructions:
+  - "Read the task brief and all listed context before editing."
+  - "Modify only the assigned write scope and preserve unrelated work."
+  - "Run the required checks or record why a check is unavailable."
+  - "Write the implementation report before returning."
+

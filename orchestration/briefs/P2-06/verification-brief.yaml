@@ -1,0 +1,32 @@
+schemaVersion: "1.0"
+artifactType: verification-brief
+taskId: "P2-06"
+implementationReportPath: "runs/<run-id>/tasks/P2-06/implementation-report.yaml"
+scopeReviewed:
+  - "apps/web-game/src/screens/**"
+  - "apps/web-game/src/state/game-flow/**"
+acceptanceCriteria:
+  - id: "AC-1"
+    description: "Quick Play selects a local validated puzzle."
+  - id: "AC-2"
+    description: "Daily Loop selects deterministically by date."
+  - id: "AC-3"
+    description: "Continue resumes an unfinished puzzle."
+  - id: "AC-4"
+    description: "Relaxed and Assisted modes behave according to the specification."
+  - id: "AC-5"
+    description: "Completion statistics include time and hint count."
+requiredChecks:
+  - command: "npm run typecheck"
+    purpose: "Verify the task acceptance criteria and detect regressions."
+  - command: "npm run test:e2e -- --grep modes"
+    purpose: "Verify the task acceptance criteria and detect regressions."
+  - command: "npm run build"
+    purpose: "Verify the task acceptance criteria and detect regressions."
+constraints:
+  - "Do not modify production code."
+  - "Treat the implementation report as a claim and verify it against the files."
+  - "Check every acceptance criterion independently."
+  - "Record evidence with file paths, test names, or command output."
+verificationReportPath: "runs/<run-id>/tasks/P2-06/verification-report.yaml"
+

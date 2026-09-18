@@ -1,0 +1,30 @@
+schemaVersion: "1.0"
+artifactType: verification-brief
+taskId: "P2-05"
+implementationReportPath: "runs/<run-id>/tasks/P2-05/implementation-report.yaml"
+scopeReviewed:
+  - "apps/web-game/src/persistence/**"
+  - "apps/web-game/src/state/persistence/**"
+acceptanceCriteria:
+  - id: "AC-1"
+    description: "Progress is saved under versioned local-storage keys."
+  - id: "AC-2"
+    description: "Continue restores the correct puzzle and state."
+  - id: "AC-3"
+    description: "Settings, statistics, and daily state use approved schemas."
+  - id: "AC-4"
+    description: "Corrupt or outdated records fail safely and can be reset."
+requiredChecks:
+  - command: "npm run typecheck"
+    purpose: "Verify the task acceptance criteria and detect regressions."
+  - command: "npm run test:e2e -- --grep persistence"
+    purpose: "Verify the task acceptance criteria and detect regressions."
+  - command: "npm run build"
+    purpose: "Verify the task acceptance criteria and detect regressions."
+constraints:
+  - "Do not modify production code."
+  - "Treat the implementation report as a claim and verify it against the files."
+  - "Check every acceptance criterion independently."
+  - "Record evidence with file paths, test names, or command output."
+verificationReportPath: "runs/<run-id>/tasks/P2-05/verification-report.yaml"
+

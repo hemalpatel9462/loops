@@ -1,0 +1,33 @@
+schemaVersion: "1.0"
+artifactType: verification-brief
+taskId: "P1-05"
+implementationReportPath: "runs/<run-id>/tasks/P1-05/implementation-report.yaml"
+scopeReviewed:
+  - "apps/web-game/src/app/**"
+  - "apps/web-game/src/styles/**"
+  - "apps/web-game/src/main.tsx"
+acceptanceCriteria:
+  - id: "AC-1"
+    description: "The app starts with Vite."
+  - id: "AC-2"
+    description: "A responsive application shell exists."
+  - id: "AC-3"
+    description: "CSS variables define colors, spacing, typography, and edge styles."
+  - id: "AC-4"
+    description: "Light, dark, and high-contrast modes are structurally supported."
+  - id: "AC-5"
+    description: "No production game rules are duplicated in UI components."
+requiredChecks:
+  - command: "npm run typecheck"
+    purpose: "Verify the task acceptance criteria and detect regressions."
+  - command: "npm run build"
+    purpose: "Verify the task acceptance criteria and detect regressions."
+  - command: "npm run lint"
+    purpose: "Verify the task acceptance criteria and detect regressions."
+constraints:
+  - "Do not modify production code."
+  - "Treat the implementation report as a claim and verify it against the files."
+  - "Check every acceptance criterion independently."
+  - "Record evidence with file paths, test names, or command output."
+verificationReportPath: "runs/<run-id>/tasks/P1-05/verification-report.yaml"
+

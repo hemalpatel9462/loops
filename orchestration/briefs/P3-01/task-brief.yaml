@@ -1,0 +1,43 @@
+schemaVersion: "1.0"
+artifactType: task-brief
+taskId: "P3-01"
+title: "Web UI and engine integration"
+phase: 3
+goal: "Connect the production web UI to the real game engine and puzzle data."
+context:
+  - "loops_game_design_spec.md"
+  - "PROJECT_STRUCTURE_AND_DEPLOYMENT.md"
+  - "orchestration/IMPLEMENTATION_PLAN.md"
+  - "orchestration/task-registry.json"
+dependencies: ["P1-03","P2-04","P2-06"]
+writeScope:
+  - "apps/web-game/src/state/game-reducer.ts"
+  - "apps/web-game/src/app/integration/**"
+forbiddenScope:
+  - "orchestration/task-registry.json"
+  - "orchestration/briefs/**"
+  - "orchestration/runs/<run-id>/tasks/<task-id>/verification-brief.yaml"
+  - "orchestration/runs/<run-id>/tasks/<task-id>/verification-report.yaml"
+acceptanceCriteria:
+  - id: "AC-1"
+    description: "UI loads real PuzzleDefinition data."
+  - id: "AC-2"
+    description: "All edge actions pass through the game engine."
+  - id: "AC-3"
+    description: "Hints use engine output."
+  - id: "AC-4"
+    description: "Completion uses engine validation."
+  - id: "AC-5"
+    description: "No mock puzzle or mock rule path remains in production code."
+requiredChecks:
+  - "npm run typecheck"
+  - "npm run test"
+  - "npm run build"
+  - "npm run test:e2e"
+implementationReportPath: "runs/<run-id>/tasks/P3-01/implementation-report.yaml"
+instructions:
+  - "Read the task brief and all listed context before editing."
+  - "Modify only the assigned write scope and preserve unrelated work."
+  - "Run the required checks or record why a check is unavailable."
+  - "Write the implementation report before returning."
+

@@ -1,0 +1,38 @@
+schemaVersion: "1.0"
+artifactType: task-brief
+taskId: "P1-03"
+title: "Runtime hint deductions"
+phase: 1
+goal: "Implement solver-backed runtime deductions for highlight, explanation, and reveal hints."
+context:
+  - "loops_game_design_spec.md"
+  - "PROJECT_STRUCTURE_AND_DEPLOYMENT.md"
+  - "orchestration/IMPLEMENTATION_PLAN.md"
+  - "orchestration/task-registry.json"
+dependencies: ["P1-02"]
+writeScope:
+  - "packages/game-engine/hints/**"
+forbiddenScope:
+  - "orchestration/task-registry.json"
+  - "orchestration/briefs/**"
+  - "orchestration/runs/<run-id>/tasks/<task-id>/verification-brief.yaml"
+  - "orchestration/runs/<run-id>/tasks/<task-id>/verification-report.yaml"
+acceptanceCriteria:
+  - id: "AC-1"
+    description: "Hints expose highlight, explanation, and reveal levels."
+  - id: "AC-2"
+    description: "Deductions identify direct-clue, vertex, connectivity, or contradiction types."
+  - id: "AC-3"
+    description: "A move is described as forced only with supporting evidence."
+  - id: "AC-4"
+    description: "Hints do not mutate game state until applied by the caller."
+requiredChecks:
+  - "npm run test --workspace @loops/game-engine"
+  - "npm run typecheck"
+implementationReportPath: "runs/<run-id>/tasks/P1-03/implementation-report.yaml"
+instructions:
+  - "Read the task brief and all listed context before editing."
+  - "Modify only the assigned write scope and preserve unrelated work."
+  - "Run the required checks or record why a check is unavailable."
+  - "Write the implementation report before returning."
+

@@ -1,0 +1,30 @@
+schemaVersion: "1.0"
+artifactType: verification-brief
+taskId: "P3-03"
+implementationReportPath: "runs/<run-id>/tasks/P3-03/implementation-report.yaml"
+scopeReviewed:
+  - "packages/puzzle-data/puzzles/**"
+  - "packages/puzzle-data/catalog.json"
+acceptanceCriteria:
+  - id: "AC-1"
+    description: "At least one validated puzzle exists for every difficulty."
+  - id: "AC-2"
+    description: "Pack includes representative 4×4, 5×5, and 7×7 boards."
+  - id: "AC-3"
+    description: "Every puzzle is unique, playable, and schema-valid."
+  - id: "AC-4"
+    description: "Catalog and Daily Loop mapping build successfully."
+requiredChecks:
+  - command: "npm run generate:pack"
+    purpose: "Verify the task acceptance criteria and detect regressions."
+  - command: "npm run validate:puzzles"
+    purpose: "Verify the task acceptance criteria and detect regressions."
+  - command: "npm run validate:catalog"
+    purpose: "Verify the task acceptance criteria and detect regressions."
+constraints:
+  - "Do not modify production code."
+  - "Treat the implementation report as a claim and verify it against the files."
+  - "Check every acceptance criterion independently."
+  - "Record evidence with file paths, test names, or command output."
+verificationReportPath: "runs/<run-id>/tasks/P3-03/verification-report.yaml"
+

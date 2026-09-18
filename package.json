@@ -1,0 +1,19 @@
+{
+  "name": "loops",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*",
+    "tools/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace @loops/web-game",
+    "build": "npm run build --workspace @loops/web-game",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "lint": "npm run lint --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "test:unit": "npm run test --workspaces --if-present",
+    "validate:schemas": "npm run validate --workspace @loops/puzzle-format --if-present"
+  }
+}

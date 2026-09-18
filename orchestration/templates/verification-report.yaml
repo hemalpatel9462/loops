@@ -1,0 +1,19 @@
+schemaVersion: "1.0"
+artifactType: verification-report
+taskId: "{{TASK_ID}}"
+verdict: PASS
+scopeReviewed:
+  - "{{FILE_OR_PACKAGE_SCOPE}}"
+acceptanceCriteria:
+  - id: AC-1
+    verdict: PASS
+    evidence:
+      - "{{FILE_PATH_OR_COMMAND_EVIDENCE}}"
+checksPerformed:
+  - command: "{{COMMAND}}"
+    exitCode: 0
+    outputFile: "runs/<run-id>/tasks/<task-id>/test-output.txt"
+findings: []
+requiredRemediation: []
+conclusion: |
+  {{CONCLUSION}}

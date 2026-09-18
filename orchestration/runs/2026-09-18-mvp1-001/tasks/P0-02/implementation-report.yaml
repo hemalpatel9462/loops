@@ -1,0 +1,88 @@
+schemaVersion: "1.0"
+artifactType: implementation-report
+taskId: "P0-02"
+status: COMPLETE
+summary: |
+  Added the @loops/puzzle-format workspace package with shared TypeScript
+  contracts for the approved runtime, generator, persistence, hint, catalog,
+  and solver schemas. The package provides branded h:row:column and
+  v:row:column edge IDs, dimension-aware puzzle validation, JSON encode/decode
+  helpers, checked-in schema imports, and valid/invalid contract fixtures.
+  Required package tests, workspace typechecking, and schema validation pass.
+filesChanged:
+  - path: "packages/puzzle-format/package.json"
+    change: "Added the @loops/puzzle-format workspace package and test, typecheck, and schema-validation commands."
+  - path: "packages/puzzle-format/tsconfig.json"
+    change: "Configured strict TypeScript checking for the shared contract source and tests."
+  - path: "packages/puzzle-format/vitest.config.ts"
+    change: "Scoped Vitest discovery to the puzzle-format package so the repository Vite root config cannot redirect package tests into the web app."
+  - path: "packages/puzzle-format/src/types.ts"
+    change: "Defined TypeScript interfaces and unions corresponding to the approved puzzle, catalog, progress, settings, daily, hint, generator, attempt, statistics, and solver schemas."
+  - path: "packages/puzzle-format/src/edge-id.ts"
+    change: "Added branded edge IDs, h/v parsing and creation helpers, syntax checks, and board-dimension bounds checks."
+  - path: "packages/puzzle-format/src/schemas.ts"
+    change: "Imported and exported all checked-in JSON schemas as the approved schema registry, including puzzleDefinitionSchema."
+  - path: "packages/puzzle-format/src/codecs.ts"
+    change: "Added schema-aligned puzzle validation, dimensional clue checks, edge collection checks, metadata consistency checks, JSON decoding, encoding, and PuzzleFormatError diagnostics."
+  - path: "packages/puzzle-format/src/index.ts"
+    change: "Re-exported the public edge, type, schema, and codec APIs."
+  - path: "packages/puzzle-format/src/codecs.test.ts"
+    change: "Added valid and invalid puzzle examples covering edge syntax, bounds, dimensions, clues, duplicate edges, metadata, JSON encoding, and malformed JSON rejection."
+  - path: "packages/puzzle-format/src/schema-validation.test.ts"
+    change: "Added integration tests that load every approved Draft 2020-12 schema and check puzzle-definition required fields and edge pattern alignment."
+  - path: "orchestration/runs/2026-09-18-mvp1-001/tasks/P0-02/implementation-report.yaml"
+    change: "Recorded implementation scope, exact command results, acceptance evidence, deviations, and known integration risks."
+acceptanceCriteria:
+  - id: AC-1
+    result: PASS
+    evidence:
+      - "packages/puzzle-format/src/types.ts defines interfaces for all ten checked-in JSON schema contracts, including PuzzleDefinition and PuzzleMetadata fields and approved enum/optional-field shapes."
+      - "src/schema-validation.test.ts imports every schema from schemas/ and verifies Draft 2020-12 object structure; npm run validate:schemas passed."
+  - id: AC-2
+    result: PASS
+    evidence:
+      - "src/edge-id.ts accepts only h:row:column and v:row:column syntax, creates validated IDs, parses orientation/row/column, and rejects negative or malformed coordinates."
+      - "src/codecs.test.ts covers horizontal and vertical IDs plus malformed IDs and invalid coordinate creation."
+      - "schemas/puzzle-definition.schema.json and schemas/hint-record.schema.json use the same ^[hv]:[0-9]+:[0-9]+$ pattern."
+  - id: AC-3
+    result: PASS
+    evidence:
+      - "src/codecs.ts requires clues.length === height and every clue row length === width."
+      - "src/codecs.ts validates horizontal and vertical edge bounds for the declared board dimensions, uniqueness, and startingEdges membership in solutionEdges."
+      - "src/codecs.test.ts passes a 2x2 closed-loop fixture and rejects inconsistent dimensions and edge collections."
+  - id: AC-4
+    result: PASS
+    evidence:
+      - "parsePuzzleDefinition and decodePuzzleDefinition reject malformed input with PuzzleFormatError and structured path/message issues."
+      - "Validation covers required fields, IDs, dimensions, clue values, edge syntax/bounds/uniqueness, starting-edge membership, metadata ranges, loop length, and starting ratio."
+      - "src/codecs.test.ts verifies malformed dimensions, clues, duplicate/out-of-bounds edges, metadata, and malformed JSON rejection."
+  - id: AC-5
+    result: PASS
+    evidence:
+      - "src/codecs.test.ts contains five tests with valid and invalid examples; src/schema-validation.test.ts contains two schema integration tests."
+      - "npm run test --workspace @loops/puzzle-format passed 2 test files and 7 tests."
+commandsRun:
+  - command: "npm run test --workspace @loops/puzzle-format"
+    exitCode: 0
+  - command: "npm run typecheck"
+    exitCode: 0
+  - command: "npm run validate:schemas"
+    exitCode: 0
+  - command: "npm run test --workspaces --if-present"
+    exitCode: 0
+  - command: "npm ci --dry-run"
+    exitCode: 1
+deviations:
+  - "No existing files under schemas/ required changes; the approved schemas already expose the contract fields and edge-ID pattern, so schema integration was implemented by importing and testing them from packages/puzzle-format."
+  - "The codec uses a dependency-free runtime validator aligned to the approved schemas instead of adding Ajv or another dependency; package-lock.json is outside this task's explicit write scope."
+  - "npm ci --dry-run was run as an integration check rather than a required task check and cannot pass until the root lockfile records the new workspace."
+knownRisks:
+  - "The P0-01 package-lock.json predates @loops/puzzle-format, so npm ci currently reports Missing: @loops/puzzle-format@0.1.0 from lock file. The orchestrator must regenerate the lockfile in the owning integration scope before a clean install or release gate."
+  - "Metadata validation requires loopLength and startingEdgeRatio to agree with the edge collections; this is stricter than the JSON Schema's independent scalar ranges but enforces the shared puzzle contract's internal consistency."
+  - "The schema-validation command checks the checked-in schema registry and key contract alignment; full JSON Schema semantic validation remains a later tooling concern."
+handoffNotes: |
+  P1 tasks can import the package through @loops/puzzle-format. Public exports
+  include PuzzleDefinition, PuzzleMetadata, EdgeId, createEdgeId, parseEdgeId,
+  validatePuzzleDefinition, parsePuzzleDefinition, decodePuzzleDefinition,
+  encodePuzzleDefinition, PuzzleFormatError, and approvedSchemas. Before the
+  next clean npm ci, regenerate package-lock.json to include this workspace.

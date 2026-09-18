@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://loops.game/schemas/orchestration/verification-report.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "artifactType", "taskId", "verdict", "scopeReviewed", "acceptanceCriteria", "checksPerformed", "findings", "requiredRemediation", "conclusion"],
+  "properties": {
+    "schemaVersion": { "const": "1.0" },
+    "artifactType": { "const": "verification-report" },
+    "taskId": { "type": "string" },
+    "verdict": { "enum": ["PASS", "FAIL", "BLOCKED"] },
+    "scopeReviewed": { "type": "array", "items": { "type": "string" } },
+    "acceptanceCriteria": { "type": "array", "items": { "type": "object", "required": ["id", "verdict", "evidence"], "properties": { "id": { "type": "string" }, "verdict": { "enum": ["PASS", "FAIL", "BLOCKED"] }, "evidence": { "type": "array", "items": { "type": "string" } } }, "additionalProperties": false } },
+    "checksPerformed": { "type": "array", "items": { "type": "object", "required": ["command", "exitCode"], "properties": { "command": { "type": "string" }, "exitCode": { "type": "integer" }, "outputFile": { "type": "string" } }, "additionalProperties": false } },
+    "findings": { "type": "array", "items": { "type": "object", "required": ["severity", "description"], "properties": { "severity": { "enum": ["BLOCKER", "HIGH", "MEDIUM", "LOW"] }, "description": { "type": "string" }, "file": { "type": "string" }, "line": { "type": "integer", "minimum": 1 } }, "additionalProperties": false } },
+    "requiredRemediation": { "type": "array", "items": { "type": "string" } },
+    "conclusion": { "type": "string" }
+  }
+}

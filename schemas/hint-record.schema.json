@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://loops.game/schemas/hint-record.schema.json",
+  "title": "Loops Hint Record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "puzzleId", "hintLevel", "deductionType", "explanation"],
+  "properties": {
+    "schemaVersion": { "type": "string", "const": "1.0" },
+    "puzzleId": { "type": "string", "minLength": 1 },
+    "hintLevel": { "type": "integer", "minimum": 1, "maximum": 3 },
+    "deductionType": { "enum": ["direct-clue", "vertex", "connectivity", "contradiction"] },
+    "targetEdge": { "type": "string", "pattern": "^[hv]:[0-9]+:[0-9]+$" },
+    "targetCell": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["row", "column"],
+      "properties": {
+        "row": { "type": "integer", "minimum": 0 },
+        "column": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "recommendedState": { "enum": ["line", "x"] },
+    "explanation": { "type": "string", "minLength": 1 },
+    "createdAt": { "type": "string", "format": "date-time" }
+  }
+}

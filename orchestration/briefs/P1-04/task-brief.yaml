@@ -1,0 +1,40 @@
+schemaVersion: "1.0"
+artifactType: task-brief
+taskId: "P1-04"
+title: "Unit-test harness and fixtures"
+phase: 1
+goal: "Create the unit-test harness and reusable fixtures for the engine, schemas, and puzzle rules."
+context:
+  - "loops_game_design_spec.md"
+  - "PROJECT_STRUCTURE_AND_DEPLOYMENT.md"
+  - "orchestration/IMPLEMENTATION_PLAN.md"
+  - "orchestration/task-registry.json"
+dependencies: ["P0-02"]
+writeScope:
+  - "tests/unit/**"
+  - "test-fixtures/**"
+  - "vitest.config.ts"
+forbiddenScope:
+  - "orchestration/task-registry.json"
+  - "orchestration/briefs/**"
+  - "orchestration/runs/<run-id>/tasks/<task-id>/verification-brief.yaml"
+  - "orchestration/runs/<run-id>/tasks/<task-id>/verification-report.yaml"
+acceptanceCriteria:
+  - id: "AC-1"
+    description: "Unit-test command runs in a clean checkout."
+  - id: "AC-2"
+    description: "Fixtures cover valid loops, branches, open paths, multiple loops, and clue errors."
+  - id: "AC-3"
+    description: "Schema validation is included in test execution."
+  - id: "AC-4"
+    description: "Test output is deterministic."
+requiredChecks:
+  - "npm run test"
+  - "npm run validate:schemas"
+implementationReportPath: "runs/<run-id>/tasks/P1-04/implementation-report.yaml"
+instructions:
+  - "Read the task brief and all listed context before editing."
+  - "Modify only the assigned write scope and preserve unrelated work."
+  - "Run the required checks or record why a check is unavailable."
+  - "Write the implementation report before returning."
+

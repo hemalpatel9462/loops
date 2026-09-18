@@ -1,0 +1,40 @@
+schemaVersion: "1.0"
+artifactType: task-brief
+taskId: "P2-03"
+title: "Catalog builder and puzzle-data package"
+phase: 2
+goal: "Build the validated puzzle catalog consumed by the browser application."
+context:
+  - "loops_game_design_spec.md"
+  - "PROJECT_STRUCTURE_AND_DEPLOYMENT.md"
+  - "orchestration/IMPLEMENTATION_PLAN.md"
+  - "orchestration/task-registry.json"
+dependencies: ["P2-01","P2-02"]
+writeScope:
+  - "tools/catalog-builder/**"
+  - "packages/puzzle-data/**"
+forbiddenScope:
+  - "orchestration/task-registry.json"
+  - "orchestration/briefs/**"
+  - "orchestration/runs/<run-id>/tasks/<task-id>/verification-brief.yaml"
+  - "orchestration/runs/<run-id>/tasks/<task-id>/verification-report.yaml"
+acceptanceCriteria:
+  - id: "AC-1"
+    description: "Validated puzzle JSON is emitted to packages/puzzle-data."
+  - id: "AC-2"
+    description: "Catalog entries point to real puzzle files."
+  - id: "AC-3"
+    description: "Duplicate IDs are rejected."
+  - id: "AC-4"
+    description: "Catalog validates against its schema."
+requiredChecks:
+  - "npm run build:catalog"
+  - "npm run validate:catalog"
+  - "npm run typecheck"
+implementationReportPath: "runs/<run-id>/tasks/P2-03/implementation-report.yaml"
+instructions:
+  - "Read the task brief and all listed context before editing."
+  - "Modify only the assigned write scope and preserve unrelated work."
+  - "Run the required checks or record why a check is unavailable."
+  - "Write the implementation report before returning."
+

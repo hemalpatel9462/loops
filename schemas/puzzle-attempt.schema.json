@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://loops.game/schemas/puzzle-attempt.schema.json",
+  "title": "Loops Puzzle Attempt",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "puzzleId", "difficulty", "mode", "startedAt", "completed", "elapsedSeconds", "hintsUsed", "undoCount", "resetCount"],
+  "properties": {
+    "schemaVersion": { "type": "string", "const": "1.0" },
+    "puzzleId": { "type": "string", "minLength": 1 },
+    "difficulty": { "enum": ["beginner", "easy", "medium", "hard", "expert"] },
+    "mode": { "enum": ["relaxed", "assisted"] },
+    "startedAt": { "type": "string", "format": "date-time" },
+    "endedAt": { "type": "string", "format": "date-time" },
+    "completed": { "type": "boolean" },
+    "elapsedSeconds": { "type": "integer", "minimum": 0 },
+    "hintsUsed": { "type": "integer", "minimum": 0 },
+    "undoCount": { "type": "integer", "minimum": 0 },
+    "resetCount": { "type": "integer", "minimum": 0 },
+    "checkProgressCount": { "type": "integer", "minimum": 0, "default": 0 },
+    "mistakeCount": { "type": "integer", "minimum": 0, "default": 0 },
+    "deviceClass": { "enum": ["phone", "tablet", "desktop", "unknown"] }
+  }
+}

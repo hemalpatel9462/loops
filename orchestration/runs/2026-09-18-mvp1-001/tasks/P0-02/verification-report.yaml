@@ -1,0 +1,62 @@
+schemaVersion: "1.0"
+artifactType: verification-report
+taskId: "P0-02"
+verdict: PASS
+scopeReviewed:
+  - "packages/puzzle-format/**"
+  - "schemas/**"
+acceptanceCriteria:
+  - id: AC-1
+    verdict: PASS
+    evidence:
+      - "packages/puzzle-format/src/types.ts defines the shared PuzzleDefinition, metadata, catalog, progress, settings, daily, hint, generator, attempt, statistics, and solver contracts with schema-aligned required/optional fields and unions."
+      - "packages/puzzle-format/src/schemas.ts imports and exports all ten checked-in JSON schemas from schemas/."
+      - "npm run validate:schemas exited 0; schema-validation.test.ts loaded all ten schemas as Draft 2020-12 object schemas and checked puzzle-definition required fields and edge pattern alignment."
+  - id: AC-2
+    verdict: PASS
+    evidence:
+      - "packages/puzzle-format/src/edge-id.ts uses ^([hv]):([0-9]+):([0-9]+)$ and exposes isEdgeId, parseEdgeId, and createEdgeId for h:row:column and v:row:column IDs."
+      - "packages/puzzle-format/src/codecs.test.ts covers horizontal and vertical IDs, malformed IDs, and invalid coordinates; the package test run passed these cases."
+      - "schemas/puzzle-definition.schema.json and schemas/hint-record.schema.json use the corresponding ^[hv]:[0-9]+:[0-9]+$ pattern."
+  - id: AC-3
+    verdict: PASS
+    evidence:
+      - "packages/puzzle-format/src/codecs.ts requires clues.length to equal height and each clue row length to equal width."
+      - "validateEdges checks edge syntax, orientation-specific bounds, minimum solution length, uniqueness, and startingEdges membership in solutionEdges."
+      - "The valid 2x2 closed-loop fixture and inconsistent dimension/edge fixtures in src/codecs.test.ts passed as expected."
+  - id: AC-4
+    verdict: PASS
+    evidence:
+      - "parsePuzzleDefinition and decodePuzzleDefinition reject malformed values with PuzzleFormatError and structured path/message issues."
+      - "Validation in packages/puzzle-format/src/codecs.ts covers required fields, identifiers, dimensions, clue values, edge syntax/bounds/uniqueness, starting-edge membership, metadata ranges/ratios, unexpected properties, and malformed JSON."
+      - "src/codecs.test.ts passed malformed dimension, clue, duplicate/out-of-bounds edge, metadata, and malformed JSON rejection tests."
+  - id: AC-5
+    verdict: PASS
+    evidence:
+      - "packages/puzzle-format/src/codecs.test.ts contains five tests covering valid and invalid edge/puzzle examples and JSON round-tripping."
+      - "packages/puzzle-format/src/schema-validation.test.ts contains two schema integration tests covering all checked-in schemas and puzzle-definition alignment."
+      - "npm run test --workspace @loops/puzzle-format exited 0: 2 test files and 7 tests passed."
+checksPerformed:
+  - command: "npm run test --workspace @loops/puzzle-format"
+    exitCode: 0
+  - command: "npm run typecheck"
+    exitCode: 0
+  - command: "npm run validate:schemas"
+    exitCode: 0
+  - command: "npm run test --workspaces --if-present"
+    exitCode: 0
+  - command: "npm ci --dry-run"
+    exitCode: 1
+findings:
+  - severity: LOW
+    description: "The existing root package-lock.json predates the @loops/puzzle-format workspace. npm ci --dry-run exits 1 with Missing: @loops/puzzle-format@0.1.0 from lock file. The package tests, typecheck, and schema validation run successfully from the checked-out workspace; lockfile regeneration is required in the owning integration scope before a clean install/release gate."
+    file: "package-lock.json"
+requiredRemediation: []
+conclusion: |
+  Independent inspection confirms all five P0-02 acceptance criteria. Shared types,
+  schema imports, edge identifiers, dimension-aware collection checks, malformed
+  input rejection, and valid/invalid test coverage are present and the required
+  package test, workspace typecheck, and schema validation commands pass. The
+  independent clean-install dry run reproduces the known lockfile integration
+  issue, which is outside this task's write scope and does not invalidate the
+  contract verification. Verdict: PASS.

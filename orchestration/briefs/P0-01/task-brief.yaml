@@ -1,0 +1,47 @@
+schemaVersion: "1.0"
+artifactType: task-brief
+taskId: "P0-01"
+title: "Project bootstrap"
+phase: 0
+goal: "Create the React, TypeScript, Vite, npm-workspace, testing, and deployment foundation for the Loops repository."
+context:
+  - "loops_game_design_spec.md"
+  - "PROJECT_STRUCTURE_AND_DEPLOYMENT.md"
+  - "orchestration/IMPLEMENTATION_PLAN.md"
+  - "orchestration/task-registry.json"
+dependencies: []
+writeScope:
+  - "package.json"
+  - "package-lock.json"
+  - "tsconfig*.json"
+  - "apps/web-game/**"
+  - "vite.config.ts"
+  - ".gitignore"
+  - "vercel.json"
+forbiddenScope:
+  - "orchestration/task-registry.json"
+  - "orchestration/briefs/**"
+  - "orchestration/runs/<run-id>/tasks/<task-id>/verification-brief.yaml"
+  - "orchestration/runs/<run-id>/tasks/<task-id>/verification-report.yaml"
+acceptanceCriteria:
+  - id: "AC-1"
+    description: "React + TypeScript + Vite app exists under apps/web-game."
+  - id: "AC-2"
+    description: "npm workspaces cover apps/*, packages/*, and tools/*."
+  - id: "AC-3"
+    description: "Shared workspace packages can be imported by the web app."
+  - id: "AC-4"
+    description: "TypeScript, lint, unit-test, and build commands are defined."
+  - id: "AC-5"
+    description: "Production build emits apps/web-game/dist without generator-only code."
+requiredChecks:
+  - "npm install or npm ci"
+  - "npm run typecheck"
+  - "npm run build"
+implementationReportPath: "runs/<run-id>/tasks/P0-01/implementation-report.yaml"
+instructions:
+  - "Read the task brief and all listed context before editing."
+  - "Modify only the assigned write scope and preserve unrelated work."
+  - "Run the required checks or record why a check is unavailable."
+  - "Write the implementation report before returning."
+

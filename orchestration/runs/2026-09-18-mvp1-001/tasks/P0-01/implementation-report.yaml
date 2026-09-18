@@ -1,0 +1,96 @@
+schemaVersion: "1.0"
+artifactType: implementation-report
+taskId: "P0-01"
+status: COMPLETE
+summary: |
+  Bootstrapped the Loops npm workspace with a React 19, TypeScript, and Vite
+  web application under apps/web-game. Added root workspace scripts, shared
+  package path resolution, a responsive accessible app shell, a Vitest smoke
+  test, Vercel packaging settings, and Git/build hygiene. No puzzle-generation
+  or solver logic was added to the browser application.
+filesChanged:
+  - path: "package.json"
+    change: "Added the private npm-workspace root, apps/packages/tools workspace globs, development/build/typecheck/lint/test scripts, and schema-validation delegation."
+  - path: "package-lock.json"
+    change: "Generated the npm lockfile for the root workspace and @loops/web-game dependencies."
+  - path: "tsconfig.base.json"
+    change: "Added strict shared TypeScript compiler settings and @loops/* workspace package path mapping."
+  - path: "tsconfig.json"
+    change: "Added the root TypeScript project reference to the web-game application."
+  - path: "apps/web-game/package.json"
+    change: "Added the private React/Vite workspace package with dev, build, preview, typecheck, lint, and Vitest commands."
+  - path: "apps/web-game/tsconfig.app.json"
+    change: "Configured strict browser TypeScript compilation for the app source."
+  - path: "apps/web-game/index.html"
+    change: "Added the Vite HTML entry point, viewport metadata, theme metadata, and app mount element."
+  - path: "apps/web-game/src/main.tsx"
+    change: "Added the React entry point with StrictMode, root validation, and stylesheet loading."
+  - path: "apps/web-game/src/App.tsx"
+    change: "Added the minimal player-facing Loops welcome shell without puzzle or generator logic."
+  - path: "apps/web-game/src/styles.css"
+    change: "Added responsive, high-contrast-friendly base styles, keyboard focus styling, and reduced-motion handling."
+  - path: "apps/web-game/src/smoke.test.ts"
+    change: "Added a deterministic Vitest bootstrap smoke test."
+  - path: "vite.config.ts"
+    change: "Configured the repository-root Vite entry for apps/web-game, React support, apps/web-game/dist output, and @loops workspace package aliasing."
+  - path: ".gitignore"
+    change: "Added ignores for dependencies, build/test outputs, Vite cache, environment files, and local OS artifacts."
+  - path: "vercel.json"
+    change: "Configured root install/build commands, Vite framework metadata, and apps/web-game/dist output for Vercel."
+  - path: "orchestration/runs/2026-09-18-mvp1-001/tasks/P0-01/implementation-report.yaml"
+    change: "Recorded implementation scope, acceptance evidence, exact checks, deviations, and risks."
+acceptanceCriteria:
+  - id: AC-1
+    result: PASS
+    evidence:
+      - "apps/web-game/package.json declares @loops/web-game with React and Vite dependencies."
+      - "apps/web-game/index.html and apps/web-game/src/main.tsx provide the Vite and React entry points."
+      - "npm run build completed successfully using Vite."
+  - id: AC-2
+    result: PASS
+    evidence:
+      - "Root package.json declares workspaces [apps/*, packages/*, tools/*]."
+      - "package-lock.json records the root workspace and apps/web-game workspace."
+  - id: AC-3
+    result: PASS
+    evidence:
+      - "tsconfig.base.json maps @loops/* imports to packages/* for TypeScript."
+      - "vite.config.ts maps the @loops alias to the repository packages directory for browser bundling."
+      - "The configuration is ready for the shared package created by P0-02 without adding generator code to the app."
+  - id: AC-4
+    result: PASS
+    evidence:
+      - "Root package.json defines typecheck, lint, test/test:unit, and build commands."
+      - "apps/web-game/package.json defines corresponding workspace commands, including a Vitest unit-test command."
+      - "npm run lint and npm run test:unit both completed successfully; the Vitest smoke test passed."
+  - id: AC-5
+    result: PASS
+    evidence:
+      - "npm run build exited 0 and emitted apps/web-game/dist/index.html plus hashed CSS and JavaScript assets."
+      - "A search of apps/web-game/dist found no generator, solver, puzzle-generator, or puzzle-validator references."
+      - "vercel.json sets outputDirectory to apps/web-game/dist and vite.config.ts sets the same build output directory."
+commandsRun:
+  - command: "npm install"
+    exitCode: 0
+  - command: "npm ci"
+    exitCode: 0
+  - command: "npm run typecheck"
+    exitCode: 0
+  - command: "npm run lint"
+    exitCode: 0
+  - command: "npm run test:unit"
+    exitCode: 0
+  - command: "npm run build"
+    exitCode: 0
+  - command: "rg -n \"generator|solver|puzzle-generator|puzzle-validator\" apps/web-game/dist"
+    exitCode: 1
+deviations:
+  - "No standalone ESLint configuration was added; the workspace lint command uses strict TypeScript checking until a later task introduces the broader lint harness."
+  - "The shared package import alias is configured in advance of P0-02 creating packages/puzzle-format; no production import was added before that dependency exists."
+knownRisks:
+  - "npm install reported two moderate dependency audit findings; no audit fix was applied because it could make unrequested dependency changes."
+  - "The current app shell is intentionally a bootstrap screen and does not yet implement gameplay; later tasks own the engine, board, and flow features."
+handoffNotes: |
+  P0-02 can add packages/puzzle-format within its declared scope. The web app
+  already has TypeScript and Vite @loops/* resolution configured for that
+  package. The exact build output is apps/web-game/dist.

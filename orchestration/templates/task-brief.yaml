@@ -1,0 +1,27 @@
+schemaVersion: "1.0"
+artifactType: task-brief
+taskId: "{{TASK_ID}}"
+title: "{{TITLE}}"
+goal: |
+  {{GOAL}}
+context:
+  - loops_game_design_spec.md
+  - PROJECT_STRUCTURE_AND_DEPLOYMENT.md
+  - orchestration/IMPLEMENTATION_PLAN.md
+  - "{{TASK_SPECIFIC_CONTEXT}}"
+dependencies: []
+writeScope: []
+forbiddenScope:
+  - orchestration/task-registry.json
+  - orchestration/runs/<run-id>/tasks/<task-id>/verification-report.yaml
+acceptanceCriteria:
+  - id: AC-1
+    description: "{{ACCEPTANCE_CRITERION}}"
+requiredChecks:
+  - "{{REQUIRED_CHECK}}"
+implementationReportPath: "runs/<run-id>/tasks/<task-id>/implementation-report.yaml"
+instructions:
+  - Read this brief before changing files.
+  - Stay within the assigned write scope.
+  - Preserve unrelated changes.
+  - Write the implementation report before returning.

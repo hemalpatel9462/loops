@@ -1,0 +1,72 @@
+schemaVersion: "1.0"
+artifactType: verification-report
+taskId: "P0-01"
+verdict: PASS
+scopeReviewed:
+  - "package.json"
+  - "package-lock.json"
+  - "tsconfig.base.json"
+  - "tsconfig.json"
+  - "apps/web-game/**"
+  - "vite.config.ts"
+  - ".gitignore"
+  - "vercel.json"
+  - "apps/web-game/dist/**"
+acceptanceCriteria:
+  - id: AC-1
+    verdict: PASS
+    evidence:
+      - "apps/web-game/package.json declares the @loops/web-game workspace with React, React DOM, TypeScript, Vite, and Vite React plugin dependencies."
+      - "apps/web-game/index.html is the Vite entry document and apps/web-game/src/main.tsx creates the React root with StrictMode."
+      - "npm run build exited 0 and Vite transformed 29 modules."
+  - id: AC-2
+    verdict: PASS
+    evidence:
+      - "package.json workspaces are exactly [apps/*, packages/*, tools/*]."
+      - "package-lock.json lockfileVersion is 3, records the same root workspace globs, and links node_modules/@loops/web-game to apps/web-game."
+      - "npm ls --workspaces --depth=0 resolved @loops/web-game from ./apps/web-game."
+  - id: AC-3
+    verdict: PASS
+    evidence:
+      - "tsconfig.base.json maps @loops/* imports to packages/* with Bundler module resolution."
+      - "vite.config.ts aliases @loops to the repository packages directory, so browser imports use the same workspace source tree."
+      - "The shared package is intentionally not present until dependent task P0-02; the bootstrap path-resolution configuration is present and the web app build succeeds without generator code."
+  - id: AC-4
+    verdict: PASS
+    evidence:
+      - "Root package.json defines typecheck, lint, test/test:unit, and build scripts; apps/web-game/package.json defines corresponding workspace commands."
+      - "npm run typecheck exited 0 (tsc --noEmit -p tsconfig.app.json)."
+      - "npm run lint exited 0 (workspace TypeScript lint command)."
+      - "npm run test:unit exited 0: Vitest reported 1 test file and 1 test passed (src/smoke.test.ts)."
+      - "npm run build exited 0."
+  - id: AC-5
+    verdict: PASS
+    evidence:
+      - "npm ci exited 0 and installed 104 packages with the lockfile."
+      - "apps/web-game/dist contains index.html, assets/index-B2n_UtF_.js, and assets/index-C2SSgkM5.css."
+      - "Built apps/web-game/dist/index.html references the hashed JS/CSS assets; no generator, solver, puzzle-generator, or puzzle-validator tokens were found in dist (rg exit 1, expected no matches)."
+      - "vite.config.ts sets build.outDir to apps/web-game/dist and vercel.json sets outputDirectory to apps/web-game/dist."
+checksPerformed:
+  - command: "npm ci"
+    exitCode: 0
+  - command: "npm run typecheck"
+    exitCode: 0
+  - command: "npm run lint"
+    exitCode: 0
+  - command: "npm run test:unit"
+    exitCode: 0
+  - command: "npm run build"
+    exitCode: 0
+  - command: "rg -n -i 'generator|solver|puzzle-generator|puzzle-validator' apps/web-game/dist"
+    exitCode: 1
+findings:
+  - severity: LOW
+    description: "npm ci reported two moderate dependency audit findings; this does not prevent the required checks or production build from passing."
+    file: "package-lock.json"
+requiredRemediation: []
+conclusion: |
+  Independent inspection confirms all five P0-01 acceptance criteria. The React/Vite
+  bootstrap, workspace globs, shared-package TypeScript/Vite resolution, command
+  definitions, clean locked install, typecheck, lint, unit test, and production
+  build all passed. The generated dist contains only the web app assets and no
+  generator-only code. Verdict: PASS.

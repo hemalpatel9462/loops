@@ -1,0 +1,30 @@
+schemaVersion: "1.0"
+artifactType: verification-brief
+taskId: "P1-01"
+implementationReportPath: "runs/<run-id>/tasks/P1-01/implementation-report.yaml"
+scopeReviewed:
+  - "packages/game-engine/model/**"
+  - "packages/game-engine/state/**"
+acceptanceCriteria:
+  - id: "AC-1"
+    description: "unknown, line, and x player states are represented."
+  - id: "AC-2"
+    description: "Fixed starting edges cannot be changed by player actions."
+  - id: "AC-3"
+    description: "Edge cycling follows Unknown → Line → X → Unknown."
+  - id: "AC-4"
+    description: "State transitions are deterministic and side-effect free."
+  - id: "AC-5"
+    description: "The state shape supports undo and redo history."
+requiredChecks:
+  - command: "npm run test --workspace @loops/game-engine"
+    purpose: "Verify the task acceptance criteria and detect regressions."
+  - command: "npm run typecheck"
+    purpose: "Verify the task acceptance criteria and detect regressions."
+constraints:
+  - "Do not modify production code."
+  - "Treat the implementation report as a claim and verify it against the files."
+  - "Check every acceptance criterion independently."
+  - "Record evidence with file paths, test names, or command output."
+verificationReportPath: "runs/<run-id>/tasks/P1-01/verification-report.yaml"
+

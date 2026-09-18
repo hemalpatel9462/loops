@@ -1,0 +1,31 @@
+schemaVersion: "1.0"
+artifactType: verification-brief
+taskId: "P1-06"
+implementationReportPath: "runs/<run-id>/tasks/P1-06/implementation-report.yaml"
+scopeReviewed:
+  - "tools/puzzle-generator/**"
+acceptanceCriteria:
+  - id: "AC-1"
+    description: "The generator creates candidate lattice loops."
+  - id: "AC-2"
+    description: "Candidates have no crossings, branches, or disconnected segments."
+  - id: "AC-3"
+    description: "Full-cell four-edge enclosures are rejected."
+  - id: "AC-4"
+    description: "Generation is deterministic for a given seed and configuration."
+  - id: "AC-5"
+    description: "Candidate output is separate from validated puzzle output."
+requiredChecks:
+  - command: "npm run test --workspace @loops/puzzle-generator"
+    purpose: "Verify the task acceptance criteria and detect regressions."
+  - command: "npm run generate:test-candidates"
+    purpose: "Verify the task acceptance criteria and detect regressions."
+  - command: "npm run typecheck"
+    purpose: "Verify the task acceptance criteria and detect regressions."
+constraints:
+  - "Do not modify production code."
+  - "Treat the implementation report as a claim and verify it against the files."
+  - "Check every acceptance criterion independently."
+  - "Record evidence with file paths, test names, or command output."
+verificationReportPath: "runs/<run-id>/tasks/P1-06/verification-report.yaml"
+

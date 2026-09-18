@@ -1,0 +1,30 @@
+schemaVersion: "1.0"
+artifactType: verification-brief
+taskId: "P1-07"
+implementationReportPath: "runs/<run-id>/tasks/P1-07/implementation-report.yaml"
+scopeReviewed:
+  - "tools/puzzle-validator/**"
+  - "tools/puzzle-validator/solver/**"
+acceptanceCriteria:
+  - id: "AC-1"
+    description: "Solver returns zero, one, or multiple solutions."
+  - id: "AC-2"
+    description: "It understands clues, vertex rules, fixed edges, excluded edges, and connectivity."
+  - id: "AC-3"
+    description: "It stops after finding two solutions for uniqueness checks."
+  - id: "AC-4"
+    description: "It emits a solver report using the approved schema."
+requiredChecks:
+  - command: "npm run test --workspace @loops/puzzle-validator"
+    purpose: "Verify the task acceptance criteria and detect regressions."
+  - command: "npm run typecheck"
+    purpose: "Verify the task acceptance criteria and detect regressions."
+  - command: "npm run validate:solver-fixtures"
+    purpose: "Verify the task acceptance criteria and detect regressions."
+constraints:
+  - "Do not modify production code."
+  - "Treat the implementation report as a claim and verify it against the files."
+  - "Check every acceptance criterion independently."
+  - "Record evidence with file paths, test names, or command output."
+verificationReportPath: "runs/<run-id>/tasks/P1-07/verification-report.yaml"
+

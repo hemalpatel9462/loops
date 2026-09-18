@@ -1,0 +1,22 @@
+schemaVersion: "1.0"
+artifactType: implementation-report
+taskId: "{{TASK_ID}}"
+status: COMPLETE
+summary: |
+  {{SUMMARY}}
+filesChanged:
+  - path: "{{FILE_PATH}}"
+    change: "{{CHANGE_DESCRIPTION}}"
+acceptanceCriteria:
+  - id: AC-1
+    result: PASS
+    evidence:
+      - "{{EVIDENCE}}"
+commandsRun:
+  - command: "{{COMMAND}}"
+    exitCode: 0
+    outputFile: "runs/<run-id>/tasks/<task-id>/test-output.txt"
+deviations: []
+knownRisks: []
+handoffNotes: |
+  {{HANDOFF_NOTES}}

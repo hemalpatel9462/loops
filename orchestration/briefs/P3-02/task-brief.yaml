@@ -1,0 +1,37 @@
+schemaVersion: "1.0"
+artifactType: task-brief
+taskId: "P3-02"
+title: "Browser and responsive end-to-end tests"
+phase: 3
+goal: "Create browser-level coverage for gameplay, persistence, accessibility, and responsive layouts."
+context:
+  - "loops_game_design_spec.md"
+  - "PROJECT_STRUCTURE_AND_DEPLOYMENT.md"
+  - "orchestration/IMPLEMENTATION_PLAN.md"
+  - "orchestration/task-registry.json"
+dependencies: ["P3-01","P2-03"]
+writeScope:
+  - "tests/e2e/**"
+  - "playwright.config.ts"
+forbiddenScope:
+  - "orchestration/task-registry.json"
+  - "orchestration/briefs/**"
+  - "orchestration/runs/<run-id>/tasks/<task-id>/verification-brief.yaml"
+  - "orchestration/runs/<run-id>/tasks/<task-id>/verification-report.yaml"
+acceptanceCriteria:
+  - id: "AC-1"
+    description: "Tests cover loading, edge cycling, undo/redo, reset, hints, progress checks, completion, Continue, and Daily Loop."
+  - id: "AC-2"
+    description: "Tests run at phone, tablet, and desktop viewports."
+  - id: "AC-3"
+    description: "Keyboard and reduced-motion smoke tests exist."
+requiredChecks:
+  - "npm run test:e2e"
+  - "npm run build"
+implementationReportPath: "runs/<run-id>/tasks/P3-02/implementation-report.yaml"
+instructions:
+  - "Read the task brief and all listed context before editing."
+  - "Modify only the assigned write scope and preserve unrelated work."
+  - "Run the required checks or record why a check is unavailable."
+  - "Write the implementation report before returning."
+

@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://loops.game/schemas/player-progress.schema.json",
+  "title": "Loops Player Progress",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "puzzleId", "mode", "edgeStates", "elapsedSeconds", "hintsUsed", "completed", "updatedAt"],
+  "properties": {
+    "schemaVersion": { "type": "string", "const": "1.0" },
+    "puzzleId": { "type": "string", "minLength": 1 },
+    "mode": { "enum": ["relaxed", "assisted"] },
+    "edgeStates": {
+      "type": "object",
+      "propertyNames": { "pattern": "^[hv]:[0-9]+:[0-9]+$" },
+      "additionalProperties": { "enum": ["line", "x"] }
+    },
+    "elapsedSeconds": { "type": "integer", "minimum": 0 },
+    "hintsUsed": { "type": "integer", "minimum": 0 },
+    "checksUsed": { "type": "integer", "minimum": 0, "default": 0 },
+    "completed": { "type": "boolean" },
+    "startedAt": { "type": "string", "format": "date-time" },
+    "completedAt": { "type": "string", "format": "date-time" },
+    "updatedAt": { "type": "string", "format": "date-time" }
+  }
+}

@@ -1,0 +1,40 @@
+schemaVersion: "1.0"
+artifactType: task-brief
+taskId: "P2-05"
+title: "Local persistence and Continue"
+phase: 2
+goal: "Implement versioned local persistence for progress, settings, statistics, unfinished puzzles, and Continue."
+context:
+  - "loops_game_design_spec.md"
+  - "PROJECT_STRUCTURE_AND_DEPLOYMENT.md"
+  - "orchestration/IMPLEMENTATION_PLAN.md"
+  - "orchestration/task-registry.json"
+dependencies: ["P0-02","P1-05"]
+writeScope:
+  - "apps/web-game/src/persistence/**"
+  - "apps/web-game/src/state/persistence/**"
+forbiddenScope:
+  - "orchestration/task-registry.json"
+  - "orchestration/briefs/**"
+  - "orchestration/runs/<run-id>/tasks/<task-id>/verification-brief.yaml"
+  - "orchestration/runs/<run-id>/tasks/<task-id>/verification-report.yaml"
+acceptanceCriteria:
+  - id: "AC-1"
+    description: "Progress is saved under versioned local-storage keys."
+  - id: "AC-2"
+    description: "Continue restores the correct puzzle and state."
+  - id: "AC-3"
+    description: "Settings, statistics, and daily state use approved schemas."
+  - id: "AC-4"
+    description: "Corrupt or outdated records fail safely and can be reset."
+requiredChecks:
+  - "npm run typecheck"
+  - "npm run test:e2e -- --grep persistence"
+  - "npm run build"
+implementationReportPath: "runs/<run-id>/tasks/P2-05/implementation-report.yaml"
+instructions:
+  - "Read the task brief and all listed context before editing."
+  - "Modify only the assigned write scope and preserve unrelated work."
+  - "Run the required checks or record why a check is unavailable."
+  - "Write the implementation report before returning."
+

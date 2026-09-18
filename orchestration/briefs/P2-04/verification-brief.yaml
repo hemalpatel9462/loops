@@ -1,0 +1,32 @@
+schemaVersion: "1.0"
+artifactType: verification-brief
+taskId: "P2-04"
+implementationReportPath: "runs/<run-id>/tasks/P2-04/implementation-report.yaml"
+scopeReviewed:
+  - "apps/web-game/src/components/board/**"
+  - "apps/web-game/src/components/edge/**"
+acceptanceCriteria:
+  - id: "AC-1"
+    description: "Board renders dots, cells, clues, lines, X marks, and fixed lines."
+  - id: "AC-2"
+    description: "Edges have touch-friendly hit targets."
+  - id: "AC-3"
+    description: "Pointer and keyboard interaction are supported where practical."
+  - id: "AC-4"
+    description: "Board scales across phone, tablet, and desktop widths."
+  - id: "AC-5"
+    description: "UI dispatches actions to the engine rather than changing rules locally."
+requiredChecks:
+  - command: "npm run typecheck"
+    purpose: "Verify the task acceptance criteria and detect regressions."
+  - command: "npm run build"
+    purpose: "Verify the task acceptance criteria and detect regressions."
+  - command: "npm run test:e2e -- --grep board"
+    purpose: "Verify the task acceptance criteria and detect regressions."
+constraints:
+  - "Do not modify production code."
+  - "Treat the implementation report as a claim and verify it against the files."
+  - "Check every acceptance criterion independently."
+  - "Record evidence with file paths, test names, or command output."
+verificationReportPath: "runs/<run-id>/tasks/P2-04/verification-report.yaml"
+

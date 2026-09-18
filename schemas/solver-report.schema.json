@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://loops.game/schemas/solver-report.schema.json",
+  "title": "Loops Solver Report",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "puzzleId", "solutionCount", "unique", "valid", "deductions"],
+  "properties": {
+    "schemaVersion": { "type": "string", "const": "1.0" },
+    "puzzleId": { "type": "string", "minLength": 1 },
+    "solutionCount": { "enum": [0, 1, 2, "2+"] },
+    "unique": { "type": "boolean" },
+    "valid": { "type": "boolean" },
+    "elapsedMilliseconds": { "type": "integer", "minimum": 0 },
+    "deductions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["direct", "vertex", "connectivity", "contradiction", "searchOnly", "maximumDepth"],
+      "properties": {
+        "direct": { "type": "integer", "minimum": 0 },
+        "vertex": { "type": "integer", "minimum": 0 },
+        "connectivity": { "type": "integer", "minimum": 0 },
+        "contradiction": { "type": "integer", "minimum": 0 },
+        "searchOnly": { "type": "integer", "minimum": 0 },
+        "maximumDepth": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "difficultyScore": { "type": "number", "minimum": 0, "maximum": 1 },
+    "qualityScore": { "type": "number", "minimum": 0, "maximum": 1 },
+    "rejectionReasons": { "type": "array", "items": { "type": "string" } }
+  }
+}

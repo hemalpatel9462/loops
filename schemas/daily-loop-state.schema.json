@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://loops.game/schemas/daily-loop-state.schema.json",
+  "title": "Loops Daily Loop State",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "date", "seed", "puzzleId", "status", "streakCount"],
+  "properties": {
+    "schemaVersion": { "type": "string", "const": "1.0" },
+    "date": { "type": "string", "format": "date" },
+    "seed": { "type": "string", "minLength": 1 },
+    "puzzleId": { "type": "string", "minLength": 1 },
+    "status": { "enum": ["not-started", "in-progress", "completed"] },
+    "streakCount": { "type": "integer", "minimum": 0 },
+    "completedAt": { "type": "string", "format": "date-time" },
+    "hintsUsed": { "type": "integer", "minimum": 0, "default": 0 },
+    "completionTimeSeconds": { "type": "integer", "minimum": 0 }
+  }
+}
