@@ -38,6 +38,10 @@ This project uses project-scoped Codex agent roles defined under `.codex/`:
   verification workers consume the same pool, so slots must be reused as work
   completes rather than treating this as six implementation plus six
   verification slots.
+- Every task dispatch must use a fresh worker context. When a worker finishes,
+  reuse its slot by spawning a new implementation or verification worker with
+  the new task brief; do not send a follow-up task to an existing worker whose
+  context contains a previous task.
 
 Dispatch the configured role names instead of generic workers, and pass explicit
 model and reasoning values matching the role configuration when the subagent

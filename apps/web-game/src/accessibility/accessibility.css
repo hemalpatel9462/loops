@@ -1,0 +1,93 @@
+.accessibility-settings {
+  display: grid;
+  gap: var(--space-3, 0.75rem);
+  min-inline-size: min(100%, 20rem);
+  padding: var(--space-4, 1rem);
+  color: var(--color-ink);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md, 1rem);
+}
+
+.accessibility-settings legend {
+  padding-inline: var(--space-2, 0.5rem);
+  font-weight: 800;
+}
+
+.accessibility-settings__option {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3, 0.75rem);
+  padding: var(--space-3, 0.75rem);
+  border-radius: var(--radius-sm, 0.5rem);
+  cursor: pointer;
+}
+
+.accessibility-settings__option:hover {
+  background: var(--color-surface-muted);
+}
+
+.accessibility-settings__option input {
+  width: 1.25rem;
+  height: 1.25rem;
+  flex: 0 0 auto;
+  accent-color: var(--color-accent);
+}
+
+.accessibility-settings__option span {
+  display: grid;
+  gap: 0.2rem;
+}
+
+.accessibility-settings__option small {
+  color: var(--color-ink-muted);
+  font-size: var(--text-xs, 0.75rem);
+}
+
+:root[data-reduced-motion='true'] *,
+:root[data-reduced-motion='true'] *::before,
+:root[data-reduced-motion='true'] *::after {
+  scroll-behavior: auto !important;
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+}
+
+:root[data-high-contrast='true'] {
+  --color-canvas: #ffffff;
+  --color-surface: #ffffff;
+  --color-surface-muted: #eeeeee;
+  --color-ink: #000000;
+  --color-ink-muted: #202020;
+  --color-ink-subtle: #3a3a3a;
+  --color-border: #000000;
+  --color-border-strong: #000000;
+  --color-accent: #004d2a;
+  --color-accent-strong: #00351d;
+  --color-focus: #8c1d18;
+  --color-loop: #8c1d18;
+  --color-loop-fixed: #004d2a;
+}
+
+/* Fixed edges use a pattern as well as a color; player lines remain solid. */
+.loop-edge--fixed .loop-edge__line {
+  stroke-dasharray: 0.8rem 0.35rem;
+}
+
+.loop-edge--line:not(.loop-edge--fixed) .loop-edge__line {
+  stroke-dasharray: none;
+}
+
+:root[data-high-contrast='true'] .loop-edge--fixed .loop-edge__line {
+  stroke-width: max(var(--edge-width-fixed, 0.35rem), 0.4rem);
+}
+
+:root[data-high-contrast='true'] .loop-edge--line:not(.loop-edge--fixed) .loop-edge__line {
+  stroke-width: max(var(--edge-width, 0.25rem), 0.3rem);
+}
+
+.accessibility-settings :focus-visible,
+.accessibility-settings__option:has(input:focus-visible) {
+  outline: 0.2rem solid var(--color-focus, #b75e34);
+  outline-offset: 0.2rem;
+}

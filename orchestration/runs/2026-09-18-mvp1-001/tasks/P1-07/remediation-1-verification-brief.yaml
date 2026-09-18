@@ -1,0 +1,29 @@
+schemaVersion: "1.0"
+artifactType: verification-brief
+taskId: "P1-07"
+implementationReportPath: "runs/2026-09-18-mvp1-001/tasks/P1-07/implementation-report-remediation-1.yaml"
+scopeReviewed:
+  - "tools/puzzle-validator/**"
+  - "tools/puzzle-validator/solver/**"
+acceptanceCriteria:
+  - id: AC-R1
+    description: "edgesAtVertex returns exactly the incident board edges for interior, boundary, and corner vertices."
+  - id: AC-R2
+    description: "A valid generated candidate loop with clues derived from its edges is accepted by solvePuzzle as a valid solution; starting edges remain honored."
+  - id: AC-R3
+    description: "All original P1-07 solver behavior remains passing, including fixed/excluded options, connectivity, and uniqueness cap."
+requiredChecks:
+  - command: "npm run test --workspace @loops/puzzle-validator"
+    purpose: "Verify original and remediation solver tests."
+  - command: "npm run typecheck"
+    purpose: "Verify the corrected solver remains type-safe across workspaces."
+  - command: "npm run validate:solver-fixtures"
+    purpose: "Verify solver fixture CLI behavior."
+  - command: "node_modules/.bin/vitest run --config tools/puzzle-generator/pipeline/vitest.config.ts"
+    purpose: "Verify the downstream generation pipeline can solve generated candidates."
+constraints:
+  - "Do not modify production code."
+  - "Treat the implementation report as a claim and inspect the actual changed files."
+  - "Check every remediation acceptance criterion independently."
+  - "Record evidence with file paths, test names, and command output."
+verificationReportPath: "runs/2026-09-18-mvp1-001/tasks/P1-07/verification-report-remediation-1.yaml"

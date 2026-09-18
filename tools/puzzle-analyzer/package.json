@@ -1,0 +1,20 @@
+{
+  "name": "@loops/puzzle-analyzer",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "import": "./src/index.ts"
+    }
+  },
+  "scripts": {
+    "test": "vitest run --config vitest.config.ts",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "analyze:puzzles": "node --experimental-strip-types src/cli.ts"
+  },
+  "dependencies": {
+    "@loops/puzzle-format": "0.1.0"
+  }
+}

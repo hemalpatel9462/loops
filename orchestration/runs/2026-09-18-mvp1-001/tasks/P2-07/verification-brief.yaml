@@ -1,0 +1,30 @@
+schemaVersion: "1.0"
+artifactType: verification-brief
+taskId: "P2-07"
+implementationReportPath: "runs/<run-id>/tasks/P2-07/implementation-report.yaml"
+scopeReviewed:
+  - "apps/web-game/src/components/tutorial/**"
+  - "apps/web-game/src/accessibility/**"
+acceptanceCriteria:
+  - id: "AC-1"
+    description: "Tutorial teaches clues, continuation, vertices, one-loop behavior, and a small puzzle."
+  - id: "AC-2"
+    description: "Reduced-motion and high-contrast settings work."
+  - id: "AC-3"
+    description: "Fixed and player-created lines are distinguishable without color alone."
+  - id: "AC-4"
+    description: "Controls have accessible labels and usable focus states."
+requiredChecks:
+  - command: "npm run typecheck"
+    purpose: "Verify the task acceptance criteria and detect regressions."
+  - command: "npm run test:e2e -- --grep tutorial"
+    purpose: "Verify the task acceptance criteria and detect regressions."
+  - command: "npm run build"
+    purpose: "Verify the task acceptance criteria and detect regressions."
+constraints:
+  - "Do not modify production code."
+  - "Treat the implementation report as a claim and verify it against the files."
+  - "Check every acceptance criterion independently."
+  - "Record evidence with file paths, test names, or command output."
+verificationReportPath: "runs/<run-id>/tasks/P2-07/verification-report.yaml"
+

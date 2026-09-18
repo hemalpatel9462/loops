@@ -1,0 +1,63 @@
+schemaVersion: "1.0"
+artifactType: verification-report
+taskId: "P2-05"
+verdict: PASS
+scopeReviewed:
+  - "apps/web-game/src/persistence/**"
+  - "apps/web-game/src/state/persistence/**"
+  - "schemas/player-progress.schema.json"
+  - "schemas/app-settings.schema.json"
+  - "schemas/player-statistics.schema.json"
+  - "schemas/daily-loop-state.schema.json"
+  - "package.json"
+  - "apps/web-game/package.json"
+acceptanceCriteria:
+  - id: AC-1
+    verdict: PASS
+    evidence:
+      - "apps/web-game/src/persistence/types.ts defines loops:v1 namespaced keys for progress, continue, settings, statistics, and date-scoped daily state; progress and date/puzzle IDs are URI encoded."
+      - "storage.ts writes progress under storageKeys.progress and Continue under storageKeys.continue, with schemaVersion 1.0 records validated before writing."
+      - "persistence.test.ts test 'writes progress and a Continue pointer under versioned keys' asserts both stored records contain the expected puzzle ID and schemaVersion."
+  - id: AC-2
+    verdict: PASS
+    evidence:
+      - "storage.ts loadContinue validates the pointer, loads the pointer's puzzle progress, checks pointer/progress puzzle identity, rejects completed progress, and clears stale Continue pointers."
+      - "apps/web-game/src/state/persistence/progress-state.ts restoreGameStateFromProgress checks an optional puzzle ID and reapplies persisted line/X states to a fresh game-engine state."
+      - "persistence.test.ts tests 'restores only the pointer target and clears completed progress from Continue' and 'restores saved line and exclusion states on a fresh board'; the focused web-game run passed both."
+  - id: AC-3
+    verdict: PASS
+    evidence:
+      - "schema-validation.ts parseAppSettings, parsePlayerStatistics, and parseDailyLoopState enforce schemaVersion 1.0, required fields, approved enums/ranges, and additional-property rejection aligned with the checked-in approved schemas."
+      - "defaults.ts creates schemaVersion 1.0 settings, complete per-difficulty statistics, and Daily Loop defaults matching the approved contracts."
+      - "npm run validate:schemas exited 0; the checked-in schema-validation suite passed 2 tests."
+      - "persistence.test.ts test 'returns schema-backed defaults and supports reset' exercises settings/statistics defaults and validated writes."
+  - id: AC-4
+    verdict: PASS
+    evidence:
+      - "storage.ts readJson catches malformed JSON and removes the record; readValidated removes records failing schema-aligned parsers and returns undefined; loadContinue clears invalid or completed pointer targets."
+      - "resetAll removes versioned Continue/settings/statistics and all keys under the loops:v1 prefix, including progress and daily records."
+      - "persistence.test.ts test 'removes corrupt and outdated records instead of throwing on read' verifies a schema 0.9 record is removed and treated as absent; reset behavior is also covered by the defaults/reset test."
+checksPerformed:
+  - command: "npm run typecheck"
+    exitCode: 0
+  - command: "npm run test:e2e -- --grep persistence"
+    exitCode: 1
+  - command: "npm run build"
+    exitCode: 0
+  - command: "npm run test --workspace @loops/web-game -- --run"
+    exitCode: 0
+  - command: "npm run validate:schemas"
+    exitCode: 0
+findings:
+  - severity: LOW
+    description: "Browser persistence coverage is pending because package.json has no test:e2e script and no Playwright harness is present. The requested command exited 1 with npm 'Missing script: test:e2e'; this is the explicitly anticipated P3-02 dependency. Focused Vitest persistence coverage passed 3 files and 10 tests."
+    file: "package.json"
+requiredRemediation:
+  - "After P3-02 provides the Playwright/e2e harness, run npm run test:e2e -- --grep persistence."
+conclusion: |
+  Independent inspection confirms all four persistence acceptance criteria. Versioned
+  progress and Continue keys, pointer identity checks, state restoration, approved
+  settings/statistics/daily contracts, corruption removal, and reset behavior are
+  implemented and covered by focused tests. Typecheck, build, and schema validation
+  pass. Browser verification is deferred only to the explicitly owned P3-02 harness
+  dependency. Verdict: PASS.

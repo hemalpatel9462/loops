@@ -1,0 +1,69 @@
+schemaVersion: "1.0"
+artifactType: implementation-report
+taskId: "P1-07"
+status: COMPLETE
+summary: |
+  Remediation 1 corrected solver lattice geometry and added regression coverage.
+  edgesAtVertex now returns exactly the horizontal and vertical edges incident
+  to the requested vertex, including correct corner and boundary handling.
+  Candidate-loop-derived clue tests confirm generated loops solve as valid
+  solutions with and without starting edges. During regression, the corrected
+  geometry also exposed an unsound propagation rule that forced two unknown
+  edges at a degree-zero vertex to line; that rule was narrowed to only force
+  a line when one selected and one unknown edge require degree two.
+filesChanged:
+  - path: "tools/puzzle-validator/solver/edges.ts"
+    change: "Corrected edgesAtVertex orientation and coordinate calculations for horizontal left/right and vertical up/down incident edges."
+  - path: "tools/puzzle-validator/solver/solver.ts"
+    change: "Corrected vertex propagation so a degree-zero vertex with two unknown edges remains undecided rather than being incorrectly forced to degree two."
+  - path: "tools/puzzle-validator/solver/solver.test.ts"
+    change: "Updated the multiple-solution clue fixture to remain valid under corrected vertex geometry while preserving original zero/one/multiple, fixed/excluded, and report tests."
+  - path: "tools/puzzle-validator/solver/remediation.test.ts"
+    change: "Added corner/boundary/interior incident-edge tests, generated-candidate derived-clue solving with and without starting edges, and generated-loop degree-two regression coverage."
+  - path: "orchestration/runs/2026-09-18-mvp1-001/tasks/P1-07/implementation-report-remediation-1.yaml"
+    change: "Recorded remediation scope, exact checks, acceptance evidence, deviations, and risks."
+acceptanceCriteria:
+  - id: AC-R1
+    result: PASS
+    evidence:
+      - "tools/puzzle-validator/solver/edges.ts edgesAtVertex now returns h:row:column-1 and h:row:column when columns are in bounds, plus v:row-1:column and v:row:column when rows are in bounds."
+      - "remediation.test.ts asserts exact edge sets for top-left, top boundary, left boundary, interior, and bottom-right corner vertices."
+  - id: AC-R2
+    result: PASS
+    evidence:
+      - "remediation.test.ts generates a deterministic 4x4 candidate with @loops/puzzle-generator, derives each cell clue from candidate edges, and verifies solvePuzzle.report.valid is true with no starting edges."
+      - "The same test verifies the generated candidate remains among valid solver solutions when two candidate edges are supplied as startingEdges."
+      - "A generated 5x5 candidate regression confirms every candidate vertex has degree two under the corrected solver geometry."
+  - id: AC-R3
+    result: PASS
+    evidence:
+      - "npm run test --workspace @loops/puzzle-validator passed 2 test files and 8 tests, including original solver behavior and remediation coverage."
+      - "Original fixed/excluded behavior passes after correcting the unsound 0-selected/2-unknown vertex propagation rule."
+      - "Original multi-solution cap test remains passing with corrected geometry and asserts exactly two retained solutions."
+      - "Connectivity validation and approved SolverReport tests remain passing."
+commandsRun:
+  - command: "npm run test --workspace @loops/puzzle-validator"
+    exitCode: 0
+    result: "Vitest passed 2 test files and 8 tests."
+  - command: "npm run typecheck"
+    exitCode: 0
+    result: "Workspace typecheck passed for all configured workspaces, including puzzle-validator."
+  - command: "npm run validate:solver-fixtures"
+    exitCode: 0
+    result: "Root route delegated to @loops/puzzle-validator and validated 2 solver fixtures."
+  - command: "node_modules/.bin/vitest run --config tools/puzzle-generator/pipeline/vitest.config.ts"
+    exitCode: 0
+    result: "Pipeline compatibility suite passed 1 test file and 4 tests; no puzzle-generator files were modified."
+deviations:
+  - "The remediation required a narrowly scoped solver propagation correction in addition to edgesAtVertex: with correct incident edges, selected=0 and unknown=2 represents either degree 0 or degree 2 and cannot force both edges line. This was necessary to satisfy AC-R3 and preserve fixed/excluded correctness."
+  - "The original multiple-solution fixture clues were updated from [[2,2],[2,1]] to [[2,3],[3,2]] because the original values only produced the intended two solutions under the incorrect vertex geometry; the test still validates the required two-solution cap."
+knownRisks:
+  - "The solver still uses exhaustive search after local propagation and may require more work on large, weakly constrained boards; it stops after the second solution as required."
+  - "Candidate-derived test coverage imports the existing puzzle-generator source for regression evidence but does not alter puzzle-generator files or contracts."
+  - "The fixture CLI continues to use Node 22 experimental type stripping and emits its expected warning; this remains development-only."
+handoffNotes: |
+  Solver geometry is now aligned with the shared edge orientation contract and
+  generated candidate loops are accepted when clues are derived from their
+  selected edges. Downstream pipeline generation can continue using
+  solvePuzzle with startingEdges. The four required remediation checks all exit
+  0, including the puzzle-generator pipeline compatibility suite.

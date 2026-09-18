@@ -1,0 +1,100 @@
+schemaVersion: "1.0"
+artifactType: implementation-report
+taskId: "P2-06"
+status: COMPLETE
+summary: |
+  Implemented offline game-flow state and reusable screens for Quick Play,
+  Daily Loop, Continue, completion feedback, and Relaxed/Assisted modes. The
+  flow reads and validates the local puzzle-data pack, selects Quick Play and
+  Daily Loop puzzles deterministically, restores saved progress through the
+  existing persistence repository, rejects immediately contradictory Assisted
+  moves using the engine hint-consistency checks, and records completion time
+  and hint counts in approved local statistics records.
+filesChanged:
+  - path: "apps/web-game/src/state/game-flow/types.ts"
+    change: "Defined flow sessions, completion statistics, assisted-move feedback, selection options, dependencies, and local puzzle source contracts."
+  - path: "apps/web-game/src/state/game-flow/puzzle-catalog.ts"
+    change: "Loaded the catalog and all five local puzzle JSON records, parsed them through @loops/puzzle-format, and exposed validated local-puzzle lookup helpers."
+  - path: "apps/web-game/src/state/game-flow/game-flow.ts"
+    change: "Added deterministic Quick Play and date-based Daily Loop selection, Continue restoration, mode-aware edge actions, persistence updates, hint/check handling, completion validation, daily-state updates, and time/hint statistics."
+  - path: "apps/web-game/src/state/game-flow/index.ts"
+    change: "Exported the game-flow public API."
+  - path: "apps/web-game/src/state/game-flow/game-flow.test.ts"
+    change: "Added focused coverage for local Quick Play, unfinished persistence, deterministic Daily Loop, Continue restoration, Assisted versus Relaxed behavior, and completion statistics."
+  - path: "apps/web-game/src/screens/types.ts"
+    change: "Defined screen props for mode selection, Daily Loop, Continue, and completion views."
+  - path: "apps/web-game/src/screens/ModeSelectionScreen.tsx"
+    change: "Added accessible difficulty and mode selectors plus Quick Play, Daily Loop, and Continue actions."
+  - path: "apps/web-game/src/screens/DailyLoopScreen.tsx"
+    change: "Added date-labelled Daily Loop preview with board, difficulty, mode, and start action."
+  - path: "apps/web-game/src/screens/ContinueScreen.tsx"
+    change: "Added saved-progress summary with mode, elapsed time, hint count, and resume action."
+  - path: "apps/web-game/src/screens/CompletionScreen.tsx"
+    change: "Added completion feedback showing difficulty, mode, elapsed time, and hints used."
+  - path: "apps/web-game/src/screens/GameFlowScreen.tsx"
+    change: "Added a reusable flow coordinator and onSessionStart integration callback for the later board/app integration task."
+  - path: "apps/web-game/src/screens/index.ts"
+    change: "Exported all game-flow screens and screen contracts."
+  - path: "apps/web-game/src/screens/screens.css"
+    change: "Added responsive, keyboard-friendly mode, summary, and action styling for the flow screens."
+  - path: "orchestration/runs/2026-09-18-mvp1-001/tasks/P2-06/implementation-report.yaml"
+    change: "Recorded implementation scope, acceptance evidence, command results, deviations, and risks."
+acceptanceCriteria:
+  - id: AC-1
+    result: PASS
+    evidence:
+      - "puzzle-catalog.ts parses the checked-in catalog puzzle JSON through parsePuzzleDefinition before exposing it to the flow."
+      - "selectQuickPlayPuzzle filters by requested difficulty and chooses from validated local puzzles using a stable seed."
+      - "game-flow.test.ts verifies Quick Play returns the requested beginner puzzle and persists an unfinished move."
+  - id: AC-2
+    result: PASS
+    evidence:
+      - "selectDailyPuzzle hashes daily:<YYYY-MM-DD> against the sorted local catalog, so the same date always selects the same puzzle offline."
+      - "startDailyLoop persists the date, stable seed, puzzle ID, and in-progress status using the approved DailyLoopState contract."
+      - "game-flow.test.ts verifies repeated date selection equality and the persisted date mapping."
+  - id: AC-3
+    result: PASS
+    evidence:
+      - "getContinueProgress loads the versioned Continue pointer through the existing persistence repository and resolves its puzzle from the validated local catalog."
+      - "resumeContinue restores saved edge states, mode, elapsed seconds, hints, checks, and start time through restoreGameStateFromProgress."
+      - "game-flow.test.ts verifies Continue resumes the saved Assisted mode, time, and edge choice."
+  - id: AC-4
+    result: PASS
+    evidence:
+      - "ModeSelectionScreen exposes Relaxed and Assisted choices with accessible pressed state and explanatory labels."
+      - "cycleSessionEdge always allows Relaxed moves, while Assisted moves are rejected when the engine hint consistency result identifies a clue, vertex, or premature-loop contradiction."
+      - "game-flow.test.ts verifies an immediately contradictory move is flagged in Assisted mode but accepted in Relaxed mode."
+  - id: AC-5
+    result: PASS
+    evidence:
+      - "completeSession validates the single-loop completion through @loops/game-engine/validation before saving completion state."
+      - "CompletionStats includes puzzle ID, difficulty, mode, elapsedSeconds, hintsUsed, and completedAt."
+      - "recordCompletion updates approved PlayerStatistics totals, best time, average time, per-difficulty completion, and hint counts; Daily Loop completion also records completionTimeSeconds and hintsUsed."
+      - "CompletionScreen renders time and hint count, and game-flow.test.ts verifies both values in persisted statistics and completion output."
+commandsRun:
+  - command: "npm run test --workspace @loops/web-game -- --run"
+    exitCode: 0
+    result: "Vitest passed 6 test files and 18 tests, including 5 game-flow tests."
+  - command: "npm run typecheck"
+    exitCode: 0
+    result: "Root workspace typecheck passed for web-game and all existing workspaces."
+  - command: "npm run build"
+    exitCode: 0
+    result: "Root production build passed and emitted apps/web-game/dist."
+  - command: "npm run test:e2e -- --grep modes"
+    exitCode: 1
+    result: "The root package reported Missing script: test:e2e; the browser harness is owned by P3-02 and no root scripts were modified within this task scope."
+deviations:
+  - "The requested browser modes check is unavailable until P3-02 adds the Playwright/test:e2e harness; deterministic focused tests cover the flow behavior in the interim."
+  - "GameFlowScreen exposes onSessionStart but is not mounted by AppShell, and it does not render the board itself; AppShell/board/engine wiring is outside the P2-06 write scope and belongs to P3-01."
+  - "Local puzzle JSON is imported from packages/puzzle-data through the flow module because adding a dependency entry to apps/web-game/package.json is outside this task's write scope; the orchestrator should confirm clean-install workspace linking before release."
+knownRisks:
+  - "The current daily streak increment is intentionally local and conservative; a later integration or playtest pass may need consecutive-date streak rules rather than incrementing on every completed Daily Loop."
+  - "The Assisted mode uses the engine's partial consistency deductions and does not prevent every globally impossible move that requires exhaustive search; completion validation remains authoritative."
+  - "The flow screen actions hand sessions to the integration callback but do not navigate to a board until P3-01 mounts the board and reducer."
+handoffNotes: |
+  P3-01 should mount GameFlowScreen from screens, provide onSessionStart, and
+  connect the returned GameFlowSession to the board/reducer. Use
+  cycleSessionEdge, requestSessionHint, checkSessionProgress, and
+  completeSession as the flow-facing action boundary so Relaxed/Assisted,
+  persistence, and completion statistics remain consistent.

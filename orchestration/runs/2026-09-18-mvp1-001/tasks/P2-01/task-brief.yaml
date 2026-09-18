@@ -1,0 +1,35 @@
+schemaVersion: "1.0"
+artifactType: task-brief
+taskId: "P2-01"
+title: "Complete puzzle-generation pipeline"
+phase: 2
+goal: "Connect loop generation, clue derivation, starting-edge selection, validation, uniqueness checking, and JSON emission."
+context:
+  - "loops_game_design_spec.md"
+  - "PROJECT_STRUCTURE_AND_DEPLOYMENT.md"
+  - "orchestration/IMPLEMENTATION_PLAN.md"
+  - "orchestration/task-registry.json"
+dependencies: ["P1-02", "P1-06", "P1-07"]
+writeScope:
+  - "tools/puzzle-generator/pipeline/**"
+forbiddenScope:
+  - "orchestration/task-registry.json"
+  - "orchestration/briefs/**"
+  - "orchestration/runs/2026-09-18-mvp1-001/tasks/P2-01/verification-brief.yaml"
+  - "orchestration/runs/2026-09-18-mvp1-001/tasks/P2-01/verification-report.yaml"
+acceptanceCriteria:
+  - id: "AC-1"
+    description: "Hidden loop is generated first."
+  - id: "AC-2"
+    description: "Clues are derived from the hidden loop."
+  - id: "AC-3"
+    description: "Starting edges use difficulty ratios and deduction value."
+  - id: "AC-4"
+    description: "The solver validates the puzzle before output."
+  - id: "AC-5"
+    description: "Only accepted puzzles are emitted as PuzzleDefinition JSON."
+requiredChecks:
+  - "npm run generate -- --difficulty beginner --count 1"
+  - "npm run validate:puzzles"
+  - "npm run typecheck"
+implementationReportPath: "orchestration/runs/2026-09-18-mvp1-001/tasks/P2-01/implementation-report.yaml"

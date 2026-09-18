@@ -1,0 +1,62 @@
+schemaVersion: "1.0"
+artifactType: verification-report
+taskId: "P1-07"
+verdict: PASS
+scopeReviewed:
+  - "tools/puzzle-validator/solver/edges.ts"
+  - "tools/puzzle-validator/solver/solver.ts"
+  - "tools/puzzle-validator/solver/solver.test.ts"
+  - "tools/puzzle-validator/solver/remediation.test.ts"
+  - "tools/puzzle-generator/pipeline/**"
+  - "schemas/solver-report.schema.json"
+  - "orchestration/runs/2026-09-18-mvp1-001/tasks/P1-07/implementation-report-remediation-1.yaml"
+acceptanceCriteria:
+  - id: AC-R1
+    verdict: PASS
+    evidence:
+      - "tools/puzzle-validator/solver/edges.ts:66-72 returns horizontal left/right edges h:row:column-1 and h:row:column when in bounds, plus vertical up/down edges v:row-1:column and v:row:column when in bounds."
+      - "tools/puzzle-validator/solver/remediation.test.ts:13-19 asserts exact incident edge sets for top-left corner, top boundary, left boundary, interior, and bottom-right corner vertices; the test passed."
+  - id: AC-R2
+    verdict: PASS
+    evidence:
+      - "tools/puzzle-validator/solver/remediation.test.ts:21-62 generates a 4x4 candidate via @loops/puzzle-generator, derives clues from candidate edges, and confirms solvePuzzle reports valid and retains the candidate loop both without starts and with two starting edges."
+      - "tools/puzzle-validator/solver/remediation.test.ts:64-75 confirms every vertex of a generated 5x5 candidate has degree two under the corrected solver geometry."
+      - "tools/puzzle-generator/pipeline/pipeline.ts:80-122 derives clues, selects starts, constructs a PuzzleDefinition, and calls solvePuzzle; pipeline tests passed with generated schema-valid accepted puzzles."
+  - id: AC-R3
+    verdict: PASS
+    evidence:
+      - "tools/puzzle-validator/solver/solver.ts:186-201 now leaves selected=0/unknown=2 vertices undecided and only forces a line for selected=1/unknown=1; this removes the unsound propagation exposed by corrected geometry."
+      - "tools/puzzle-validator/solver/solver.test.ts:24-47 retains zero-solution, fixed/excluded, two-solution cap, and report-shape coverage; all original tests passed after remediation."
+      - "tools/puzzle-validator/solver/solver.ts:217-232 retains premature disconnected-cycle rejection, and finalSolutionIsValid still requires a single selected component."
+      - "schemas/solver-report.schema.json remains the approved report contract; original report-shape tests passed."
+checksPerformed:
+  - command: "npm run test --workspace @loops/puzzle-validator"
+    exitCode: 0
+    result: "Vitest passed 2 test files and 8 tests: 5 original solver tests and 3 remediation tests."
+  - command: "npm run typecheck"
+    exitCode: 0
+    result: "Workspace typecheck passed for web-game, game-engine, puzzle-format, puzzle-generator, and puzzle-validator."
+  - command: "npm run validate:solver-fixtures"
+    exitCode: 0
+    result: "Root route delegated to @loops/puzzle-validator and printed 'Validated 2 solver fixtures.'; only the expected Node experimental type-stripping warning appeared."
+  - command: "node_modules/.bin/vitest run --config tools/puzzle-generator/pipeline/vitest.config.ts"
+    exitCode: 0
+    result: "Pipeline compatibility suite passed 1 test file and 4 tests, including schema-valid unique puzzle emission and accepted/rejected pipeline result behavior."
+findings:
+  - severity: LOW
+    description: "The corrected solver geometry required updating the prior multiple-solution fixture clues to [[2,3],[3,2]]; the test still asserts exactly two retained solutions and the two-solution cap."
+    file: "tools/puzzle-validator/solver/solver.test.ts"
+  - severity: LOW
+    description: "The solver remains exhaustive after propagation and can be expensive on large weakly constrained boards; the required early stop after the second solution remains intact."
+    file: "tools/puzzle-validator/solver/solver.ts"
+  - severity: LOW
+    description: "The fixture CLI emits Node's expected experimental type-stripping warning; it is development-only."
+    file: "tools/puzzle-validator/src/validate-fixtures.ts"
+requiredRemediation: []
+conclusion: |
+  Independent remediation verification confirms AC-R1 through AC-R3. Incident-edge
+  geometry is correct at corners, boundaries, and interior vertices; generated
+  candidate loops solve from derived clues with and without starting edges; and
+  original fixed/excluded, connectivity, report-schema, zero/one/multiple, and
+  two-solution-cap behavior remains passing. All four required commands exited 0.
+  Verdict: PASS.

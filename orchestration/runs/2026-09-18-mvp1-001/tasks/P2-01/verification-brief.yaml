@@ -1,0 +1,31 @@
+schemaVersion: "1.0"
+artifactType: verification-brief
+taskId: "P2-01"
+implementationReportPath: "runs/<run-id>/tasks/P2-01/implementation-report.yaml"
+scopeReviewed:
+  - "tools/puzzle-generator/pipeline/**"
+acceptanceCriteria:
+  - id: "AC-1"
+    description: "Hidden loop is generated first."
+  - id: "AC-2"
+    description: "Clues are derived from the hidden loop."
+  - id: "AC-3"
+    description: "Starting edges use difficulty ratios and deduction value."
+  - id: "AC-4"
+    description: "The solver validates the puzzle before output."
+  - id: "AC-5"
+    description: "Only accepted puzzles are emitted as PuzzleDefinition JSON."
+requiredChecks:
+  - command: "npm run generate -- --difficulty beginner --count 1"
+    purpose: "Verify the task acceptance criteria and detect regressions."
+  - command: "npm run validate:puzzles"
+    purpose: "Verify the task acceptance criteria and detect regressions."
+  - command: "npm run typecheck"
+    purpose: "Verify the task acceptance criteria and detect regressions."
+constraints:
+  - "Do not modify production code."
+  - "Treat the implementation report as a claim and verify it against the files."
+  - "Check every acceptance criterion independently."
+  - "Record evidence with file paths, test names, or command output."
+verificationReportPath: "runs/<run-id>/tasks/P2-01/verification-report.yaml"
+

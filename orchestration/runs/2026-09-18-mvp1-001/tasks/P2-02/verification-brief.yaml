@@ -1,0 +1,29 @@
+schemaVersion: "1.0"
+artifactType: verification-brief
+taskId: "P2-02"
+implementationReportPath: "runs/<run-id>/tasks/P2-02/implementation-report.yaml"
+scopeReviewed:
+  - "tools/puzzle-analyzer/**"
+acceptanceCriteria:
+  - id: "AC-1"
+    description: "Coverage, regional usage, loop length, turns, density, and repetition are measured."
+  - id: "AC-2"
+    description: "Difficulty profiles use the approved fixed-edge ratios."
+  - id: "AC-3"
+    description: "Tiny, trivial, overly dense, or concentrated loops are rejected."
+  - id: "AC-4"
+    description: "Solver deduction metrics are included in analysis output."
+requiredChecks:
+  - command: "npm run test --workspace @loops/puzzle-analyzer"
+    purpose: "Verify the task acceptance criteria and detect regressions."
+  - command: "npm run analyze:puzzles"
+    purpose: "Verify the task acceptance criteria and detect regressions."
+  - command: "npm run typecheck"
+    purpose: "Verify the task acceptance criteria and detect regressions."
+constraints:
+  - "Do not modify production code."
+  - "Treat the implementation report as a claim and verify it against the files."
+  - "Check every acceptance criterion independently."
+  - "Record evidence with file paths, test names, or command output."
+verificationReportPath: "runs/<run-id>/tasks/P2-02/verification-report.yaml"
+

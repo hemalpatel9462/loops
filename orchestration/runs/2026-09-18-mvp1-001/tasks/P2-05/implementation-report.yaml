@@ -1,0 +1,69 @@
+schemaVersion: "1.0"
+artifactType: implementation-report
+taskId: "P2-05"
+status: COMPLETE
+summary: >-
+  Implemented a schema-validated, versioned localStorage repository for player
+  progress, Continue state, app settings, player statistics, and Daily Loop
+  state, plus a scoped handoff for restoring persisted progress into the game
+  engine. Focused persistence tests, typecheck, and production build pass.
+filesChanged:
+  - path: "apps/web-game/src/persistence/types.ts"
+    change: "Defined the storage adapter contract, persistence repository API, Continue pointer shape, and loops:v1 key builders."
+  - path: "apps/web-game/src/persistence/schema-validation.ts"
+    change: "Added strict runtime validation and parsing for player progress, app settings, player statistics, Daily Loop state, and Continue pointers, including schema-version and corruption checks."
+  - path: "apps/web-game/src/persistence/defaults.ts"
+    change: "Added approved-schema defaults for settings, statistics, and Daily Loop state."
+  - path: "apps/web-game/src/persistence/storage.ts"
+    change: "Added localStorage-safe repository operations, memory storage for tests, versioned progress keys, Continue restoration and clearing, reset behavior, and safe corrupt-record removal."
+  - path: "apps/web-game/src/persistence/index.ts"
+    change: "Exported the persistence repository, defaults, key builders, validators, and storage types."
+  - path: "apps/web-game/src/persistence/persistence.test.ts"
+    change: "Added focused tests for versioned keys, Continue round-tripping, completed-state clearing, defaults/reset, corrupt/outdated records, and state restoration."
+  - path: "apps/web-game/src/state/persistence/progress-state.ts"
+    change: "Added conversion from runtime edge state snapshots to approved PlayerProgress and restoration of saved line/X states onto a fresh game-engine state."
+  - path: "apps/web-game/src/state/persistence/index.ts"
+    change: "Exported the progress-state persistence handoff helpers."
+acceptanceCriteria:
+  - id: "AC-1"
+    result: PASS
+    evidence:
+      - "storageKeys generates loops:v1:progress:<encoded-puzzle-id>, loops:v1:continue, loops:v1:settings, loops:v1:statistics, and loops:v1:daily:<encoded-date> keys in apps/web-game/src/persistence/types.ts."
+      - "The persistence test 'writes progress and a Continue pointer under versioned keys' verifies schemaVersion 1.0 records are stored and loadable."
+  - id: "AC-2"
+    result: PASS
+    evidence:
+      - "loadContinue reads the validated Continue pointer, loads the matching puzzle progress, checks puzzle identity, and rejects completed progress."
+      - "restoreGameStateFromProgress reconstructs a fresh game-engine state and reapplies persisted line/X states; the corresponding focused test passes."
+  - id: "AC-3"
+    result: PASS
+    evidence:
+      - "parseAppSettings, parsePlayerStatistics, and parseDailyLoopState enforce the approved schemaVersion 1.0 fields, enums, required values, numeric ranges, and additional-property rejection."
+      - "Repository getSettings/getStatistics defaults and save/load methods are covered by persistence tests."
+  - id: "AC-4"
+    result: PASS
+    evidence:
+      - "Malformed JSON, outdated schema versions, invalid fields, and invalid Continue pointers are removed and treated as absent by readValidated."
+      - "resetAll removes versioned repository records, and focused tests verify corrupt progress removal and reset behavior."
+commandsRun:
+  - command: "npm run typecheck"
+    exitCode: 0
+  - command: "npm run test --workspace @loops/web-game -- --run"
+    exitCode: 0
+  - command: "npm run test:e2e -- --grep persistence"
+    exitCode: 1
+  - command: "npm run build"
+    exitCode: 0
+deviations:
+  - "The required npm run test:e2e -- --grep persistence check could not execute because the repository currently has no test:e2e script; npm reported Missing script: test:e2e."
+  - "No root script or browser route was added because both are outside the P2-05 write scope."
+knownRisks:
+  - "The persistence repository is not wired into the visible app shell or game-flow routes yet; the P3/P2 flow integration tasks must connect Continue and settings UI to these exports."
+  - "Browser-level persistence coverage remains pending until the repository gains its Playwright/e2e command and game-flow route."
+handoffNotes: >-
+  P2-06/P3-01 should use getPersistenceRepository(), saveContinue(),
+  loadContinue(), and restoreGameStateFromProgress() when wiring app flow.
+  The generated run brief was present at the project-root path
+  2026-09-18-mvp1-001/tasks/P2-05/task-brief.yaml; the canonical brief and
+  all listed context were read before editing. Production files outside the
+  declared persistence scopes were not modified.

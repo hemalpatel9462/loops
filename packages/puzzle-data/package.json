@@ -1,0 +1,11 @@
+{
+  "name": "@loops/puzzle-data",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./catalog.json": "./catalog.json",
+    "./puzzles/*": "./puzzles/*"
+  },
+  "files": ["catalog.json", "puzzles"]
+}

@@ -1,0 +1,62 @@
+schemaVersion: "1.0"
+artifactType: verification-report
+taskId: "P2-07"
+verdict: PASS
+scopeReviewed:
+  - "apps/web-game/src/components/tutorial/**"
+  - "apps/web-game/src/accessibility/**"
+  - "apps/web-game/src/components/edge/EdgeSegment.tsx"
+  - "apps/web-game/src/components/edge/edge.css"
+  - "apps/web-game/src/styles/global.css"
+  - "package.json"
+acceptanceCriteria:
+  - id: AC-1
+    verdict: PASS
+    evidence:
+      - "apps/web-game/src/components/tutorial/steps.ts defines six ordered lessons covering clues, continuation, vertices, one connected closed loop, and a final practice step with a two-by-two puzzle."
+      - "Tutorial.tsx renders the lessons in a semantic role=dialog with progress, Back/Next navigation, Skip/Close actions, and Start puzzle completion control; the final step renders a labeled small practice board."
+      - "tutorial.test.ts test 'covers the core rules and ends with a small practice puzzle' asserts clue, continuation, vertex, one connected closed loop, and practice content."
+  - id: AC-2
+    verdict: PASS
+    evidence:
+      - "preferences.ts applies or removes data-reduced-motion and data-high-contrast on document.documentElement, and its hook resets both attributes on cleanup."
+      - "accessibility.css suppresses transitions/animations under data-reduced-motion and provides high-contrast canvas, surface, ink, border, focus, and loop token overrides; tutorial.css also includes prefers-reduced-motion fallbacks."
+      - "AccessibilitySettings.tsx exposes labeled Reduce motion and High contrast checkbox controls; accessibility.test.ts verifies both attributes apply and clear."
+  - id: AC-3
+    verdict: PASS
+    evidence:
+      - "accessibility.css gives .loop-edge--fixed .loop-edge__line a dash pattern and explicitly resets .loop-edge--line:not(.loop-edge--fixed) to a solid stroke, providing a non-color distinction."
+      - "EdgeSegment.tsx supplies loop-edge--fixed, loop-edge--line, and loop-edge__line hooks and data-fixed semantics for the CSS selectors; fixed edges render the line even when their editable state is not line."
+      - "High-contrast CSS separately reinforces fixed and player line widths and colors while retaining the fixed dash pattern."
+  - id: AC-4
+    verdict: PASS
+    evidence:
+      - "Tutorial.tsx uses dialog labeling via aria-labelledby/aria-describedby, gives the close and progress controls accessible labels, and uses native keyboard-operable buttons. AccessibilitySettings.tsx uses a labeled fieldset and native checkboxes."
+      - "tutorial.css, accessibility.css, global.css, and edge.css provide focus-visible outlines; EdgeSegment retains aria-label, role=button, tabIndex, Enter/Space handling, and focus-visible hit-target styling."
+      - "The focused web-game test run passed tutorial and accessibility suites: 5 files and 13 tests."
+checksPerformed:
+  - command: "npm run typecheck"
+    exitCode: 0
+  - command: "npm run test:e2e -- --grep tutorial"
+    exitCode: 1
+  - command: "npm run build"
+    exitCode: 0
+  - command: "npm run test --workspace @loops/web-game -- --run"
+    exitCode: 0
+findings:
+  - severity: LOW
+    description: "Browser-level tutorial, focus, and screen-reader coverage is pending because package.json has no test:e2e script or Playwright harness. The requested command exited 1 with npm 'Missing script: test:e2e'; this is the explicitly anticipated P3-02 dependency."
+    file: "package.json"
+  - severity: LOW
+    description: "Tutorial and accessibility exports are not mounted by the current AppShell, so the verified behavior becomes reachable only after the scoped UI integration task imports these exports and styles."
+    file: "apps/web-game/src/app/AppShell.tsx"
+requiredRemediation:
+  - "After P3-02 provides the Playwright/e2e harness, run npm run test:e2e -- --grep tutorial."
+  - "Wire Tutorial, AccessibilitySettings, and useAccessibilityPreferences into the app flow during the owning integration task."
+conclusion: |
+  Independent inspection confirms all four P2-07 acceptance criteria. The tutorial
+  content teaches every required rule and includes a small practice puzzle; motion
+  and contrast preferences apply document-level behavior; fixed versus player lines
+  differ by stroke pattern as well as color; and controls/dialogs expose labels and
+  focus behavior. Typecheck, build, and focused tests pass. Browser verification and
+  runtime mounting remain explicitly owned follow-ups. Verdict: PASS.

@@ -1,0 +1,39 @@
+schemaVersion: "1.0"
+artifactType: task-brief
+taskId: "P2-02"
+title: "Difficulty analyzer and quality evaluator"
+phase: 2
+goal: "Measure puzzle complexity and reject valid but trivial, concentrated, repetitive, or unreadable puzzles."
+context:
+  - "loops_game_design_spec.md"
+  - "PROJECT_STRUCTURE_AND_DEPLOYMENT.md"
+  - "orchestration/IMPLEMENTATION_PLAN.md"
+  - "orchestration/task-registry.json"
+dependencies: ["P1-07","P2-01"]
+writeScope:
+  - "tools/puzzle-analyzer/**"
+forbiddenScope:
+  - "orchestration/task-registry.json"
+  - "orchestration/briefs/**"
+  - "orchestration/runs/<run-id>/tasks/<task-id>/verification-brief.yaml"
+  - "orchestration/runs/<run-id>/tasks/<task-id>/verification-report.yaml"
+acceptanceCriteria:
+  - id: "AC-1"
+    description: "Coverage, regional usage, loop length, turns, density, and repetition are measured."
+  - id: "AC-2"
+    description: "Difficulty profiles use the approved fixed-edge ratios."
+  - id: "AC-3"
+    description: "Tiny, trivial, overly dense, or concentrated loops are rejected."
+  - id: "AC-4"
+    description: "Solver deduction metrics are included in analysis output."
+requiredChecks:
+  - "npm run test --workspace @loops/puzzle-analyzer"
+  - "npm run analyze:puzzles"
+  - "npm run typecheck"
+implementationReportPath: "runs/<run-id>/tasks/P2-02/implementation-report.yaml"
+instructions:
+  - "Read the task brief and all listed context before editing."
+  - "Modify only the assigned write scope and preserve unrelated work."
+  - "Run the required checks or record why a check is unavailable."
+  - "Write the implementation report before returning."
+

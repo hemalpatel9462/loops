@@ -1,0 +1,42 @@
+schemaVersion: "1.0"
+artifactType: task-brief
+taskId: "P2-06"
+title: "Quick Play, Daily Loop, and app flow"
+phase: 2
+goal: "Implement the core game modes and navigation flow using local validated puzzle data."
+context:
+  - "loops_game_design_spec.md"
+  - "PROJECT_STRUCTURE_AND_DEPLOYMENT.md"
+  - "orchestration/IMPLEMENTATION_PLAN.md"
+  - "orchestration/task-registry.json"
+dependencies: ["P2-03","P2-04","P2-05"]
+writeScope:
+  - "apps/web-game/src/screens/**"
+  - "apps/web-game/src/state/game-flow/**"
+forbiddenScope:
+  - "orchestration/task-registry.json"
+  - "orchestration/briefs/**"
+  - "orchestration/runs/<run-id>/tasks/<task-id>/verification-brief.yaml"
+  - "orchestration/runs/<run-id>/tasks/<task-id>/verification-report.yaml"
+acceptanceCriteria:
+  - id: "AC-1"
+    description: "Quick Play selects a local validated puzzle."
+  - id: "AC-2"
+    description: "Daily Loop selects deterministically by date."
+  - id: "AC-3"
+    description: "Continue resumes an unfinished puzzle."
+  - id: "AC-4"
+    description: "Relaxed and Assisted modes behave according to the specification."
+  - id: "AC-5"
+    description: "Completion statistics include time and hint count."
+requiredChecks:
+  - "npm run typecheck"
+  - "npm run test:e2e -- --grep modes"
+  - "npm run build"
+implementationReportPath: "runs/<run-id>/tasks/P2-06/implementation-report.yaml"
+instructions:
+  - "Read the task brief and all listed context before editing."
+  - "Modify only the assigned write scope and preserve unrelated work."
+  - "Run the required checks or record why a check is unavailable."
+  - "Write the implementation report before returning."
+

@@ -1,0 +1,75 @@
+.loop-board {
+  --loop-board-grid: var(--color-border-strong, #b7c0b3);
+  --loop-board-cell: var(--color-surface, #fffdf8);
+  --loop-board-clue: var(--color-ink, #20251f);
+  width: min(100%, 58rem);
+  margin-inline: auto;
+}
+
+.loop-board__viewport {
+  width: 100%;
+  overflow: visible;
+  border: 1px solid var(--color-border, #d8ddd4);
+  border-radius: var(--radius-md, 1rem);
+  background: var(--loop-board-cell);
+  box-shadow: var(--shadow-card, 0 0.5rem 1.5rem rgb(33 40 32 / 6%));
+  container-type: inline-size;
+}
+
+.loop-board__svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: var(--loop-board-ratio, 1 / 1);
+  overflow: visible;
+  touch-action: manipulation;
+  user-select: none;
+}
+
+.loop-board__cell rect {
+  fill: var(--loop-board-cell);
+  stroke: var(--loop-board-grid);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.loop-board__clue {
+  fill: var(--loop-board-clue);
+  font-family: var(--font-body, system-ui, sans-serif);
+  font-size: 2.25rem;
+  font-weight: 700;
+  pointer-events: none;
+}
+
+.loop-board__dot {
+  fill: var(--color-ink, #20251f);
+  pointer-events: none;
+}
+
+@container (max-width: 32rem) {
+  .loop-board__clue {
+    font-size: 2rem;
+  }
+}
+
+@media (min-width: 48rem) {
+  .loop-board {
+    width: min(100%, 64rem);
+  }
+
+  .loop-board__clue {
+    font-size: 2.5rem;
+  }
+}
+
+@media (min-width: 80rem) {
+  .loop-board {
+    width: min(100%, 70rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .loop-edge__line {
+    transition: none;
+  }
+}

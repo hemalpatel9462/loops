@@ -1,0 +1,70 @@
+schemaVersion: "1.0"
+artifactType: verification-report
+taskId: "P2-01"
+verdict: PASS
+scopeReviewed:
+  - "tools/puzzle-generator/pipeline/**"
+  - "tools/puzzle-generator/package.json"
+  - "tools/puzzle-generator/tsconfig.json"
+  - "package.json"
+  - "package-lock.json"
+  - "tools/puzzle-generator/src/generator.ts"
+  - "tools/puzzle-generator/src/geometry.ts"
+  - "tools/puzzle-validator/solver/**"
+acceptanceCriteria:
+  - id: AC-1
+    verdict: PASS
+    evidence:
+      - "tools/puzzle-generator/pipeline/pipeline.ts buildPuzzleAttempt calls generateCandidateLoop before deriveClues, selectStartingEdges, makePuzzle, or solver validation; the hidden candidate is geometry-validated before conversion."
+      - "tools/puzzle-generator/src/generator.ts produces a candidate-loop artifact with closed, connected, degree-two edges, and focused pipeline tests passed deterministically."
+  - id: AC-2
+    verdict: PASS
+    evidence:
+      - "tools/puzzle-generator/pipeline/clues.ts derives every cell clue by counting the four boundary edges present in a Set of hiddenLoopEdges."
+      - "pipeline/pipeline.test.ts test 'derives one clue count per cell from hidden loop edges' derives [[2,2],[2,2]] from a 2x2 perimeter loop."
+  - id: AC-3
+    verdict: PASS
+    evidence:
+      - "tools/puzzle-generator/pipeline/starting-edges.ts computes difficultyTargetRatio, ranks solution edges using adjacent clue values and neighboring solution edges, and records a non-empty deductionValue explanation for each score."
+      - "pipeline/pipeline.test.ts test 'selects a deterministic ratio of high-deduction starting edges' confirms repeatable selection, four selected edges for the 2x2 beginner ratio, and non-empty deduction explanations."
+      - "The required beginner generation emitted 7 starting edges from a 16-edge solution (metadata.startingEdgeRatio 0.4375), within DIFFICULTY_PROFILES.beginner's 0.4–0.5 range."
+  - id: AC-4
+    verdict: PASS
+    evidence:
+      - "generateAcceptedPuzzle re-solves every constructed candidate and accepts only solutionCount === 1 with report.valid and report.unique; emitAcceptedPuzzle repeats parse and uniqueness checks before encoding."
+      - "npm run validate:puzzles exited 0 and printed solutionCount 1 and unique true for the integration route."
+      - "The focused pipeline suite passed its unique-emission and accepted-result tests; the corrected tools/puzzle-validator solver uses canonical incident-edge geometry."
+  - id: AC-5
+    verdict: PASS
+    evidence:
+      - "makePuzzle calls parsePuzzleDefinition before returning a candidate, and emitAcceptedPuzzle calls parsePuzzleDefinition plus the solver gate before encodePuzzleDefinition."
+      - "npm run generate -- --difficulty beginner --count 1 exited 0 and emitted a JSON array containing schemaVersion, puzzle identity, clues, solutionEdges, startingEdges, and metadata."
+      - "A direct vite-node CLI invocation piped through JSON.parse exited 0 and confirmed one parseable PuzzleDefinition-shaped record with clues, solutionEdges, and metadata."
+checksPerformed:
+  - command: "npm run generate -- --difficulty beginner --count 1"
+    exitCode: 0
+  - command: "npm run validate:puzzles"
+    exitCode: 0
+  - command: "npm run typecheck"
+    exitCode: 0
+  - command: "node_modules/.bin/vitest run --config tools/puzzle-generator/pipeline/vitest.config.ts"
+    exitCode: 0
+  - command: "npm run test --workspace @loops/puzzle-generator"
+    exitCode: 0
+  - command: "npm run validate:schemas"
+    exitCode: 0
+  - command: "node_modules/.bin/vite-node --config tools/puzzle-generator/pipeline/vite.config.ts tools/puzzle-generator/pipeline/cli.ts --difficulty beginner --count 1 | node -e 'let data=\"\"; process.stdin.on(\"data\", c => data += c); process.stdin.on(\"end\", () => { const parsed=JSON.parse(data); if (!Array.isArray(parsed) || parsed.length !== 1 || !parsed[0].solutionEdges || !parsed[0].clues || !parsed[0].metadata) process.exit(2); });'"
+    exitCode: 0
+findings:
+  - severity: LOW
+    description: "tools/puzzle-generator/tsconfig.json includes only src/**, so pipeline production and CLI sources are not covered by the workspace typecheck. A source-only tsc check for pipeline/types.ts, clues.ts, starting-edges.ts, pipeline.ts, and index.ts passed; a full pipeline glob check also exposed the CLI's readonly process.exitCode declaration and absent Node typings in Vite config files."
+    file: "tools/puzzle-generator/tsconfig.json"
+requiredRemediation:
+  - "In the owning integration scope, include tools/puzzle-generator/pipeline production sources in TypeScript coverage and provide Node typings/correct process declarations for the pipeline CLI/config files."
+conclusion: |
+  Independent inspection confirms all five P2-01 acceptance criteria. The pipeline
+  generates and validates a hidden loop first, derives clues from it, selects ratio-
+  bounded high-deduction starts, gates acceptance on solver uniqueness, and emits
+  only schema-parsed PuzzleDefinition JSON. Generation, puzzle validation, root
+  typecheck, focused pipeline tests, package tests, and schema validation all pass.
+  Verdict: PASS.

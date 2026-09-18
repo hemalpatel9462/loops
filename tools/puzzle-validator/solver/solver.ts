@@ -192,7 +192,13 @@ function propagate(
           deductions.contradiction += 1;
           return false;
         }
-        const forced: Assignment | undefined = selected === 2 ? 'excluded' : selected + unknown.length === 2 ? 'line' : selected === 0 && unknown.length === 1 ? 'excluded' : undefined;
+        const forced: Assignment | undefined = selected === 2
+          ? 'excluded'
+          : selected === 1 && unknown.length === 1
+            ? 'line'
+            : selected === 0 && unknown.length === 1
+              ? 'excluded'
+              : undefined;
         if (forced) {
           for (const edge of unknown) {
             const result = setAssignment(state, edge, forced);

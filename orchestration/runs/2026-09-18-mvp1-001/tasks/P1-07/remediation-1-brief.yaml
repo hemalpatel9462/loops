@@ -1,0 +1,36 @@
+schemaVersion: "1.0"
+artifactType: remediation-brief
+taskId: "P1-07"
+remediationAttempt: 1
+trigger: "P2-01 pipeline generates clue-consistent candidate loops that solver rejects before search."
+finding: "tools/puzzle-validator/solver/edges.ts edgesAtVertex uses row-1 horizontal and column-1 vertical edges, which are not incident to the requested lattice vertex. Generated candidate loops therefore appear to have degree 1, 3, or 4 to the solver despite matching cell clues."
+writeScope:
+  - "tools/puzzle-validator/**"
+  - "tools/puzzle-validator/solver/**"
+forbiddenScope:
+  - "orchestration/task-registry.json"
+  - "orchestration/briefs/**"
+  - "orchestration/runs/<run-id>/tasks/<task-id>/verification-brief.yaml"
+  - "orchestration/runs/<run-id>/tasks/<task-id>/verification-report.yaml"
+requiredChanges:
+  - "Correct edgesAtVertex to return the four edges incident to vertex(row,column): horizontal edges h:row:column-1 and h:row:column when in bounds, and vertical edges v:row-1:column and v:row:column when in bounds."
+  - "Add or update solver tests proving a generated candidate loop has degree 2 at every vertex and can be solved from derived clues, with and without starting edges."
+  - "Preserve fixed/excluded edge handling, connectivity checks, early two-solution termination, and the approved SolverReport schema."
+acceptanceCriteria:
+  - id: AC-R1
+    description: "edgesAtVertex returns exactly the incident board edges for interior, boundary, and corner vertices."
+  - id: AC-R2
+    description: "A valid generated candidate loop with clues derived from its edges is accepted by solvePuzzle as a valid solution; starting edges remain honored."
+  - id: AC-R3
+    description: "All original P1-07 solver behavior remains passing, including fixed/excluded options, connectivity, and uniqueness cap."
+requiredChecks:
+  - "npm run test --workspace @loops/puzzle-validator"
+  - "npm run typecheck"
+  - "npm run validate:solver-fixtures"
+  - "node_modules/.bin/vitest run --config tools/puzzle-generator/pipeline/vitest.config.ts"
+implementationReportPath: "runs/2026-09-18-mvp1-001/tasks/P1-07/implementation-report-remediation-1.yaml"
+instructions:
+  - "Read the original P1-07 brief and report before editing."
+  - "Modify only the assigned write scope and preserve unrelated work from other tasks."
+  - "Run every required check or record why it is unavailable."
+  - "Write the remediation implementation report at the exact path before returning."

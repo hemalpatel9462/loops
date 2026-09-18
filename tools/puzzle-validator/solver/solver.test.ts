@@ -35,7 +35,7 @@ describe('exhaustive uniqueness solver', () => {
   });
 
   it('returns multiple solutions and stops after the second', () => {
-    const result = solvePuzzle(puzzle({ id: 'loop-test-multiple', clues: [[2, 2], [2, 1]] }));
+    const result = solvePuzzle(puzzle({ id: 'loop-test-multiple', clues: [[2, 3], [3, 2]] }));
     expect(result.solutionCount).toBe(2);
     expect(result.solutions).toHaveLength(2);
     expect(result.report.solutionCount).toBe(2);

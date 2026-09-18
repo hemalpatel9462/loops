@@ -1,0 +1,30 @@
+schemaVersion: "1.0"
+artifactType: verification-brief
+taskId: "P2-03"
+implementationReportPath: "runs/<run-id>/tasks/P2-03/implementation-report.yaml"
+scopeReviewed:
+  - "tools/catalog-builder/**"
+  - "packages/puzzle-data/**"
+acceptanceCriteria:
+  - id: "AC-1"
+    description: "Validated puzzle JSON is emitted to packages/puzzle-data."
+  - id: "AC-2"
+    description: "Catalog entries point to real puzzle files."
+  - id: "AC-3"
+    description: "Duplicate IDs are rejected."
+  - id: "AC-4"
+    description: "Catalog validates against its schema."
+requiredChecks:
+  - command: "npm run build:catalog"
+    purpose: "Verify the task acceptance criteria and detect regressions."
+  - command: "npm run validate:catalog"
+    purpose: "Verify the task acceptance criteria and detect regressions."
+  - command: "npm run typecheck"
+    purpose: "Verify the task acceptance criteria and detect regressions."
+constraints:
+  - "Do not modify production code."
+  - "Treat the implementation report as a claim and verify it against the files."
+  - "Check every acceptance criterion independently."
+  - "Record evidence with file paths, test names, or command output."
+verificationReportPath: "runs/<run-id>/tasks/P2-03/verification-report.yaml"
+

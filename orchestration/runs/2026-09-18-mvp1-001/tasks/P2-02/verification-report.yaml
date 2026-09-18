@@ -1,0 +1,62 @@
+schemaVersion: "1.0"
+artifactType: verification-report
+taskId: "P2-02"
+verdict: PASS
+scopeReviewed:
+  - "tools/puzzle-analyzer/**"
+  - "package.json"
+  - "package-lock.json"
+  - "tools/puzzle-generator/src/generator.ts"
+  - "tools/puzzle-validator/solver/**"
+acceptanceCriteria:
+  - id: AC-1
+    verdict: PASS
+    evidence:
+      - "tools/puzzle-analyzer/src/geometry.ts measureLoop returns loopLength, bounding-box width/height ratios, rowsUsed, columnsUsed, regionalCoverage, turnCount, density, repetitionScore, symmetryScore, longestStraightRun, and averageStraightRun."
+      - "geometry.ts orders edges by shared vertices before calculating turns and straight runs; analyzer.test.ts test 'measures coverage, regions, length, turns, density, and repetition' asserts the perimeter metrics."
+      - "npm run analyze:puzzles emitted metrics including loopLength 18, full bounding-box coverage, regionalCoverage 7, turnCount 12, density 0.45, repetitionScore 0.75, and straight-run statistics."
+  - id: AC-2
+    verdict: PASS
+    evidence:
+      - "tools/puzzle-analyzer/src/profiles.ts defines the exact approved startingEdgeRatio ranges: beginner 0.40–0.50, easy 0.25–0.30, medium 0.15–0.20, hard 0.10–0.15, expert 0.05–0.10."
+      - "analyzer.test.ts test 'exposes approved fixed-edge ratios for every difficulty' asserts all five exact ranges."
+      - "evaluateQuality computes startingEdges.length / solutionEdges.length and rejects ratios outside the selected profile; the CLI smoke output reports fixedEdgeRatio 0.4444 with beginner profile 0.4–0.5."
+  - id: AC-3
+    verdict: PASS
+    evidence:
+      - "evaluateQuality implements tiny, trivial/low-turn, overlyDense, concentrated coverage/regions, repetitive, profile-required symmetrical, and starting-edge-ratio checks with explicit rejection reasons."
+      - "analyzer.test.ts test 'rejects tiny, trivial, concentrated, and dense loops' independently covers the required baseline rejection gates."
+      - "A direct symmetry check on a hard-profile perimeter measured symmetryScore 1 and returned loop-too-symmetrical; a direct repetition check on a deterministic 10x10 loop measured repetitionScore 0.9355 and returned loop-too-repetitive."
+  - id: AC-4
+    verdict: PASS
+    evidence:
+      - "analyzePuzzle copies direct, vertex, connectivity, contradiction, searchOnly, and maximumDepth from an optional SolverReport into solverDeductions and preserves solverReport."
+      - "analyzer.test.ts test 'includes solver deduction metrics in analysis output' asserts the complete deduction object and report are preserved."
+      - "When no report is provided, analysis still emits the stable schema-aligned zeroed deduction object, visible in the successful analyze:puzzles CLI output."
+checksPerformed:
+  - command: "npm run test --workspace @loops/puzzle-analyzer"
+    exitCode: 0
+  - command: "npm run analyze:puzzles"
+    exitCode: 0
+  - command: "npm run typecheck"
+    exitCode: 0
+  - command: "node_modules/.bin/vitest run --config tools/puzzle-analyzer/vitest.config.ts"
+    exitCode: 0
+  - command: "node --experimental-strip-types --input-type=module -e \"import { generateCandidateLoop } from './tools/puzzle-generator/src/generator.ts'; import { measureLoop } from './tools/puzzle-analyzer/src/geometry.ts'; import { evaluateQuality } from './tools/puzzle-analyzer/src/analyzer.ts'; const symmetry={id:'loop-sym',width:4,height:4,difficulty:'hard',solutionEdges:['h:0:0','h:0:1','h:0:2','h:0:3','h:4:0','h:4:1','h:4:2','h:4:3','v:0:0','v:1:0','v:2:0','v:3:0','v:0:4','v:1:4','v:2:4','v:3:4'],startingEdges:[]}; const sm=measureLoop(symmetry); const sq=evaluateQuality(symmetry,sm); const candidate=generateCandidateLoop({width:10,height:10,seed:'rep-54',minRowsUsed:5,minColumnsUsed:5}); const repetitive={id:'loop-rep',width:10,height:10,difficulty:'expert',solutionEdges:candidate.edges,startingEdges:candidate.edges.slice(0,7)}; const rm=measureLoop(repetitive); const rq=evaluateQuality(repetitive,rm); if(!sq.checks.symmetrical || !sq.rejectionReasons.includes('loop-too-symmetrical') || !rq.checks.repetitive || !rq.rejectionReasons.includes('loop-too-repetitive')) process.exit(2);\""
+    exitCode: 0
+findings:
+  - severity: LOW
+    description: "tools/puzzle-analyzer/tsconfig.json includes src/** and the required root typecheck passes, but this analyzer workspace does not add any generated or pipeline-adjacent sources outside src. The analyzer production sources themselves are covered by the workspace typecheck."
+    file: "tools/puzzle-analyzer/tsconfig.json"
+  - severity: LOW
+    description: "The development analyze:puzzles CLI intentionally calls analyzePuzzle without a solver report, so its smoke output contains a stable zeroed solverDeductions object; production consumers must pass the P2-01 solver report to expose actual deduction counts."
+    file: "tools/puzzle-analyzer/src/cli.ts"
+requiredRemediation:
+  - "Pass the P2-01 solver report into analyzer consumers when integrating release-quality puzzle analysis."
+conclusion: |
+  Independent inspection confirms all four P2-02 acceptance criteria. Analyzer
+  geometry measures the required coverage, regional, length, turn, density, and
+  repetition metrics; all approved fixed-edge ratios are exact; quality gates reject
+  tiny, trivial, dense, concentrated, repetitive, and required-symmetry cases; and
+  solver deduction metrics are retained in analysis output. Workspace tests, root
+  CLI analysis, and typecheck all pass. Verdict: PASS.

@@ -1,0 +1,36 @@
+schemaVersion: "1.0"
+artifactType: task-brief
+taskId: "P2-04"
+title: "SVG board and edge interactions"
+phase: 2
+goal: "Implement the responsive SVG board, clue display, edge hit targets, and player edge interactions."
+context:
+  - "loops_game_design_spec.md"
+  - "PROJECT_STRUCTURE_AND_DEPLOYMENT.md"
+  - "orchestration/IMPLEMENTATION_PLAN.md"
+  - "orchestration/task-registry.json"
+dependencies: ["P1-01", "P1-05"]
+writeScope:
+  - "apps/web-game/src/components/board/**"
+  - "apps/web-game/src/components/edge/**"
+forbiddenScope:
+  - "orchestration/task-registry.json"
+  - "orchestration/briefs/**"
+  - "orchestration/runs/2026-09-18-mvp1-001/tasks/P2-04/verification-brief.yaml"
+  - "orchestration/runs/2026-09-18-mvp1-001/tasks/P2-04/verification-report.yaml"
+acceptanceCriteria:
+  - id: "AC-1"
+    description: "Board renders dots, cells, clues, lines, X marks, and fixed lines."
+  - id: "AC-2"
+    description: "Edges have touch-friendly hit targets."
+  - id: "AC-3"
+    description: "Pointer and keyboard interaction are supported where practical."
+  - id: "AC-4"
+    description: "Board scales across phone, tablet, and desktop widths."
+  - id: "AC-5"
+    description: "UI dispatches actions to the engine rather than changing rules locally."
+requiredChecks:
+  - "npm run typecheck"
+  - "npm run build"
+  - "npm run test:e2e -- --grep board"
+implementationReportPath: "orchestration/runs/2026-09-18-mvp1-001/tasks/P2-04/implementation-report.yaml"

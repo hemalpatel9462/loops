@@ -1,0 +1,58 @@
+.loop-edge {
+  cursor: pointer;
+  outline: none;
+}
+
+.loop-edge[aria-disabled='true'] {
+  cursor: default;
+}
+
+.loop-edge:focus-visible .loop-edge__hit-target {
+  stroke: var(--color-focus, #b75e34);
+  stroke-width: 3.25rem;
+  stroke-opacity: 0.32;
+}
+
+.loop-edge__hit-target {
+  fill: none;
+  stroke: transparent;
+  stroke-linecap: round;
+  stroke-width: 2.75rem;
+  pointer-events: stroke;
+  touch-action: none;
+}
+
+.loop-edge__guide {
+  fill: none;
+  stroke: var(--loop-board-grid, var(--color-border-strong, #b7c0b3));
+  stroke-linecap: round;
+  stroke-width: 0.12rem;
+  pointer-events: none;
+}
+
+.loop-edge__line {
+  fill: none;
+  stroke: var(--color-loop, #b75e34);
+  stroke-linecap: round;
+  stroke-width: var(--edge-width, 0.25rem);
+  pointer-events: none;
+  transition: stroke var(--transition-fast, 140ms ease), stroke-width var(--transition-fast, 140ms ease);
+}
+
+.loop-edge--fixed .loop-edge__line {
+  stroke: var(--color-loop-fixed, #3b6a56);
+  stroke-width: var(--edge-width-fixed, 0.35rem);
+}
+
+.loop-edge__x {
+  fill: none;
+  stroke: var(--color-ink-subtle, #8b928a);
+  stroke-linecap: round;
+  stroke-width: 0.18rem;
+  pointer-events: none;
+}
+
+.loop-edge--fixed .loop-edge__hit-target,
+.loop-edge--fixed .loop-edge__guide {
+  pointer-events: none;
+}

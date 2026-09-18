@@ -1,0 +1,60 @@
+schemaVersion: "1.0"
+artifactType: verification-report
+taskId: "P2-04"
+verdict: PASS
+scopeReviewed:
+  - "apps/web-game/src/components/board/**"
+  - "apps/web-game/src/components/edge/**"
+  - "apps/web-game/dist/**"
+acceptanceCriteria:
+  - id: AC-1
+    verdict: PASS
+    evidence:
+      - "LoopBoard.tsx enumerates every board edge through @loops/game-engine/model allBoardEdges, renders each clue cell and clue text, and renders every lattice dot."
+      - "EdgeSegment.tsx renders guide edges, player line edges, X marks, and fixed lines; fixed lines render even when edgeStates omits the edge."
+      - "The component classes and data attributes distinguish line, x, unknown, and fixed states."
+  - id: AC-2
+    verdict: PASS
+    evidence:
+      - "apps/web-game/src/components/edge/edge.css gives .loop-edge__hit-target a transparent round stroke with 2.75rem stroke-width and pointer-events: stroke."
+      - "The board SVG uses touch-action: manipulation and the hit target uses touch-action: none, providing touch-oriented activation without changing visible edge geometry."
+  - id: AC-3
+    verdict: PASS
+    evidence:
+      - "EdgeSegment.tsx handles onPointerUp and calls preventDefault before dispatching the semantic action."
+      - "The edge group has role=button, tabIndex=0, aria-label, data-edge-id, data-edge-state, data-fixed, and handles Enter/Space keydown with preventDefault."
+      - "Fixed edges are announced as disabled and do not dispatch actions."
+  - id: AC-4
+    verdict: PASS
+    evidence:
+      - "LoopBoard sets a dimension-aware SVG viewBox and inline aspect ratio while board.css sets width: 100%, auto height, bounded board widths, and overflow-safe viewport styling."
+      - "board.css includes a narrow container query plus 48rem tablet and 80rem desktop breakpoints, responsive clue sizing, and a one-column phone layout through the board container."
+      - "npm run build exited 0 and emitted the production Vite assets."
+  - id: AC-5
+    verdict: PASS
+    evidence:
+      - "LoopBoard only derives geometry/state for rendering and forwards onEdgeAction(edge, action); it contains no local state transitions, clue validation, or connectivity rules."
+      - "EdgeSegment only emits onAction(edgeId, 'cycle'); it does not implement cycling or mutate edge state."
+      - "Board edge enumeration is imported from @loops/game-engine/model and EdgeState is imported from the engine model types."
+checksPerformed:
+  - command: "npm run typecheck"
+    exitCode: 0
+  - command: "npm run build"
+    exitCode: 0
+  - command: "npm run test:e2e -- --grep board"
+    exitCode: 1
+findings:
+  - severity: LOW
+    description: "The requested board browser check is unavailable: the root package has no test:e2e script or Playwright harness yet, and npm reports Missing script: test:e2e. P3-02 owns that harness; no root scripts were changed."
+    file: "package.json"
+  - severity: LOW
+    description: "The board components are not mounted by the current app entry because AppShell/main integration is outside P2-04's write scope; runtime integration and browser coverage remain with downstream tasks."
+    file: "apps/web-game/src/components/board/LoopBoard.tsx"
+requiredRemediation: []
+conclusion: |
+  Independent inspection confirms all five P2-04 acceptance criteria. The board
+  renders the required SVG elements and states, exposes touch-sized and keyboard
+  accessible edge targets, scales through responsive sizing rules, and dispatches
+  semantic engine actions without duplicating game rules. Typecheck and build pass.
+  The board e2e command is currently unavailable because P3-02 has not added the
+  Playwright route; this dependency is recorded as a low-risk finding. Verdict: PASS.

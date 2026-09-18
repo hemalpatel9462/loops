@@ -1,0 +1,76 @@
+schemaVersion: "1.0"
+artifactType: verification-report
+taskId: "P2-06"
+verdict: PASS
+scopeReviewed:
+  - "apps/web-game/src/screens/**"
+  - "apps/web-game/src/state/game-flow/**"
+  - "apps/web-game/src/persistence/**"
+  - "packages/puzzle-data/catalog.json"
+  - "packages/puzzle-data/puzzles/**"
+  - "apps/web-game/src/app/AppShell.tsx"
+  - "package.json"
+acceptanceCriteria:
+  - id: AC-1
+    verdict: PASS
+    evidence:
+      - "puzzle-catalog.ts imports all five checked-in local puzzle JSON records, parses each with parsePuzzleDefinition, sorts them deterministically, and verifies each puzzle ID is represented in catalog.json."
+      - "selectQuickPlayPuzzle filters the validated source by requested difficulty and selects deterministically using stableHash; startQuickPlay creates a local session and records a started statistic."
+      - "game-flow.test.ts test 'selects a validated local puzzle for Quick Play and persists unfinished progress' confirms a requested beginner puzzle and an unfinished persisted move."
+  - id: AC-2
+    verdict: PASS
+    evidence:
+      - "selectDailyPuzzle applies stableHash('daily:' + date) modulo the sorted local puzzle list, so the same date maps to the same offline puzzle."
+      - "startDailyLoop persists date, seed, puzzle ID, and in-progress status through the approved DailyLoopState repository contract."
+      - "game-flow.test.ts test 'selects Daily Loop deterministically by date and stores the date mapping' asserts repeated date equality and persisted mapping for 2026-09-18."
+  - id: AC-3
+    verdict: PASS
+    evidence:
+      - "getContinueProgress loads the versioned Continue pointer, resolves its puzzle only from the validated local source, and returns the matching progress/puzzle pair."
+      - "resumeContinue restores saved mode, elapsed seconds, hints, checks, start time, and line/X edge state through restoreGameStateFromProgress; pointer identity is checked by the persistence repository."
+      - "game-flow.test.ts test 'resumes Continue with the saved mode, elapsed time, hints, and edge choices' verifies Assisted mode, 42 seconds, and the saved edge state."
+  - id: AC-4
+    verdict: PASS
+    evidence:
+      - "ModeSelectionScreen exposes Relaxed and Assisted choices with aria-pressed state and explanatory behavior labels."
+      - "cycleSessionEdge always accepts Relaxed moves, while Assisted moves call findDeductions and reject inconsistent clue, vertex, or premature-loop states with explicit feedback."
+      - "game-flow.test.ts test 'flags an immediately contradictory move in Assisted mode but allows it in Relaxed mode' verifies divergent behavior for the same candidate edge."
+  - id: AC-5
+    verdict: PASS
+    evidence:
+      - "completeSession calls validateCompletion and refuses to mark a session complete until the single-loop rule result is complete."
+      - "CompletionStats records puzzle ID, difficulty, mode, elapsedSeconds, hintsUsed, and completedAt; recordCompletion updates total/completed/hints totals, best and average times, and per-difficulty counts."
+      - "Daily completion additionally records completedAt, hintsUsed, completionTimeSeconds, and streakCount; CompletionScreen renders elapsed time and hints used."
+      - "game-flow.test.ts test 'records completion time and hint count in completion statistics' verifies 87 seconds, 2 hints, totalCompleted 1, and cleared Continue state."
+checksPerformed:
+  - command: "npm run typecheck"
+    exitCode: 0
+  - command: "npm run test:e2e -- --grep modes"
+    exitCode: 1
+  - command: "npm run build"
+    exitCode: 0
+  - command: "npm run test --workspace @loops/web-game -- --run"
+    exitCode: 0
+  - command: "npm run validate:schemas"
+    exitCode: 0
+findings:
+  - severity: LOW
+    description: "Browser-level mode and flow verification is pending because package.json has no test:e2e script or Playwright harness. The required command exited 1 with npm 'Missing script: test:e2e'; this is the explicitly anticipated P3-02 dependency."
+    file: "package.json"
+  - severity: LOW
+    description: "GameFlowScreen and the flow actions are not mounted by the current AppShell, so Quick Play/Daily/Continue behavior is not reachable from the built shell until the owning P3-01 board/app integration mounts the coordinator."
+    file: "apps/web-game/src/app/AppShell.tsx"
+  - severity: LOW
+    description: "The flow imports puzzle-data JSON through repository-relative paths rather than a declared apps/web-game package dependency; workspace typecheck/build pass, but clean-install packaging should be rechecked by integration."
+    file: "apps/web-game/src/state/game-flow/puzzle-catalog.ts"
+requiredRemediation:
+  - "After P3-02 provides the Playwright/e2e harness, run npm run test:e2e -- --grep modes."
+  - "Mount GameFlowScreen and connect its sessions to the board/reducer during P3-01 integration."
+  - "Confirm clean-install workspace linking for the puzzle-data imports before release packaging."
+conclusion: |
+  Independent inspection confirms all five P2-06 acceptance criteria. Quick Play
+  uses parsed local puzzles, Daily Loop selection is date-deterministic, Continue
+  restores the saved puzzle and state, Relaxed versus Assisted behavior diverges
+  as specified, and completion records time and hint statistics. Focused tests,
+  typecheck, build, and schema validation pass. Browser execution and runtime
+  mounting remain explicitly owned integration follow-ups. Verdict: PASS.

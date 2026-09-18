@@ -1,0 +1,88 @@
+schemaVersion: "1.0"
+artifactType: implementation-report
+taskId: P2-01
+status: PARTIAL
+summary: >-
+  Implemented the pipeline-only puzzle generation flow: generate a hidden
+  candidate loop, derive clues, select deterministic high-deduction starting
+  edges, construct and schema-parse PuzzleDefinition data, and gate emission
+  on solver uniqueness. The focused pipeline suite reaches the solver gate but
+  all generated 4x4 candidates are rejected by the existing puzzle-validator
+  solver (solutionCount 0), so end-to-end accepted emission remains blocked by
+  a dependency outside this task's permitted write scope.
+filesChanged:
+  - path: tools/puzzle-generator/pipeline/types.ts
+    change: Added pipeline configuration, difficulty profiles, attempt, selection, and result types.
+  - path: tools/puzzle-generator/pipeline/clues.ts
+    change: Added deterministic clue derivation from hidden loop edges.
+  - path: tools/puzzle-generator/pipeline/starting-edges.ts
+    change: Added difficulty-ratio starting-edge selection and deduction-value scoring.
+  - path: tools/puzzle-generator/pipeline/pipeline.ts
+    change: Added candidate generation, geometry validation, PuzzleDefinition construction, solver gating, retry handling, and emission guard.
+  - path: tools/puzzle-generator/pipeline/index.ts
+    change: Added public pipeline exports.
+  - path: tools/puzzle-generator/pipeline/cli.ts
+    change: Added pipeline CLI argument parsing and JSON output.
+  - path: tools/puzzle-generator/pipeline/vitest.config.ts
+    change: Added focused Vitest configuration for pipeline tests.
+  - path: tools/puzzle-generator/pipeline/pipeline.test.ts
+    change: Added deterministic clue, starting-edge, schema/emission, and pipeline-result tests.
+acceptanceCriteria:
+  - id: hidden-loop-first
+    result: PASS
+    evidence:
+      - pipeline.ts calls generateCandidateLoop before clue derivation and PuzzleDefinition construction.
+      - Focused tests and the existing generator test suite execute deterministically.
+  - id: clue-derivation
+    result: PASS
+    evidence:
+      - pipeline.test.ts verifies a 2x2 square derives [[2,2],[2,2]].
+      - clues.ts counts the four cell boundary edges against the generated hidden edge set.
+  - id: starting-edge-selection
+    result: PASS
+    evidence:
+      - pipeline.test.ts verifies deterministic ratio selection and non-empty deduction explanations.
+      - starting-edges.ts ranks clue-adjacent solution edges and returns the configured difficulty ratio.
+  - id: solver-validation
+    result: FAIL
+    evidence:
+      - Focused pipeline test exits 1 because solvePuzzle reports solutionCount 0 for every attempted beginner candidate.
+      - A 300-seed diagnostic sampled the same existing solver rejection, including with no starting edges.
+  - id: accepted-json-output
+    result: PARTIAL
+    evidence:
+      - emitAcceptedPuzzle parses and re-solves before encodePuzzleDefinition output.
+      - No accepted output is emitted while solver validation remains blocked.
+  - id: reproducible-commands
+    result: PARTIAL
+    evidence:
+      - Root typecheck and the existing @loops/puzzle-generator test suite pass.
+      - Required root generate and validate:puzzles routes are absent from root package.json and therefore exit 1.
+commandsRun:
+  - command: npm run generate -- --difficulty beginner --count 1
+    exitCode: 1
+  - command: npm run validate:puzzles
+    exitCode: 1
+  - command: npm run typecheck
+    exitCode: 0
+  - command: npm run validate:schemas
+    exitCode: 0
+  - command: npm run test --workspace @loops/puzzle-generator
+    exitCode: 0
+  - command: node_modules/.bin/vitest run --config tools/puzzle-generator/pipeline/vitest.config.ts
+    exitCode: 1
+  - command: ../../node_modules/.bin/tsc --noEmit --target ES2022 --module ESNext --moduleResolution Bundler --strict --skipLibCheck --resolveJsonModule --allowImportingTsExtensions --types vitest/globals pipeline/*.ts
+    exitCode: 1
+deviations:
+  - Root generate and validate:puzzles scripts do not exist; adding root package routes was explicitly outside the P2-01 write scope.
+  - Focused pipeline acceptance tests cannot pass against the current puzzle-validator solver because its generated-loop checks consistently return solutionCount 0; puzzle-validator files were forbidden by this task.
+knownRisks:
+  - End-to-end generation and release packaging cannot proceed until the solver compatibility issue is resolved and the root command routes are wired by an authorized integration task.
+  - Pipeline files are not included by the existing tools/puzzle-generator/tsconfig.json or package test script; focused configuration is provided under pipeline/ for independent verification.
+handoffNotes: >-
+  Please inspect the existing solver edge-incidence implementation before
+  verification. The solver's edgesAtVertex helper uses horizontal edges at
+  (row-1,column) and (row,column), which rejects ordinary generated loops even
+  when their cell clues and candidate geometry are valid. After an authorized
+  solver remediation, rerun the focused pipeline suite, wire root generate and
+  validate:puzzles routes outside this task scope, and repeat verification.

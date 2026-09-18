@@ -12,9 +12,12 @@
   "scripts": {
     "test": "vitest run --config vitest.config.ts",
     "typecheck": "tsc --noEmit -p tsconfig.json",
-    "generate:test-candidates": "node --experimental-strip-types src/cli.ts"
+    "generate:test-candidates": "node --experimental-strip-types src/cli.ts",
+    "generate": "vite-node --config pipeline/vite.config.ts pipeline/cli.ts",
+    "validate:puzzles": "vite-node --config pipeline/vite.config.ts pipeline/validate-cli.ts"
   },
   "dependencies": {
-    "@loops/puzzle-format": "0.1.0"
+    "@loops/puzzle-format": "0.1.0",
+    "@loops/puzzle-validator": "0.1.0"
   }
 }

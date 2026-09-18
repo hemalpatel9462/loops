@@ -1,0 +1,103 @@
+schemaVersion: "1.0"
+artifactType: implementation-report
+taskId: "P2-03"
+status: COMPLETE
+summary: |
+  Implemented the catalog-builder workspace and puzzle-data package. The
+  builder can generate deterministic validated puzzle files through the P2-01
+  acceptance pipeline, construct a schema-aligned catalog, reject duplicate
+  IDs, and validate that every catalog entry points to a real compatible puzzle
+  file. A five-puzzle catalog covering all approved difficulties was emitted
+  under packages/puzzle-data.
+filesChanged:
+  - path: "tools/catalog-builder/package.json"
+    change: "Added the @loops/catalog-builder workspace manifest and build, validate, test, and typecheck commands."
+  - path: "tools/catalog-builder/tsconfig.json"
+    change: "Added strict TypeScript configuration for catalog-builder sources and tests."
+  - path: "tools/catalog-builder/vitest.config.ts"
+    change: "Scoped Vitest discovery to catalog-builder tests."
+  - path: "tools/catalog-builder/src/types.ts"
+    change: "Defined catalog build options, build results, and validation result types."
+  - path: "tools/catalog-builder/src/catalog.ts"
+    change: "Added catalog JSON parsing, entry validation, duplicate-ID detection, safe relative-path checks, puzzle-file validation, and assertion helpers."
+  - path: "tools/catalog-builder/src/builder.ts"
+    change: "Added catalog generation from validated pipeline puzzles or supplied puzzles, deterministic per-difficulty seeds, duplicate rejection, puzzle emission, catalog emission, and post-build validation."
+  - path: "tools/catalog-builder/src/cli.ts"
+    change: "Added build and validate CLI commands with output-directory support and machine-readable results."
+  - path: "tools/catalog-builder/src/index.ts"
+    change: "Exported the catalog-builder public API."
+  - path: "tools/catalog-builder/src/catalog-builder.test.ts"
+    change: "Added coverage for puzzle/catalog emission, catalog validation, duplicate IDs, and missing catalog files."
+  - path: "packages/puzzle-data/package.json"
+    change: "Added the @loops/puzzle-data package manifest and exports for catalog.json and puzzle files."
+  - path: "packages/puzzle-data/catalog.json"
+    change: "Emitted the validated catalog containing one generated puzzle for each approved difficulty."
+  - path: "packages/puzzle-data/puzzles/beginner/loop-beginner-catalog-beginner-0.json"
+    change: "Emitted the validated beginner puzzle referenced by catalog.json."
+  - path: "packages/puzzle-data/puzzles/easy/loop-easy-catalog-easy-0.json"
+    change: "Emitted the validated easy puzzle referenced by catalog.json."
+  - path: "packages/puzzle-data/puzzles/expert/loop-expert-catalog-expert-0.json"
+    change: "Emitted the validated expert puzzle referenced by catalog.json."
+  - path: "packages/puzzle-data/puzzles/hard/loop-hard-catalog-hard-0.json"
+    change: "Emitted the validated hard puzzle referenced by catalog.json."
+  - path: "packages/puzzle-data/puzzles/medium/loop-medium-catalog-medium-0.json"
+    change: "Emitted the validated medium puzzle referenced by catalog.json."
+  - path: "orchestration/runs/2026-09-18-mvp1-001/tasks/P2-03/implementation-report.yaml"
+    change: "Recorded implementation scope, acceptance evidence, command results, deviations, and risks."
+acceptanceCriteria:
+  - id: AC-1
+    result: PASS
+    evidence:
+      - "builder.ts generates puzzles through generateAcceptedPuzzle and validates every emitted definition with parsePuzzleDefinition."
+      - "packages/puzzle-data contains five emitted schema-valid puzzle JSON files, one per approved difficulty."
+      - "npm run build:catalog --workspace @loops/catalog-builder exited 0 and emitted catalog.json plus five puzzle files."
+  - id: AC-2
+    result: PASS
+    evidence:
+      - "catalog.json contains five relative puzzle paths under puzzles/<difficulty>/."
+      - "validateCatalogFile checks path containment, file existence, puzzle parsing, ID equality, difficulty equality, and dimension equality for every entry."
+      - "npm run validate:catalog --workspace @loops/catalog-builder exited 0 with valid=true and puzzleCount=5."
+  - id: AC-3
+    result: PASS
+    evidence:
+      - "buildCatalog rejects duplicate puzzle IDs before writing output."
+      - "catalog-builder.test.ts verifies duplicate IDs throw, and validateCatalogFile reports duplicate catalog IDs."
+      - "The package test suite passed all three tests."
+  - id: AC-4
+    result: PASS
+    evidence:
+      - "catalog.ts enforces the approved catalog fields, entry shape, schemaVersion, catalogVersion, generatedAt, dimensions, difficulty, relative paths, and referenced puzzle compatibility."
+      - "The generated catalog validates successfully through the workspace CLI."
+commandsRun:
+  - command: "npm run test --workspace @loops/catalog-builder"
+    exitCode: 0
+    result: "Vitest passed 1 test file and 3 tests."
+  - command: "npm run typecheck --workspace @loops/catalog-builder"
+    exitCode: 0
+    result: "Catalog-builder TypeScript compilation passed."
+  - command: "npm run build:catalog --workspace @loops/catalog-builder"
+    exitCode: 0
+    result: "Generated five validated puzzle files and catalog.json under packages/puzzle-data."
+  - command: "npm run validate:catalog --workspace @loops/catalog-builder"
+    exitCode: 0
+    result: "Validated catalog.json with valid=true, puzzleCount=5, and catalogVersion=1.0.0."
+  - command: "npm run typecheck"
+    exitCode: 0
+    result: "Root workspace typecheck passed, including catalog-builder and its dependent packages."
+  - command: "npm run build:catalog"
+    exitCode: 1
+    result: "Root package reported Missing script: build:catalog. The root convenience route is outside the declared write scope."
+  - command: "npm run validate:catalog"
+    exitCode: 1
+    result: "Root package reported Missing script: validate:catalog. The root convenience route is outside the declared write scope."
+deviations:
+  - "The required root-level build:catalog and validate:catalog routes are not present in package.json and could not be added within the tools/catalog-builder/** and packages/puzzle-data/** write scope. The workspace-scoped routes pass and the orchestrator should add root aliases in integration scope before the release gate."
+  - "The generated catalog timestamp is recorded at build time; callers that require reproducible bytes can supply generatedAt and explicit puzzle inputs through the public builder API."
+knownRisks:
+  - "The root package-lock.json must remain synchronized with the new workspace manifests for clean-install and Vercel reproducibility; lockfile/root integration is outside this task's write scope."
+  - "Catalog generation depends on the P2-01 pipeline and therefore assumes its solver and schema validation remain available in the integrated workspace."
+handoffNotes: |
+  The orchestrator can expose the workspace commands as root build:catalog and
+  validate:catalog scripts, regenerate package-lock.json, and run the release
+  gate. Consumers can import @loops/puzzle-data/catalog.json or use the
+  catalog-builder API to build a catalog into a chosen output directory.

@@ -1,0 +1,83 @@
+schemaVersion: "1.0"
+artifactType: implementation-report
+taskId: P2-07
+status: COMPLETE
+summary: >-
+  Added a reusable, keyboard-accessible tutorial dialog covering the core Loops
+  rules and a small practice puzzle, plus an accessibility preferences layer
+  for reduced motion and high contrast. Accessibility styling includes
+  non-color fixed-line patterns, focus-visible states, responsive tutorial
+  layout, and reduced-motion fallbacks. All changes remain within the assigned
+  tutorial and accessibility directories.
+filesChanged:
+  - path: apps/web-game/src/components/tutorial/Tutorial.tsx
+    change: Added interactive six-step tutorial dialog with semantic modal structure, progress, navigation, skip/close, and practice puzzle content.
+  - path: apps/web-game/src/components/tutorial/types.ts
+    change: Added tutorial step and component prop types.
+  - path: apps/web-game/src/components/tutorial/steps.ts
+    change: Added canonical tutorial lessons for clues, continuation, vertices, one-loop behavior, and practice.
+  - path: apps/web-game/src/components/tutorial/index.ts
+    change: Added tutorial public exports.
+  - path: apps/web-game/src/components/tutorial/tutorial.css
+    change: Added responsive dialog, progress, practice-board, focus, and reduced-motion styles.
+  - path: apps/web-game/src/components/tutorial/tutorial.test.ts
+    change: Added deterministic content coverage and step-clamping tests.
+  - path: apps/web-game/src/accessibility/types.ts
+    change: Added accessibility preference types and defaults.
+  - path: apps/web-game/src/accessibility/preferences.ts
+    change: Added preference application and React state hook for document-level accessibility attributes.
+  - path: apps/web-game/src/accessibility/AccessibilitySettings.tsx
+    change: Added labeled reduced-motion and high-contrast controls.
+  - path: apps/web-game/src/accessibility/accessibility.css
+    change: Added high-contrast tokens, reduced-motion overrides, fixed-line pattern styling, and focus states.
+  - path: apps/web-game/src/accessibility/index.ts
+    change: Added accessibility public exports.
+  - path: apps/web-game/src/accessibility/accessibility.test.ts
+    change: Added preference attribute application and reset coverage.
+acceptanceCriteria:
+  - id: AC-1
+    result: PASS
+    evidence:
+      - Tutorial.tsx renders all six TUTORIAL_STEPS in a semantic dialog with Back, Next, Skip, and Start puzzle controls.
+      - steps.ts explicitly teaches clues, continuation, vertices, one connected closed loop, and a small two-by-two practice puzzle.
+      - tutorial.test.ts verifies the required lesson terms and practice final step.
+  - id: AC-2
+    result: PASS
+    evidence:
+      - AccessibilitySettings.tsx exposes labeled Reduce motion and High contrast controls.
+      - preferences.ts applies data-reduced-motion and data-high-contrast attributes and clears them safely.
+      - accessibility.css applies reduced-motion animation/transition suppression and high-contrast color tokens.
+      - accessibility.test.ts verifies both attributes are applied and reset.
+  - id: AC-3
+    result: PASS
+    evidence:
+      - accessibility.css gives fixed solution lines a dash pattern while player-created lines remain solid, independent of color.
+      - Existing EdgeSegment semantic data-fixed and loop-edge--fixed hooks are targeted by the accessibility styles.
+  - id: AC-4
+    result: PASS
+    evidence:
+      - Tutorial.tsx provides labeled dialog, close, progress, navigation, and skip controls with keyboard-operable buttons.
+      - AccessibilitySettings.tsx uses visible labels and native checkbox controls.
+      - Tutorial and accessibility styles provide focus-visible outlines and disabled-state affordances.
+      - Existing EdgeSegment controls retain aria-label, role=button, keyboard Enter/Space handling, and focus-visible styling.
+commandsRun:
+  - command: npm run typecheck
+    exitCode: 0
+  - command: npm run test:e2e -- --grep tutorial
+    exitCode: 1
+  - command: npm run build
+    exitCode: 0
+  - command: npm test -- --run
+    exitCode: 0
+deviations:
+  - The requested test:e2e command is unavailable because the current root package.json defines no test:e2e script; no root scripts were changed because they are outside the assigned write scope.
+  - The new tutorial and accessibility exports are intentionally reusable and not wired into AppShell.tsx, which is outside the assigned write scope and reserved for integration work.
+knownRisks:
+  - A later UI integration task must mount Tutorial and AccessibilitySettings and connect useAccessibilityPreferences to the app settings state for the behavior to be reachable from the running shell.
+  - Browser-level focus trapping and screen-reader interaction should be covered once the P3-02 E2E harness exists.
+handoffNotes: >-
+  Import Tutorial from components/tutorial and AccessibilitySettings plus
+  useAccessibilityPreferences from accessibility during UI integration. The
+  accessibility CSS intentionally targets the existing EdgeSegment fixed and
+  player line classes, so importing AccessibilitySettings (or its stylesheet)
+  in the integrated app enables the non-color distinction.

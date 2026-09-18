@@ -1,0 +1,22 @@
+{
+  "name": "@loops/catalog-builder",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "import": "./src/index.ts"
+    }
+  },
+  "scripts": {
+    "test": "vitest run --config vitest.config.ts",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "build:catalog": "vite-node --config ../../tools/puzzle-generator/pipeline/vite.config.ts src/cli.ts build",
+    "validate:catalog": "vite-node --config ../../tools/puzzle-generator/pipeline/vite.config.ts src/cli.ts validate"
+  },
+  "dependencies": {
+    "@loops/puzzle-format": "0.1.0",
+    "@loops/puzzle-generator": "0.1.0"
+  }
+}

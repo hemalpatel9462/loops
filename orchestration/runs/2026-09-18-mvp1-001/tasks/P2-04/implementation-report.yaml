@@ -1,0 +1,81 @@
+schemaVersion: "1.0"
+artifactType: implementation-report
+taskId: "P2-04"
+status: COMPLETE
+summary: |
+  Added a responsive SVG LoopBoard and reusable EdgeSegment component within
+  the assigned component scopes. The board renders cells, clues, dots, guide
+  edges, line/X states, and fixed solution lines. EdgeSegment exposes a
+  touch-friendly transparent hit target and supports pointer plus Enter/Space
+  keyboard activation. Interactions emit a semantic cycle action callback so
+  game-engine state transitions remain owned by the parent/state layer.
+filesChanged:
+  - path: "apps/web-game/src/components/board/LoopBoard.tsx"
+    change: "Added the responsive SVG board renderer, board-edge geometry, clue/cell rendering, dots, fixed-edge mapping, and engine-action callback wiring."
+  - path: "apps/web-game/src/components/board/board.css"
+    change: "Added responsive board sizing, SVG/cell/clue/dot styles, touch behavior, container breakpoints, and reduced-motion handling."
+  - path: "apps/web-game/src/components/board/types.ts"
+    change: "Defined LoopBoard props and semantic edge-action callback contracts."
+  - path: "apps/web-game/src/components/board/index.ts"
+    change: "Exported LoopBoard, Board alias, and board types."
+  - path: "apps/web-game/src/components/edge/EdgeSegment.tsx"
+    change: "Added accessible SVG edge rendering with guide, line, X, fixed styling, pointer interaction, and keyboard activation."
+  - path: "apps/web-game/src/components/edge/edge.css"
+    change: "Added edge state visuals, fixed-line styling, large transparent hit targets, focus indication, and reduced-motion behavior."
+  - path: "apps/web-game/src/components/edge/types.ts"
+    change: "Defined edge geometry, state, and semantic action types."
+  - path: "apps/web-game/src/components/edge/index.ts"
+    change: "Exported EdgeSegment and edge interaction types."
+  - path: "orchestration/runs/2026-09-18-mvp1-001/tasks/P2-04/implementation-report.yaml"
+    change: "Recorded implementation scope, command results, acceptance evidence, deviations, and known risks."
+acceptanceCriteria:
+  - id: AC-1
+    result: PASS
+    evidence:
+      - "LoopBoard.tsx renders each clue cell and cell background, every lattice dot, and every horizontal/vertical board edge through EdgeSegment."
+      - "EdgeSegment renders guide edges, player line state, X state, and fixed line state; fixed lines render even when edgeStates omits the edge."
+  - id: AC-2
+    result: PASS
+    evidence:
+      - "EdgeSegment renders .loop-edge__hit-target over every edge with a transparent 2.75rem stroke-width and round caps, providing a touch-friendly target while preserving the visible geometry."
+      - "The board SVG uses touch-action: manipulation and the edge target prevents browser gesture handling during pointer activation."
+  - id: AC-3
+    result: PASS
+    evidence:
+      - "EdgeSegment handles pointer-up activation and Enter/Space keyboard activation with preventDefault for keyboard scrolling."
+      - "Interactive edge groups expose role=button, tabIndex, aria-label, data-edge-id, data-edge-state, and fixed-state accessibility metadata."
+  - id: AC-4
+    result: PASS
+    evidence:
+      - "LoopBoard scales its SVG to 100% width with a dimension-aware aspect ratio and bounded board widths."
+      - "board.css includes phone/container sizing plus 48rem tablet and 80rem desktop breakpoints, with responsive clue typography and bounded max widths."
+  - id: AC-5
+    result: PASS
+    evidence:
+      - "LoopBoard never mutates edge state or implements edge cycling; it passes edge IDs and the semantic cycle action to onEdgeAction."
+      - "EdgeSegment only dispatches onAction(edgeId, 'cycle'); game-engine state transitions remain the responsibility of the parent/state owner."
+      - "Board edge enumeration is sourced from @loops/game-engine/model rather than duplicated in the UI."
+commandsRun:
+  - command: "npm run typecheck"
+    exitCode: 0
+    result: "Root workspace typecheck passed for web-game, game-engine, puzzle-format, puzzle-generator, and puzzle-validator."
+  - command: "npm run build"
+    exitCode: 0
+    result: "Vite production build passed and emitted apps/web-game/dist assets."
+  - command: "npm run test:e2e -- --grep board"
+    exitCode: 1
+    result: "Root package reported Missing script: test:e2e; no Playwright/e2e route exists yet in the repository."
+deviations:
+  - "The board and edge components are intentionally not mounted into AppShell or main.tsx because those files are outside the declared P2-04 write scope; P3 integration will connect them to live puzzle state."
+  - "The requested board-specific e2e command is unavailable until the browser-test task adds the root test:e2e script and Playwright configuration."
+knownRisks:
+  - "The board currently renders fallback clue 0 when a caller provides a short clue row; integrated callers should pass schema-valid dimensions and clues."
+  - "The transparent SVG hit target uses a broad stroke in SVG user units; visual QA should confirm it remains comfortable and does not overlap neighboring edges on very small boards."
+  - "Fixed edge interaction is intentionally disabled while remaining focusable and announced; the integration layer should preserve fixedEdges from the game-engine state."
+handoffNotes: |
+  Import LoopBoard from apps/web-game/src/components/board and pass width,
+  height, clues, edgeStates, fixedEdges, and an onEdgeAction callback that
+  dispatches to game-engine cycleEdge. Import EdgeSegment directly only for
+  specialized board presentations. P3 browser tests can target data-edge-id,
+  data-edge-state, data-fixed, role=grid, and role=button attributes. Add the
+  root test:e2e route when the browser-test task owns that integration scope.

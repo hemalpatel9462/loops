@@ -65,9 +65,9 @@ export function cellEdges(row: number, column: number): [EdgeId, EdgeId, EdgeId,
 
 export function edgesAtVertex(row: number, column: number, width: number, height: number): EdgeId[] {
   const edges: EdgeId[] = [];
-  if (row > 0) edges.push(createEdgeId('h', row - 1, column));
-  if (row < height) edges.push(createEdgeId('h', row, column));
-  if (column > 0) edges.push(createEdgeId('v', row, column - 1));
-  if (column < width) edges.push(createEdgeId('v', row, column));
+  if (column > 0) edges.push(createEdgeId('h', row, column - 1));
+  if (column < width) edges.push(createEdgeId('h', row, column));
+  if (row > 0) edges.push(createEdgeId('v', row - 1, column));
+  if (row < height) edges.push(createEdgeId('v', row, column));
   return edges;
 }

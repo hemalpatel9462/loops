@@ -1,0 +1,87 @@
+schemaVersion: "1.0"
+artifactType: implementation-report
+taskId: "P2-02"
+status: COMPLETE
+summary: |
+  Added the @loops/puzzle-analyzer workspace with deterministic loop geometry
+  measurement, approved difficulty profiles, quality rejection gates, solver
+  deduction integration, and a development CLI. Analysis measures bounding-box
+  coverage, occupied rows/columns, regional usage, loop length, turns, board
+  density, straight-run statistics, repetition, and symmetry. Quality checks
+  reject tiny, trivial, concentrated, overly dense, repetitive, symmetrical
+  (where profile-required), and out-of-profile fixed-edge puzzles.
+filesChanged:
+  - path: "tools/puzzle-analyzer/package.json"
+    change: "Added analyzer workspace package and test, typecheck, and analyze:puzzles scripts."
+  - path: "tools/puzzle-analyzer/tsconfig.json"
+    change: "Configured strict analyzer typechecking and Node-compatible TypeScript imports."
+  - path: "tools/puzzle-analyzer/vitest.config.ts"
+    change: "Scoped Vitest discovery to analyzer tests."
+  - path: "tools/puzzle-analyzer/src/types.ts"
+    change: "Defined analyzer difficulty profiles, loop metrics, quality evaluation, analysis output, and solver integration contracts."
+  - path: "tools/puzzle-analyzer/src/profiles.ts"
+    change: "Added beginner/easy/medium/hard/expert profiles with approved fixed-edge ratios and coverage/quality thresholds."
+  - path: "tools/puzzle-analyzer/src/geometry.ts"
+    change: "Added ordered-loop traversal and measurements for coverage, rows/columns, regions, length, turns, density, repetition, symmetry, and straight runs."
+  - path: "tools/puzzle-analyzer/src/analyzer.ts"
+    change: "Added quality scoring/rejection evaluation, solver deduction inclusion, puzzle analysis, and batch analysis APIs."
+  - path: "tools/puzzle-analyzer/src/cli.ts"
+    change: "Added deterministic development CLI that generates a candidate-derived sample puzzle and emits JSON analysis."
+  - path: "tools/puzzle-analyzer/src/index.ts"
+    change: "Exported analyzer types, profiles, geometry helpers, and analysis APIs."
+  - path: "tools/puzzle-analyzer/src/analyzer.test.ts"
+    change: "Added coverage for all requested measurements, approved ratios, quality rejection categories, and solver deduction metrics."
+  - path: "orchestration/runs/2026-09-18-mvp1-001/tasks/P2-02/implementation-report.yaml"
+    change: "Recorded implementation scope, command results, acceptance evidence, deviations, and risks."
+acceptanceCriteria:
+  - id: AC-1
+    result: PASS
+    evidence:
+      - "measureLoop returns loopLength, boundingBoxWidthRatio, boundingBoxHeightRatio, rowsUsed, columnsUsed, regionalCoverage, turnCount, density, repetitionScore, symmetryScore, longestStraightRun, and averageStraightRun."
+      - "geometry.ts orders lattice edges by shared vertices before calculating turn and straight-run metrics, while preserving an explicit validOrder flag for malformed/disconnected collections."
+      - "analyzer.test.ts asserts coverage, rows/columns, regional usage, length, turns, density, and repetition on a perimeter fixture."
+  - id: AC-2
+    result: PASS
+    evidence:
+      - "profiles.ts defines exact approved startingEdgeRatio ranges: beginner 0.40–0.50, easy 0.25–0.30, medium 0.15–0.20, hard 0.10–0.15, expert 0.05–0.10."
+      - "evaluateQuality computes startingEdges.length / solutionEdges.length and rejects values outside the selected difficulty profile."
+      - "analyzer.test.ts asserts every approved fixed-edge ratio."
+  - id: AC-3
+    result: PASS
+    evidence:
+      - "evaluateQuality rejects loops below profile minLoopLength, four-turn rectangles/low-turn shapes, density above profile maxDensity, insufficient bounding-box coverage or regional usage, excessive repetition, and profile-required symmetry."
+      - "analyzer.test.ts verifies rejection of tiny/trivial/concentrated loops and a fully dense board-edge collection."
+      - "CLI smoke analysis emitted explicit quality checks and rejectionReasons fields."
+  - id: AC-4
+    result: PASS
+    evidence:
+      - "analyzePuzzle accepts an optional SolverReport and copies its direct, vertex, connectivity, contradiction, searchOnly, and maximumDepth deductions into solverDeductions."
+      - "analyzer.test.ts asserts solverDeductions and solverReport are preserved in analysis output."
+      - "When no report is supplied, analysis emits a schema-aligned zeroed deduction object so consumers have a stable output shape."
+commandsRun:
+  - command: "npm run test --workspace @loops/puzzle-analyzer"
+    exitCode: 0
+    result: "Vitest passed 1 test file and 4 tests."
+  - command: "npm run analyze:puzzles --workspace @loops/puzzle-analyzer -- --width 4 --height 4 --seed analyzer-smoke"
+    exitCode: 0
+    result: "Emitted parseable JSON puzzle-analysis output with metrics, profile, solverDeductions, and quality checks."
+  - command: "npm run typecheck"
+    exitCode: 0
+    result: "Root workspace typecheck passed for web-game, game-engine, puzzle-format, puzzle-analyzer, puzzle-generator, and puzzle-validator."
+  - command: "npm run analyze:puzzles"
+    exitCode: 1
+    result: "Root package reported Missing script: analyze:puzzles."
+deviations:
+  - "The exact root-level analyze:puzzles route cannot be added within the declared tools/puzzle-analyzer/** write scope. The workspace-scoped CLI is implemented and passes; the orchestrator should add the root convenience route in integration scope before release checks."
+  - "Analyzer thresholds are explicit initial quality gates derived from the approved design ranges; they remain subject to playtesting calibration as anticipated by the product specification."
+  - "The CLI generates a deterministic candidate-derived sample puzzle for smoke analysis and does not claim to replace the validated pipeline or uniqueness gate."
+knownRisks:
+  - "The analyzer does not itself prove puzzle uniqueness; it consumes optional solver reports and should run after the P2-01 pipeline solver gate."
+  - "Symmetry is measured using vertex reflection ratios and is rejected only for profiles marked rejectSymmetry; this policy may need tuning during playtesting."
+  - "The new workspace must remain represented in package-lock.json for clean-install/release reproducibility; lockfile ownership is outside this task's write scope."
+handoffNotes: |
+  P2-03 catalog work can import analyzePuzzle, analyzePuzzles, measureLoop,
+  evaluateQuality, DIFFICULTY_PROFILES, and the analysis types from
+  @loops/puzzle-analyzer. Pass the PuzzleDefinition plus the P2-01 SolverReport
+  so solver deduction metrics are retained. Add the root analyze:puzzles script
+  in authorized integration scope before running the exact root release route.
