@@ -52,16 +52,12 @@ acceptanceCriteria:
 checksPerformed:
   - command: "npm run typecheck"
     exitCode: 0
-    result: "Workspace TypeScript checks passed for web-game, game-engine, puzzle-format, and all existing tool workspaces."
   - command: "npm run test"
     exitCode: 0
-    result: "All workspace suites passed: 7 web-game files/21 tests, game-engine model/state 2 files/6 tests, validation 1 file/4 tests, hints 1 file/4 tests, puzzle-format 2 files/7 tests, catalog-builder 1 file/3 tests, puzzle-analyzer 1 file/4 tests, puzzle-generator 1 file/4 tests, and puzzle-validator 2 files/8 tests."
   - command: "npm run build"
     exitCode: 0
-    result: "Vite production build passed; 93 modules transformed and apps/web-game/dist assets emitted."
   - command: "npm run test:e2e"
     exitCode: 1
-    result: "Unavailable: npm reported Missing script: test:e2e; package.json has no e2e script and the P3-02 browser harness is not present."
 findings:
   - severity: LOW
     description: "Browser-level verification of the running app remains unavailable until P3-02 adds the e2e harness. The exact required command was run and exited 1 with npm Missing script: test:e2e; source inspection, focused integration tests, typecheck, and build independently verify the wired path."

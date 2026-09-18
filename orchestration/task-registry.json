@@ -279,7 +279,7 @@
       "implementationReportPath": "runs/<run-id>/tasks/P4-01/implementation-report.yaml",
       "verificationBriefPath": "runs/<run-id>/tasks/P4-01/verification-brief.yaml",
       "verificationReportPath": "runs/<run-id>/tasks/P4-01/verification-report.yaml",
-      "status": "queued"
+      "status": "verified"
     }
   ]
 }

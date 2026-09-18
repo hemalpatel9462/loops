@@ -37,10 +37,8 @@ acceptanceCriteria:
 checksPerformed:
   - command: "npm run test --workspace @loops/game-engine"
     exitCode: 0
-    result: "The package script ran model/vitest.config.ts (2 files, 6 tests) and validation/vitest.config.ts (1 file, 4 tests); all 10 tests passed."
   - command: "npm run typecheck"
     exitCode: 0
-    result: "The root workspace typecheck passed web-game, game-engine, puzzle-format, puzzle-generator, and puzzle-validator typechecks."
 findings:
   - severity: LOW
     description: "packages/game-engine/tsconfig.json includes model/**/*.ts and state/**/*.ts but not validation/**/*.ts; therefore the package typecheck does not statically typecheck validator.ts or validator.test.ts. The integrated Vitest package test does execute all validation tests, and the required root typecheck and package tests pass."

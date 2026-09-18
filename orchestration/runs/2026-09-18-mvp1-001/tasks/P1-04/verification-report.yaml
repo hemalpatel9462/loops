@@ -35,13 +35,10 @@ acceptanceCriteria:
 checksPerformed:
   - command: "npm run test"
     exitCode: 0
-    result: "All workspace suites passed: web-game 2 files/5 tests, game-engine 2 files/6 tests, puzzle-format 2 files/7 tests, puzzle-generator 1 file/4 tests."
   - command: "npm run validate:schemas"
     exitCode: 0
-    result: "The puzzle-format schema-validation suite passed 1 file and 2 tests."
   - command: "npm ci --dry-run"
     exitCode: 0
-    result: "The checked-out workspace dependency graph resolved successfully in dry-run mode."
 findings:
   - severity: LOW
     description: "The deterministic fixture test's self-serialization assertion is tautological, but determinism is independently supported by static fixture constants and identical results across two complete npm run test executions."

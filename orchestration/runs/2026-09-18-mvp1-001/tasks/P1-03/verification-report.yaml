@@ -34,13 +34,10 @@ acceptanceCriteria:
 checksPerformed:
   - command: "npm run test --workspace @loops/game-engine"
     exitCode: 0
-    result: "Package script ran model, validation, and hints Vitest configs: 3 test files and 14 tests passed (6 model/state, 4 validation, 4 hints)."
   - command: "npm run typecheck"
     exitCode: 0
-    result: "Workspace typecheck exited 0 for web-game, game-engine, puzzle-format, puzzle-generator, and puzzle-validator."
   - command: "node --experimental-strip-types --input-type=module -e '<forced evidence and purity assertions>'"
     exitCode: 1
-    result: "The ad hoc direct-Node import could not resolve the existing extensionless ../model/board import; this is not a required verification command and does not affect the Vite/Vitest package checks."
 findings:
   - severity: LOW
     description: "The implementation report records package test wiring and workspace typecheck as pending/failing, but the current package.json includes hints/vitest.config.ts and the exact required commands now pass after integration changes."

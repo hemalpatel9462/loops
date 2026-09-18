@@ -29,19 +29,14 @@ acceptanceCriteria:
 checksPerformed:
   - command: "npm ci"
     exitCode: 0
-    result: "Clean install completed; npm reported 116 packages added and 2 moderate audit vulnerabilities."
   - command: "npm run test:e2e"
     exitCode: 1
-    result: "Playwright ran 32 tests across phone, tablet, desktop, and reduced-motion: 29 failed and 3 skipped; no test passed. Exact failure groups are recorded under the acceptance criteria and findings."
   - command: "npm run build"
     exitCode: 0
-    result: "Vite production build completed successfully; 93 modules transformed and apps/web-game/dist assets emitted."
   - command: "npm run typecheck"
     exitCode: 0
-    result: "All configured workspace TypeScript checks completed successfully."
   - command: "npm test"
     exitCode: 0
-    result: "All workspace Vitest suites passed: 17 web-game tests, 6 game-engine tests, 4 validator tests, 4 hint tests, 7 puzzle-format tests, 3 catalog-builder tests, 4 analyzer tests, 4 generator tests, and 8 puzzle-validator tests."
 findings:
   - severity: HIGH
     description: "The required browser command is red. 24 tests fail at tests/e2e/helpers.ts:29 because Playwright considers the data-edge-id <g> locator hidden, even though its child SVG lines render. This blocks all Quick Play, keyboard, and responsive assertions in every configured project. The helper should assert a visible child hit target/line (or otherwise use a locator with measurable SVG geometry) before interacting."

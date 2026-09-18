@@ -45,22 +45,16 @@ acceptanceCriteria:
 checksPerformed:
   - command: "npm ci"
     exitCode: 0
-    result: "113 packages added; 122 packages audited; two moderate audit findings reported."
   - command: "npm run build"
     exitCode: 0
-    result: "Vite transformed 93 modules and emitted apps/web-game/dist production assets."
   - command: "find apps/web-game/dist -maxdepth 2 -type f"
     exitCode: 0
-    result: "Listed index.html and hashed JS/CSS assets under apps/web-game/dist."
   - command: "npx vite build --config apps/web-game/vite.config.ts"
     exitCode: 0
-    result: "Direct app-local Vite production build completed successfully."
   - command: "rg -n -i 'vitest|puzzle-generator|puzzle-validator|catalog-builder|test-candidates|tools/' apps/web-game/dist"
     exitCode: 1
-    result: "No generator/test-only markers found in the production artifact; exit code 1 is the expected no-match result."
   - command: "git diff --check -- PROJECT_STRUCTURE_AND_DEPLOYMENT.md apps/web-game/vite.config.ts vercel.json"
     exitCode: 0
-    result: "No whitespace errors in the reviewed implementation files."
 findings:
   - severity: LOW
     description: "npm ci reports two moderate dependency audit findings. They do not prevent installation or the production build; dependency remediation is outside P3-04's write scope."

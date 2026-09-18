@@ -36,16 +36,12 @@ acceptanceCriteria:
 checksPerformed:
   - command: "npm run test --workspace @loops/puzzle-validator"
     exitCode: 0
-    result: "Vitest reported 1 test file and 5 tests passed."
   - command: "npm run typecheck"
     exitCode: 0
-    result: "Workspace typecheck passed for web-game, game-engine, puzzle-format, puzzle-generator, and puzzle-validator."
   - command: "npm run validate:solver-fixtures"
     exitCode: 0
-    result: "Root integration route delegated to @loops/puzzle-validator and printed 'Validated 2 solver fixtures.'; only Node's expected experimental type-stripping warning was emitted."
   - command: "node --experimental-strip-types --input-type=module -e '<zero/one/multiple, fixed/excluded, and report-shape assertions>'"
     exitCode: 0
-    result: "Independent runtime assertions passed: one=1, zero=0, multiple=2, retained=2, constrained=1; report keys matched the approved shape."
 findings:
   - severity: LOW
     description: "The implementation report records the root validate:solver-fixtures route and lockfile integration as pending. The current inspected project state has since added the root route and package-lock workspace link; the exact required root command now passes."

@@ -40,16 +40,12 @@ acceptanceCriteria:
 checksPerformed:
   - command: "npm run test --workspace @loops/puzzle-generator"
     exitCode: 0
-    result: "Vitest reported 1 test file and 4 tests passed."
   - command: "npm run generate:test-candidates"
     exitCode: 0
-    result: "Root integration script routed to @loops/puzzle-generator; emitted three candidate-loop artifacts as candidate-loop-set JSON, with only Node's expected experimental type-stripping warning."
   - command: "npm run typecheck"
     exitCode: 0
-    result: "Workspace typecheck passed for web-game, game-engine, puzzle-format, and puzzle-generator."
   - command: "node --experimental-strip-types --input-type=module -e '<600-seed generation and validation sweep>'"
     exitCode: 0
-    result: "Generated and structurally validated 600 candidates across 2x2, 3x3, 4x4, 5x5, 7x7, and 10x10 boards; stdout reported validated 600 generated candidates."
 findings:
   - severity: LOW
     description: "The implementation report records the root generate:test-candidates command as failing and says the root route/lockfile were pending. The current inspected project state has since integrated the root script and package-lock workspace links; the exact required root command now passes."

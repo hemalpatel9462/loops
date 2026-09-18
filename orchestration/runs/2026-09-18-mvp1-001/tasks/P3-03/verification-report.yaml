@@ -41,6 +41,19 @@ acceptanceCriteria:
       - "The focused web-game run `npm run test --workspace @loops/web-game -- src/state/game-flow/game-flow.test.ts src/app/integration/integration.test.ts` exited 0 with 2 files and 8 tests passed, including deterministic Daily Loop selection and persisted date/puzzle mapping."
       - "npm run typecheck exited 0 across web-game, game-engine, puzzle-format, catalog-builder, puzzle-analyzer, puzzle-generator, and puzzle-validator."
       - "npm run test --workspace @loops/catalog-builder exited 0 with 1 file and 3 tests passed."
+checksPerformed:
+  - command: "npm run generate:pack"
+    exitCode: 0
+  - command: "npm run validate:puzzles"
+    exitCode: 0
+  - command: "npm run validate:catalog"
+    exitCode: 0
+  - command: "npm run validate:schemas"
+    exitCode: 0
+  - command: "npm run typecheck"
+    exitCode: 0
+  - command: "npm run test --workspace @loops/catalog-builder"
+    exitCode: 0
 findings:
   - severity: LOW
     description: "The implementation report was stale about the root generate:pack route: the current package.json now defines it and the exact required command exits 0."

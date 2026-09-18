@@ -1,0 +1,85 @@
+schemaVersion: "1.0"
+artifactType: implementation-report
+taskId: "P4-01"
+status: COMPLETE
+summary: |
+  Completed the P4-01 final release gate within the declared run-artifact scope.
+  The clean install, workspace typecheck, unit tests, Playwright browser matrix,
+  production build, puzzle validation, and catalog validation all exited 0.
+  Release evidence records report inventory, browser/responsive/accessibility
+  coverage, bundle exclusion, and byte-identical root versus app-local Vite
+  packaging output.
+filesChanged:
+  - path: "orchestration/runs/2026-09-18-mvp1-001/RUN-SUMMARY.md"
+    change: "Recorded the final MVP1 release recommendation, gate results, remediation history, scope, and known risks."
+  - path: "orchestration/runs/2026-09-18-mvp1-001/release-checks/command-results.md"
+    change: "Recorded exact required release commands and exit codes with current output evidence."
+  - path: "orchestration/runs/2026-09-18-mvp1-001/release-checks/browser-smoke.md"
+    change: "Recorded the 32-test phone/tablet/desktop/reduced-motion browser matrix and gameplay/accessibility findings."
+  - path: "orchestration/runs/2026-09-18-mvp1-001/release-checks/packaging.md"
+    change: "Recorded Vercel settings, root/app-local build comparison, bundle exclusion, schema inventory, and verification-report inventory."
+  - path: "orchestration/runs/2026-09-18-mvp1-001/tasks/P4-01/implementation-report.yaml"
+    change: "Recorded the scoped implementation result, command exit codes, acceptance evidence, deviations, and known risks."
+acceptanceCriteria:
+  - id: AC-1
+    result: PASS
+    evidence:
+      - "Ruby YAML parsing validated all 23 verification-report files with artifactType=verification-report, taskId, and verdict headers."
+      - "The latest verification report for each of the 20 pre-release tasks P0-01 through P3-04 is PASS; P3-02's retained historical FAIL is superseded by verification-report-remediation-1.yaml=PASS."
+      - "All 20 pre-release status.json records report status: verified."
+  - id: AC-2
+    result: PASS
+    evidence:
+      - "npm ci, npm run typecheck, npm run test, npm run test:e2e, npm run build, npm run validate:puzzles, and npm run validate:catalog each exited 0."
+      - "The browser matrix ran 32 tests across phone, tablet, desktop, and reduced-motion projects: 29 passed and 3 intentional reduced-motion-only skips."
+      - "Root production build transformed 93 modules and emitted apps/web-game/dist/index.html plus hashed CSS and JavaScript assets."
+  - id: AC-3
+    result: PASS
+    evidence:
+      - "Browser coverage passed Quick Play edge cycling, undo/redo/reset, hints, progress checks, completion feedback, Continue persistence, and Daily Loop startup."
+      - "Keyboard Enter/Space activation and the dedicated reduced-motion assertion passed; responsive checks passed for phone, tablet, desktop, and reduced-motion with no horizontal overflow."
+      - "The production bundle scan found no vitest, generator, validator, catalog-builder, test-candidates, or tools markers (rg exit 1, expected no matches)."
+  - id: AC-4
+    result: PASS
+    evidence:
+      - "RUN-SUMMARY.md is present under orchestration/runs/2026-09-18-mvp1-001/."
+      - "RUN-SUMMARY.md records all four acceptance-criterion results and points to the release-check evidence files."
+commandsRun:
+  - command: "npm ci"
+    exitCode: 0
+  - command: "npm run typecheck"
+    exitCode: 0
+  - command: "npm run test"
+    exitCode: 0
+  - command: "npm run test:e2e"
+    exitCode: 0
+  - command: "npm run build"
+    exitCode: 0
+  - command: "npm run validate:puzzles"
+    exitCode: 0
+  - command: "npm run validate:catalog"
+    exitCode: 0
+  - command: "npx vite build --config apps/web-game/vite.config.ts"
+    exitCode: 0
+  - command: "find apps/web-game/dist -maxdepth 2 -type f -print | sort"
+    exitCode: 0
+  - command: "find apps/web-game/dist -maxdepth 2 -type f -print0 | sort -z | xargs -0 shasum -a 256"
+    exitCode: 0
+  - command: "rg -n -i 'vitest|puzzle-generator|puzzle-validator|catalog-builder|test-candidates|tools/' apps/web-game/dist"
+    exitCode: 1
+  - command: "ruby -ryaml -e 'base=\"orchestration/runs/2026-09-18-mvp1-001/tasks\"; files=Dir[File.join(base,\"*\",\"verification-report*.yaml\")].sort; abort \"expected 23 reports, got #{files.length}\" unless files.length == 23; files.each { |f| d=YAML.load_file(f); abort \"invalid #{f}\" unless d.is_a?(Hash) && d[\"artifactType\"] == \"verification-report\" && d[\"taskId\"] && d[\"verdict\"] }; puts \"report_count=#{files.length}; headers=valid\"'"
+    exitCode: 0
+  - command: "ruby -rjson -ryaml -e 'registry=JSON.parse(File.read(\"orchestration/task-registry.json\")); expected=registry[\"tasks\"].map{|t| t[\"id\"]}.reject{|id| id==\"P4-01\"}; base=\"orchestration/runs/2026-09-18-mvp1-001/tasks\"; reports=Dir[File.join(base,\"*\",\"verification-report*.yaml\")].map{|f| [f,YAML.load_file(f)]}; latest={}; reports.each{|f,d| latest[d[\"taskId\"]]=[f,d] if !latest[d[\"taskId\"]] || File.basename(f).include?(\"remediation\")}; abort \"missing task\" unless (expected-latest.keys).empty?; abort \"non-pass latest\" unless latest.values.all?{|f,d| d[\"verdict\"]==\"PASS\"}; statuses=expected.map{|id| JSON.parse(File.read(File.join(base,id,\"status.json\")))[\"status\"]}; abort \"unverified status\" unless statuses.all?{|s| s==\"verified\"}; puts \"expected_tasks=#{expected.length}; latest_pass=#{latest.length}; statuses_verified=#{statuses.length}\"'"
+    exitCode: 0
+deviations:
+  - "P3-02 retains its original FAIL verification report for audit history; the later remediation-1 verification report is PASS and the task status is verified, so AC-1 uses the latest report per task."
+  - "The Playwright run intentionally reports three skips because the reduced-motion assertion runs only in the dedicated reduced-motion project; that project passed the assertion."
+knownRisks:
+  - "npm ci reports two moderate dependency audit advisories; no dependency changes were made within this release-verification scope."
+  - "Root and app-local Vite configurations remain duplicated; both builds were independently run and produced byte-identical artifacts."
+  - "The P3-03 verification report records a medium-risk root generate:pack output-path integration issue; the checked-in five-puzzle catalog and required validation commands pass, but the convenience alias should be corrected in a future integration change."
+handoffNotes: |
+  MVP1 release evidence is complete under the 2026-09-18-mvp1-001 run folder.
+  The release summary recommends release readiness. Independent verification can
+  reproduce the gate from command-results.md, browser-smoke.md, packaging.md,
+  and the exact command/exit-code list in this report.

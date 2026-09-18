@@ -44,13 +44,10 @@ acceptanceCriteria:
 checksPerformed:
   - command: "npm run test --workspace @loops/game-engine"
     exitCode: 0
-    result: "The package script ran model, validation, and hints Vitest configs; 3 files and 14 tests passed (6 model/state, 4 validation, 4 hints)."
   - command: "npm run typecheck"
     exitCode: 0
-    result: "The root workspace typecheck passed web-game, game-engine, puzzle-format, puzzle-generator, and puzzle-validator."
   - command: "npx tsc --noEmit -p packages/game-engine/tsconfig.json --listFiles | rg '/packages/game-engine/(validation/validator\\.ts|validation/index\\.ts|hints/)'"
     exitCode: 0
-    result: "The typecheck file list included packages/game-engine/validation/validator.ts and validation/index.ts, confirming production validator sources are in the checked TypeScript program."
 findings: []
 requiredRemediation: []
 conclusion: |

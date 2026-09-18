@@ -1,0 +1,103 @@
+schemaVersion: "1.0"
+artifactType: verification-report
+taskId: "P4-01"
+verdict: PASS
+scopeReviewed:
+  - "orchestration/briefs/P4-01/verification-brief.yaml"
+  - "orchestration/runs/2026-09-18-mvp1-001/tasks/P4-01/verification-brief.yaml"
+  - "orchestration/runs/2026-09-18-mvp1-001/tasks/P4-01/task-brief.yaml"
+  - "orchestration/runs/2026-09-18-mvp1-001/tasks/P4-01/implementation-report.yaml"
+  - "orchestration/runs/2026-09-18-mvp1-001/RUN-SUMMARY.md"
+  - "orchestration/runs/2026-09-18-mvp1-001/release-checks/**"
+  - "orchestration/task-registry.json"
+  - "orchestration/runs/2026-09-18-mvp1-001/tasks/P[0-3]-*/verification-report*.yaml"
+  - "orchestration/runs/2026-09-18-mvp1-001/tasks/P[0-3]-*/status.json"
+  - "package.json"
+  - "package-lock.json"
+  - "vercel.json"
+  - "vite.config.ts"
+  - "apps/web-game/vite.config.ts"
+  - "tests/e2e/**"
+  - "playwright.config.ts"
+  - "schemas/**"
+  - "packages/puzzle-data/**"
+  - "apps/web-game/dist/**"
+acceptanceCriteria:
+  - id: AC-1
+    verdict: PASS
+    evidence:
+      - "Independent inventory found 23 pre-release verification-report*.yaml files for the 20 registry task IDs P0-01 through P3-04; all report headers parse as artifactType=verification-report with taskId and verdict."
+      - "Latest-per-task selection found 20/20 PASS reports and all 20 corresponding status.json files have status=verified; the retained P3-02 historical verification-report.yaml is FAIL but is superseded by verification-report-remediation-1.yaml=PASS, as documented in RUN-SUMMARY.md and the P4-01 implementation report."
+  - id: AC-2
+    verdict: PASS
+    evidence:
+      - "Fresh npm ci exited 0 (116 packages installed; npm reported two moderate audit advisories only)."
+      - "Fresh npm run typecheck exited 0 for web-game, game-engine, puzzle-format, catalog-builder, puzzle-analyzer, puzzle-generator, and puzzle-validator."
+      - "Fresh npm run test exited 0: 17 web-game, 6 game-engine model/state, 4 validation, 4 hints, 7 puzzle-format, 3 catalog-builder, 4 analyzer, 4 generator, and 8 puzzle-validator tests passed."
+      - "Fresh npm run test:e2e exited 0: 32 Playwright tests ran across phone, tablet, desktop, and reduced-motion projects; 29 passed and 3 intentional reduced-motion-only skips."
+      - "Fresh npm run build exited 0: Vite transformed 93 modules and emitted apps/web-game/dist/index.html plus hashed CSS/JavaScript assets."
+      - "Fresh npm run validate:puzzles exited 0 with solutionCount=1 and unique=true; fresh npm run validate:catalog exited 0 with valid=true, puzzleCount=5, catalogVersion=1.0.0."
+  - id: AC-3
+    verdict: PASS
+    evidence:
+      - "tests/e2e/gameplay.spec.ts passed Quick Play edge cycling, undo/redo/reset, hints, progress checks, completion feedback, Continue restoration, and deterministic Daily Loop startup in all configured projects."
+      - "tests/e2e/accessibility.spec.ts passed Enter/Space activation for editable edges in phone, tablet, desktop, and reduced-motion projects; the dedicated reduced-motion assertion passed with the checked-in 0/0.01ms transition contract."
+      - "tests/e2e/responsive.spec.ts passed board-fit and no-horizontal-overflow checks for phone, tablet, desktop, and reduced-motion viewports."
+      - "Independent bundle scan rg -n -i 'vitest|puzzle-generator|puzzle-validator|catalog-builder|test-candidates|tools/' apps/web-game/dist exited 1 with zero matches; the production artifact contains only index.html and hashed CSS/JavaScript assets."
+      - "No critical accessibility or gameplay failure was observed in the fresh 29-passing-test browser matrix or direct inspection of the mounted app and accessibility/gameplay tests."
+  - id: AC-4
+    verdict: PASS
+    evidence:
+      - "orchestration/runs/2026-09-18-mvp1-001/RUN-SUMMARY.md exists and records all four acceptance-criterion results, release recommendation, command evidence, browser evidence, and packaging evidence."
+checksPerformed:
+  - command: "npm ci"
+    exitCode: 0
+  - command: "npm run typecheck"
+    exitCode: 0
+  - command: "npm run test"
+    exitCode: 0
+  - command: "npm run test:e2e"
+    exitCode: 0
+  - command: "npm run build"
+    exitCode: 0
+  - command: "npm run validate:puzzles"
+    exitCode: 0
+  - command: "npm run validate:catalog"
+    exitCode: 0
+  - command: "npm run validate:schemas"
+    exitCode: 0
+  - command: "npx vite build --config apps/web-game/vite.config.ts"
+    exitCode: 0
+  - command: "root build and direct app-local Vite build SHA-256 manifest comparison"
+    exitCode: 0
+  - command: "rg -n -i 'vitest|puzzle-generator|puzzle-validator|catalog-builder|test-candidates|tools/' apps/web-game/dist"
+    exitCode: 1
+  - command: "independent Ruby report/status inventory for registry tasks P0-01 through P3-04"
+    exitCode: 0
+findings:
+  - severity: LOW
+    description: "npm ci reports two moderate dependency audit advisories. Installation and all required checks still pass; dependency remediation is outside this release-verification scope."
+    file: "package-lock.json"
+  - severity: LOW
+    description: "The report archive retains the original P3-02 verification-report.yaml=FAIL for audit history. Its remediation report is PASS and the task status is verified; AC-1 therefore relies on the documented latest-per-task convention."
+    file: "orchestration/runs/2026-09-18-mvp1-001/tasks/P3-02/verification-report.yaml"
+  - severity: LOW
+    description: "P3-02's remediation report contains an extra remediationAttempt field not declared by schemas/verification-report.schema.json additionalProperties=false; it is not used by the release gate's header/latest-report inventory."
+    file: "orchestration/runs/2026-09-18-mvp1-001/tasks/P3-02/verification-report-remediation-1.yaml"
+  - severity: MEDIUM
+    description: "The root generate:pack alias passes a relative --output packages/puzzle-data to the catalog-builder workspace, whose CLI resolves relative paths from its workspace cwd; this can write tools/catalog-builder/packages/puzzle-data instead of refreshing packages/puzzle-data. The checked-in five-puzzle catalog and required validation commands are valid, so this does not fail the P4-01 acceptance criteria."
+    file: "tools/catalog-builder/src/cli.ts"
+  - severity: LOW
+    description: "Root and app-local Vite configurations remain duplicated. Independent root and app-local builds both pass and produced byte-identical dist manifests."
+    file: "vite.config.ts"
+requiredRemediation:
+  - "Future integration work should normalize the remediation-report schema metadata and correct the generate:pack output-path resolution; neither issue blocks the current required release gate."
+conclusion: |
+  Independent verification passes all four P4-01 acceptance criteria. The seven
+  required commands and an additional schema-validation command exited 0; the
+  fresh browser matrix passed 29 tests with only three intentional skips; root
+  and direct app-local Vite builds produced byte-identical artifacts; and the
+  production bundle contains no test or generator markers. The retained
+  historical P3-02 FAIL is superseded by its PASS remediation report and
+  verified status. Remaining audit/configuration issues are recorded above and
+  are non-blocking for this release gate.

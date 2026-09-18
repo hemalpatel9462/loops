@@ -32,16 +32,12 @@ acceptanceCriteria:
 checksPerformed:
   - command: "npm run test --workspace @loops/puzzle-validator"
     exitCode: 0
-    result: "Vitest passed 2 test files and 8 tests: 5 original solver tests and 3 remediation tests."
   - command: "npm run typecheck"
     exitCode: 0
-    result: "Workspace typecheck passed for web-game, game-engine, puzzle-format, puzzle-generator, and puzzle-validator."
   - command: "npm run validate:solver-fixtures"
     exitCode: 0
-    result: "Root route delegated to @loops/puzzle-validator and printed 'Validated 2 solver fixtures.'; only the expected Node experimental type-stripping warning appeared."
   - command: "node_modules/.bin/vitest run --config tools/puzzle-generator/pipeline/vitest.config.ts"
     exitCode: 0
-    result: "Pipeline compatibility suite passed 1 test file and 4 tests, including schema-valid unique puzzle emission and accepted/rejected pipeline result behavior."
 findings:
   - severity: LOW
     description: "The corrected solver geometry required updating the prior multiple-solution fixture clues to [[2,3],[3,2]]; the test still asserts exactly two retained solutions and the two-solution cap."
