@@ -227,7 +227,7 @@
       "implementationReportPath": "runs/<run-id>/tasks/P3-01/implementation-report.yaml",
       "verificationBriefPath": "runs/<run-id>/tasks/P3-01/verification-brief.yaml",
       "verificationReportPath": "runs/<run-id>/tasks/P3-01/verification-report.yaml",
-      "status": "queued"
+      "status": "verified"
     },
     {
       "id": "P3-02",
@@ -240,7 +240,7 @@
       "implementationReportPath": "runs/<run-id>/tasks/P3-02/implementation-report.yaml",
       "verificationBriefPath": "runs/<run-id>/tasks/P3-02/verification-brief.yaml",
       "verificationReportPath": "runs/<run-id>/tasks/P3-02/verification-report.yaml",
-      "status": "queued"
+      "status": "verified"
     },
     {
       "id": "P3-03",
@@ -253,7 +253,7 @@
       "implementationReportPath": "runs/<run-id>/tasks/P3-03/implementation-report.yaml",
       "verificationBriefPath": "runs/<run-id>/tasks/P3-03/verification-brief.yaml",
       "verificationReportPath": "runs/<run-id>/tasks/P3-03/verification-report.yaml",
-      "status": "queued"
+      "status": "verified"
     },
     {
       "id": "P3-04",
@@ -266,7 +266,7 @@
       "implementationReportPath": "runs/<run-id>/tasks/P3-04/implementation-report.yaml",
       "verificationBriefPath": "runs/<run-id>/tasks/P3-04/verification-brief.yaml",
       "verificationReportPath": "runs/<run-id>/tasks/P3-04/verification-report.yaml",
-      "status": "queued"
+      "status": "verified"
     },
     {
       "id": "P4-01",

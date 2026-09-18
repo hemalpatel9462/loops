@@ -1,0 +1,62 @@
+schemaVersion: "1.0"
+artifactType: implementation-report
+taskId: "P3-03"
+status: COMPLETE
+summary: |
+  Rebuilt the initial validated puzzle pack through the catalog-builder
+  pipeline using the existing stable puzzle IDs consumed by P3-01. The pack
+  contains one uniquely solvable, schema-valid puzzle for each launch
+  difficulty, including 4×4, 5×5, and 7×7 representatives. The catalog was
+  regenerated against those files and the offline Daily Loop mapping was
+  exercised through the web-game flow tests. Puzzle bytes were deterministic
+  and unchanged; catalog.json received the new build timestamp.
+filesChanged:
+  - path: "packages/puzzle-data/catalog.json"
+    change: "Regenerated the catalog against the five validated puzzle files while preserving stable IDs, paths, dimensions, difficulty entries, and catalog version; refreshed generatedAt to the build timestamp."
+acceptanceCriteria:
+  - id: AC-1
+    result: PASS
+    evidence:
+      - "The catalog contains exactly one entry for each approved difficulty: beginner, easy, medium, hard, and expert."
+      - "The five referenced files parse as PuzzleDefinition records and the independent solver check reported solutionCount=1, valid=true, and unique=true for every file."
+  - id: AC-2
+    result: PASS
+    evidence:
+      - "The pack contains 4×4 beginner, 5×5 easy, 7×7 medium, 8×8 hard, and 10×10 expert boards, confirmed by the independent pack check output."
+      - "Each puzzle's clue matrix dimensions match its declared width and height."
+  - id: AC-3
+    result: PASS
+    evidence:
+      - "The independent pack check parsed all five files through parsePuzzleDefinition, rejected duplicate IDs, verified clue dimensions, and solved every puzzle uniquely."
+      - "The puzzle validator reported unique=1 for each checked-in puzzle; every solution is a single playable loop accepted by the solver."
+  - id: AC-4
+    result: PASS
+    evidence:
+      - "npm run validate:catalog exited 0 with valid=true, puzzleCount=5, and catalogVersion=1.0.0, confirming all catalog paths resolve to compatible puzzle files."
+      - "The web-game game-flow test passed all five tests, including deterministic Daily Loop selection and session mapping for 2026-09-18."
+commandsRun:
+  - command: "npm run generate:pack"
+    exitCode: 1
+  - command: "npm run build:catalog --workspace @loops/catalog-builder -- --output /Users/hemalpatel/Development/loops/packages/puzzle-data --seed catalog"
+    exitCode: 0
+  - command: "npm run validate:puzzles"
+    exitCode: 0
+  - command: "npm run validate:catalog"
+    exitCode: 0
+  - command: "npx vite-node --config tools/puzzle-generator/pipeline/vite.config.ts /tmp/loops-p3-03-verify.ts"
+    exitCode: 0
+  - command: "npm run validate:schemas"
+    exitCode: 0
+  - command: "npm run test --workspace @loops/web-game -- src/state/game-flow/game-flow.test.ts"
+    exitCode: 0
+deviations:
+  - "The required root npm run generate:pack route is not defined in package.json, so npm reported Missing script: generate:pack. The available catalog-builder workspace generation route was run successfully; adding a root alias would exceed this task's declared write scope."
+  - "The independent all-puzzle solver check used a temporary verification script at /tmp/loops-p3-03-verify.ts; the script was removed after the check and is not part of the implementation."
+knownRisks:
+  - "The root generate:pack convenience alias remains unavailable until an integration-scope task adds it; the workspace generation route is the reproducible substitute."
+  - "Catalog generatedAt is build-time metadata, so repeated catalog builds differ in that timestamp even when puzzle IDs and puzzle bytes remain deterministic."
+handoffNotes: |
+  The validated five-puzzle pack is ready for independent verification. Stable
+  puzzle filenames and IDs remain compatible with P3-01's local puzzle loader.
+  Reproduce with the workspace build command above, then run the three required
+  root validation commands and inspect catalog.json plus every referenced file.

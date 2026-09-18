@@ -1,0 +1,31 @@
+schemaVersion: "1.0"
+artifactType: verification-brief
+taskId: "P3-02"
+remediationAttempt: 1
+implementationReportPath: "runs/2026-09-18-mvp1-001/tasks/P3-02/implementation-report-remediation-1.yaml"
+scopeReviewed:
+  - "tests/e2e/**"
+  - "playwright.config.ts"
+  - "orchestration/runs/2026-09-18-mvp1-001/tasks/P3-02/implementation-report-remediation-1.yaml"
+  - "orchestration/runs/2026-09-18-mvp1-001/tasks/P3-02/verification-report.yaml"
+acceptanceCriteria:
+  - id: AC-R1
+    description: "npm run test:e2e passes across phone, tablet, desktop, and reduced-motion projects with all required gameplay, persistence, responsive, keyboard, and reduced-motion assertions executing."
+  - id: AC-R2
+    description: "The E2E tests assert only observable contracts exposed by the current application and do not depend on a hidden SVG group or an absent source marker."
+  - id: AC-R3
+    description: "The task write scope remains limited to tests/e2e/** and playwright.config.ts."
+requiredChecks:
+  - command: "npm run test:e2e"
+    purpose: "Verify all browser projects and remediation acceptance criteria."
+  - command: "npm run build"
+    purpose: "Verify production packaging remains healthy."
+  - command: "npm run typecheck"
+    purpose: "Verify typed project integration."
+  - command: "npm test"
+    purpose: "Verify existing unit and workspace tests remain passing."
+constraints:
+  - "Do not modify production code, task briefs, implementation reports, verification reports, or the task registry."
+  - "Treat the remediation implementation report as a claim and inspect actual files and command output."
+  - "Verdict PASS only if every remediation criterion and required check passes."
+verificationReportPath: "runs/2026-09-18-mvp1-001/tasks/P3-02/verification-report-remediation-1.yaml"

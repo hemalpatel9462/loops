@@ -1,0 +1,43 @@
+schemaVersion: "1.0"
+artifactType: task-brief
+taskId: "P3-04"
+title: "Vercel packaging and production build"
+phase: 3
+goal: "Make the repository produce the documented static Vite artifact for Vercel."
+context:
+  - "loops_game_design_spec.md"
+  - "PROJECT_STRUCTURE_AND_DEPLOYMENT.md"
+  - "orchestration/IMPLEMENTATION_PLAN.md"
+  - "orchestration/task-registry.json"
+dependencies: ["P3-01","P2-03"]
+writeScope:
+  - "vercel.json"
+  - "PROJECT_STRUCTURE_AND_DEPLOYMENT.md"
+  - "apps/web-game/vite.config.ts"
+forbiddenScope:
+  - "orchestration/task-registry.json"
+  - "orchestration/briefs/**"
+  - "orchestration/runs/<run-id>/tasks/<task-id>/verification-brief.yaml"
+  - "orchestration/runs/<run-id>/tasks/<task-id>/verification-report.yaml"
+acceptanceCriteria:
+  - id: "AC-1"
+    description: "Root workspace install succeeds with npm ci."
+  - id: "AC-2"
+    description: "npm run build succeeds from repository root."
+  - id: "AC-3"
+    description: "Output is apps/web-game/dist."
+  - id: "AC-4"
+    description: "Generator and test-only files are not bundled."
+  - id: "AC-5"
+    description: "Preview deployment settings are documented."
+requiredChecks:
+  - "npm ci"
+  - "npm run build"
+  - "find apps/web-game/dist -maxdepth 2 -type f"
+implementationReportPath: "runs/<run-id>/tasks/P3-04/implementation-report.yaml"
+instructions:
+  - "Read the task brief and all listed context before editing."
+  - "Modify only the assigned write scope and preserve unrelated work."
+  - "Run the required checks or record why a check is unavailable."
+  - "Write the implementation report before returning."
+

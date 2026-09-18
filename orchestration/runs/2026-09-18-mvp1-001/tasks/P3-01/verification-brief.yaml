@@ -1,0 +1,34 @@
+schemaVersion: "1.0"
+artifactType: verification-brief
+taskId: "P3-01"
+implementationReportPath: "runs/<run-id>/tasks/P3-01/implementation-report.yaml"
+scopeReviewed:
+  - "apps/web-game/src/state/game-reducer.ts"
+  - "apps/web-game/src/app/integration/**"
+acceptanceCriteria:
+  - id: "AC-1"
+    description: "UI loads real PuzzleDefinition data."
+  - id: "AC-2"
+    description: "All edge actions pass through the game engine."
+  - id: "AC-3"
+    description: "Hints use engine output."
+  - id: "AC-4"
+    description: "Completion uses engine validation."
+  - id: "AC-5"
+    description: "No mock puzzle or mock rule path remains in production code."
+requiredChecks:
+  - command: "npm run typecheck"
+    purpose: "Verify the task acceptance criteria and detect regressions."
+  - command: "npm run test"
+    purpose: "Verify the task acceptance criteria and detect regressions."
+  - command: "npm run build"
+    purpose: "Verify the task acceptance criteria and detect regressions."
+  - command: "npm run test:e2e"
+    purpose: "Verify the task acceptance criteria and detect regressions."
+constraints:
+  - "Do not modify production code."
+  - "Treat the implementation report as a claim and verify it against the files."
+  - "Check every acceptance criterion independently."
+  - "Record evidence with file paths, test names, or command output."
+verificationReportPath: "runs/<run-id>/tasks/P3-01/verification-report.yaml"
+

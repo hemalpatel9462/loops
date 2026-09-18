@@ -1,0 +1,73 @@
+schemaVersion: "1.0"
+artifactType: verification-report
+taskId: "P3-02"
+verdict: FAIL
+scopeReviewed:
+  - "playwright.config.ts"
+  - "tests/e2e/**"
+  - "package.json"
+  - "package-lock.json"
+  - "orchestration/runs/2026-09-18-mvp1-001/tasks/P3-02/implementation-report.yaml"
+acceptanceCriteria:
+  - id: AC-1
+    verdict: FAIL
+    evidence:
+      - "tests/e2e/gameplay.spec.ts contains named coverage for Quick Play loading and edge cycling (line 11), undo/redo/reset/hints/progress (line 25), completion (line 50), Continue persistence (line 57), and Daily Loop (line 78); tests/e2e/helpers.ts supplies the beginner solution fixture and completion flow."
+      - "The required npm run test:e2e command ran the implementation suite but exited 1: all 24 executions of the six Quick Play/board-dependent tests failed before their feature assertions at tests/e2e/helpers.ts:29 because locator('[data-edge-id]').first() was reported hidden."
+      - "The four Daily Loop executions also failed at tests/e2e/gameplay.spec.ts:86: the test expected .flow-screen__eyebrow to contain daily-loop, but the rendered value was expert · relaxed. apps/web-game/src/app/integration/GamePlayScreen.tsx:46 renders difficulty · mode and does not expose the session source in that element."
+  - id: AC-2
+    verdict: FAIL
+    evidence:
+      - "playwright.config.ts:32-59 defines phone (iPhone 13), tablet (iPad gen 7 at 834x1112), desktop (1440x900), and reduced-motion projects; tests/e2e/responsive.spec.ts asserts board fit and document overflow."
+      - "The phone, tablet, desktop, and reduced-motion responsive executions all failed at tests/e2e/helpers.ts:29 before reaching the viewport assertions; therefore the configured viewport coverage did not complete successfully."
+  - id: AC-3
+    verdict: FAIL
+    evidence:
+      - "tests/e2e/accessibility.spec.ts:4 defines keyboard Enter/Space activation coverage and line 17 defines the reduced-motion smoke test; playwright.config.ts:52-57 sets reducedMotion: reduce for the dedicated project."
+      - "All four keyboard smoke executions failed at tests/e2e/helpers.ts:29 before focus/keyboard assertions. The reduced-motion execution also failed at the same helper before its assertions; the other three projects were intentionally skipped by accessibility.spec.ts:18."
+      - "The reduced-motion assertion expects transitionDuration === 0s at accessibility.spec.ts:26, while the loaded accessibility/global CSS uses transition-duration: 0.01ms !important (apps/web-game/src/accessibility/accessibility.css:47-54 and apps/web-game/src/styles/global.css:471-482), so this assertion requires reconciliation even after the helper failure is fixed."
+checksPerformed:
+  - command: "npm ci"
+    exitCode: 0
+    result: "Clean install completed; npm reported 116 packages added and 2 moderate audit vulnerabilities."
+  - command: "npm run test:e2e"
+    exitCode: 1
+    result: "Playwright ran 32 tests across phone, tablet, desktop, and reduced-motion: 29 failed and 3 skipped; no test passed. Exact failure groups are recorded under the acceptance criteria and findings."
+  - command: "npm run build"
+    exitCode: 0
+    result: "Vite production build completed successfully; 93 modules transformed and apps/web-game/dist assets emitted."
+  - command: "npm run typecheck"
+    exitCode: 0
+    result: "All configured workspace TypeScript checks completed successfully."
+  - command: "npm test"
+    exitCode: 0
+    result: "All workspace Vitest suites passed: 17 web-game tests, 6 game-engine tests, 4 validator tests, 4 hint tests, 7 puzzle-format tests, 3 catalog-builder tests, 4 analyzer tests, 4 generator tests, and 8 puzzle-validator tests."
+findings:
+  - severity: HIGH
+    description: "The required browser command is red. 24 tests fail at tests/e2e/helpers.ts:29 because Playwright considers the data-edge-id <g> locator hidden, even though its child SVG lines render. This blocks all Quick Play, keyboard, and responsive assertions in every configured project. The helper should assert a visible child hit target/line (or otherwise use a locator with measurable SVG geometry) before interacting."
+    file: "tests/e2e/helpers.ts"
+  - severity: HIGH
+    description: "The Daily Loop test asserts an unavailable source label. Four executions fail at tests/e2e/gameplay.spec.ts:86 because the UI renders expert · relaxed in .flow-screen__eyebrow, not daily-loop. Align the test with the actual UI contract or add an explicit source marker within the owning application integration scope."
+    file: "tests/e2e/gameplay.spec.ts"
+  - severity: HIGH
+    description: "The reduced-motion smoke test is not independently passing: it is blocked by the shared helper, and its expected exact value 0s conflicts with the checked-in 0.01ms reduced-motion CSS rule."
+    file: "tests/e2e/accessibility.spec.ts"
+  - severity: LOW
+    description: "The implementation report claims test:e2e and @playwright/test are unavailable, but the inspected current root package.json and package-lock.json contain test:e2e and @playwright/test; npm ci and the command executed. The report is stale relative to the integrated project state."
+    file: "orchestration/runs/2026-09-18-mvp1-001/tasks/P3-02/implementation-report.yaml"
+  - severity: LOW
+    description: "npm ci reported two moderate dependency audit vulnerabilities; this did not prevent typecheck, unit tests, or production build."
+    file: "package-lock.json"
+requiredRemediation:
+  - "Fix tests/e2e/helpers.ts:29 so startQuickPlay waits for and checks a measurable visible SVG child or another valid board-ready signal, then rerun npm run test:e2e across all projects."
+  - "Reconcile tests/e2e/gameplay.spec.ts:86 with the actual Daily Loop UI contract (or expose a documented source marker) and rerun the Daily Loop test in all projects."
+  - "Make tests/e2e/accessibility.spec.ts reduced-motion expectation match the intended CSS contract (0s versus 0.01ms), then rerun the dedicated reduced-motion project."
+conclusion: |
+  Independent inspection confirms the browser harness and declared coverage exist,
+  and npm ci, workspace typecheck, workspace unit tests, and production build pass.
+  However, the required npm run test:e2e command exits 1 with 29 failures and 3
+  skips. Shared helper visibility failures prevent Quick Play, keyboard, and
+  responsive assertions in every project; the Daily Loop assertion expects a
+  source label absent from the rendered UI; and reduced-motion has an additional
+  expected-value mismatch. The acceptance criteria and required browser check
+  therefore do not pass. Verdict: FAIL.

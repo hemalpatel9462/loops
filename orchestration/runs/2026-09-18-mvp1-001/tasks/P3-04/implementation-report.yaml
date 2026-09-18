@@ -1,0 +1,75 @@
+schemaVersion: "1.0"
+artifactType: implementation-report
+taskId: "P3-04"
+status: COMPLETE
+summary: |
+  Completed the scoped Vercel packaging documentation and app-local Vite
+  production configuration. The web-game config resolves shared runtime
+  packages from packages/ and emits the static artifact to
+  apps/web-game/dist. The deployment document now records the complete root
+  Vercel settings and pull-request preview workflow. The existing vercel.json
+  already contained the required build, install, framework, and output values,
+  so it was verified without a semantic change.
+filesChanged:
+  - path: "apps/web-game/vite.config.ts"
+    change: "Added an app-local Vite configuration with the web-game root, React plugin, @loops runtime-package alias, and apps/web-game/dist output directory."
+  - path: "PROJECT_STRUCTURE_AND_DEPLOYMENT.md"
+    change: "Documented the complete vercel.json equivalent, app-local Vite/output contract, and automatic pull-request preview deployment settings."
+  - path: "orchestration/runs/2026-09-18-mvp1-001/tasks/P3-04/implementation-report.yaml"
+    change: "Recorded implementation scope, required command results, acceptance evidence, deviations, and known risks."
+acceptanceCriteria:
+  - id: AC-1
+    result: PASS
+    evidence:
+      - "npm ci completed from the repository root with exit code 0."
+      - "npm ci installed 113 packages and audited 122 packages; it reported two moderate audit findings without changing dependencies."
+  - id: AC-2
+    result: PASS
+    evidence:
+      - "npm run build completed from the repository root with exit code 0."
+      - "Vite transformed 93 modules and emitted the production bundle successfully."
+  - id: AC-3
+    result: PASS
+    evidence:
+      - "apps/web-game/vite.config.ts sets build.outDir to apps/web-game/dist."
+      - "vercel.json sets outputDirectory to apps/web-game/dist."
+      - "find apps/web-game/dist -maxdepth 2 -type f listed apps/web-game/dist/index.html, apps/web-game/dist/assets/index-DbUdLiNP.js, and apps/web-game/dist/assets/index-DrP_tPS1.css."
+      - "A direct npx vite build --config apps/web-game/vite.config.ts also completed successfully and emitted the same output directory."
+  - id: AC-4
+    result: PASS
+    evidence:
+      - "The production artifact contains only the HTML entry and hashed CSS/JavaScript assets; no generator or test files are present in the output tree."
+      - "rg -n -i 'vitest|puzzle-generator|puzzle-validator|catalog-builder|test-candidates|tools/' apps/web-game/dist returned no matches."
+      - "The Vite alias in apps/web-game/vite.config.ts targets packages/ only, leaving tools/ and test workspaces outside the browser bundle resolution path."
+  - id: AC-5
+    result: PASS
+    evidence:
+      - "PROJECT_STRUCTURE_AND_DEPLOYMENT.md section 8 documents repository-root deployment, Vite framework, npm ci install, npm run build, and apps/web-game/dist output settings."
+      - "PROJECT_STRUCTURE_AND_DEPLOYMENT.md section 8 Preview deployments subsection documents automatic pull-request previews, preview URL checks, and production-branch promotion after validation and browser tests."
+      - "vercel.json contains the matching root buildCommand, installCommand, framework, and outputDirectory values."
+commandsRun:
+  - command: "npm ci"
+    exitCode: 0
+  - command: "npm run build"
+    exitCode: 0
+  - command: "find apps/web-game/dist -maxdepth 2 -type f"
+    exitCode: 0
+  - command: "npx vite build --config apps/web-game/vite.config.ts"
+    exitCode: 0
+  - command: "rg -n -i 'vitest|puzzle-generator|puzzle-validator|catalog-builder|test-candidates|tools/' apps/web-game/dist"
+    exitCode: 1
+    result: "No generator/test-only markers found in the production artifact; exit code 1 is the expected no-match result."
+  - command: "git diff --check -- PROJECT_STRUCTURE_AND_DEPLOYMENT.md apps/web-game/vite.config.ts vercel.json"
+    exitCode: 0
+deviations:
+  - "The root workspace scripts still invoke the pre-existing root vite.config.ts; the new apps/web-game/vite.config.ts was independently verified with a direct Vite production build because changing package.json or the root config is outside this task's declared write scope."
+  - "vercel.json already matched the required Vercel settings from the existing foundation, so no semantic edit was necessary; it was checked and cited as acceptance evidence."
+knownRisks:
+  - "npm ci reports two moderate dependency audit findings; no audit fix was applied because dependency changes are outside this task scope."
+  - "The app-local Vite config duplicates the repository-root Vite entry until a future integration change can safely route the workspace package scripts through the app-local config."
+handoffNotes: |
+  The production artifact is ready at apps/web-game/dist. Vercel should use
+  the repository root with install command npm ci, build command npm run build,
+  Vite framework detection, and output directory apps/web-game/dist. Preview
+  deployments are documented for pull requests; production promotion remains
+  gated on puzzle validation and browser tests.

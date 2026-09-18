@@ -1,0 +1,26 @@
+schemaVersion: "1.0"
+artifactType: verification-brief
+taskId: "P3-02"
+implementationReportPath: "runs/<run-id>/tasks/P3-02/implementation-report.yaml"
+scopeReviewed:
+  - "tests/e2e/**"
+  - "playwright.config.ts"
+acceptanceCriteria:
+  - id: "AC-1"
+    description: "Tests cover loading, edge cycling, undo/redo, reset, hints, progress checks, completion, Continue, and Daily Loop."
+  - id: "AC-2"
+    description: "Tests run at phone, tablet, and desktop viewports."
+  - id: "AC-3"
+    description: "Keyboard and reduced-motion smoke tests exist."
+requiredChecks:
+  - command: "npm run test:e2e"
+    purpose: "Verify the task acceptance criteria and detect regressions."
+  - command: "npm run build"
+    purpose: "Verify the task acceptance criteria and detect regressions."
+constraints:
+  - "Do not modify production code."
+  - "Treat the implementation report as a claim and verify it against the files."
+  - "Check every acceptance criterion independently."
+  - "Record evidence with file paths, test names, or command output."
+verificationReportPath: "runs/<run-id>/tasks/P3-02/verification-report.yaml"
+

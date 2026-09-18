@@ -1,0 +1,86 @@
+schemaVersion: "1.0"
+artifactType: implementation-report
+taskId: "P3-01"
+status: PARTIAL
+summary: >-
+  Added the engine-backed web integration boundary: a reducer that owns one
+  real PuzzleDefinition and delegates edge transitions, undo/redo, hints,
+  progress checks, and completion validation to @loops/game-engine, plus a
+  reusable GameIntegration composition surface that loads parsed local puzzle
+  data, mounts the existing flow screens and LoopBoard, persists active
+  sessions, and presents engine feedback. The declared scope does not include
+  AppShell.tsx or main.tsx, so the new composition surface is exported but is
+  not yet mounted by the current browser entry point.
+filesChanged:
+  - path: "apps/web-game/src/state/game-reducer.ts"
+    change: "Added GameReducerState, semantic GameAction types, and gameReducer transitions backed by cycleEdge, setEdgeState, undo, redo, computeHint/findDeductions, createInitialGameState, and validateCompletion."
+  - path: "apps/web-game/src/app/integration/puzzle-loader.ts"
+    change: "Added loaders that resolve parsed local PuzzleDefinition records from the existing validated puzzle catalog for ID, Quick Play, Daily Loop, and difficulty-filtered selection."
+  - path: "apps/web-game/src/app/integration/GamePlayScreen.tsx"
+    change: "Added the board-facing gameplay view; LoopBoard edge events dispatch reducer actions and controls expose engine-backed undo, redo, reset, hint, progress, and completion actions."
+  - path: "apps/web-game/src/app/integration/GameIntegration.tsx"
+    change: "Added the flow-to-game composition root, reducer state/session synchronization, Continue helper, approved progress persistence, and completion statistics handoff."
+  - path: "apps/web-game/src/app/integration/integration.css"
+    change: "Added responsive layout and feedback styling for the integrated gameplay view."
+  - path: "apps/web-game/src/app/integration/index.ts"
+    change: "Added public exports for GameIntegration, GamePlayScreen, and the real puzzle loaders."
+  - path: "apps/web-game/src/app/integration/integration.test.ts"
+    change: "Added focused tests for catalog PuzzleDefinition loading, engine edge transitions, engine hint output, and engine completion validation."
+  - path: "orchestration/runs/2026-09-18-mvp1-001/tasks/P3-01/implementation-report.yaml"
+    change: "Recorded exact implementation files, acceptance evidence, command results, deviations, and known risks."
+acceptanceCriteria:
+  - id: AC-1
+    result: PARTIAL
+    evidence:
+      - "puzzle-loader.ts delegates to getLocalPuzzleById/getLocalPuzzles/selectQuickPlayPuzzle/selectDailyPuzzle; these parse the checked-in packages/puzzle-data JSON through the existing puzzle-catalog module."
+      - "GameIntegration mounts GameFlowScreen and GamePlayScreen with the selected PuzzleDefinition, and integration.test.ts verifies schemaVersion, clue dimensions, and solutionEdges from the real beginner catalog record."
+      - "The current entry point still renders AppShell.tsx, which is outside this task's declared write scope; the exported GameIntegration surface therefore requires host wiring before the running root page uses it."
+  - id: AC-2
+    result: PASS
+    evidence:
+      - "game-reducer.ts routes cycle-edge through cycleEdge, set-edge and hint reveal through setEdgeState, and undo/redo/reset through the game-engine state package."
+      - "GamePlayScreen dispatches edge events from LoopBoard and exposes all edge controls through GameAction dispatch; no UI rule mutation is performed."
+      - "integration.test.ts verifies a cycle-edge action produces a line state and one engine history transition."
+  - id: AC-3
+    result: PASS
+    evidence:
+      - "game-reducer.ts calls computeHint and findDeductions with the real PuzzleDefinition and current engine edge/fixed state, increments hint usage only when a RuntimeHint is returned, and applies reveals through setEdgeState."
+      - "GamePlayScreen renders engine target/recommendation/explanation data and offers an explicit Apply engine suggestion action."
+      - "integration.test.ts requests a level-two hint and verifies engine hint output is present."
+  - id: AC-4
+    result: PASS
+    evidence:
+      - "game-reducer.ts calls validateCompletion for both check-progress and complete actions and sets completed only from validation.complete."
+      - "GameIntegration hands a reducer-confirmed completion through the existing completeSession flow for approved completion persistence/statistics."
+      - "integration.test.ts fills the real puzzle solution through reducer set-edge actions and verifies validateCompletion marks the state complete."
+  - id: AC-5
+    result: PARTIAL
+    evidence:
+      - "The new reducer and integration production path contain no mock PuzzleDefinition, mock rule implementation, or locally duplicated completion/hint rules; all such behavior delegates to the shared packages."
+      - "The pre-existing AppShell.tsx still contains its static landing/preview content and remains outside the P3-01 write scope, so the repository's current browser entry has not yet removed that placeholder path."
+commandsRun:
+  - command: "npm run typecheck"
+    exitCode: 0
+    result: "Root workspace typecheck passed for web-game, game-engine, puzzle-format, and all existing tool workspaces."
+  - command: "npm run test"
+    exitCode: 0
+    result: "All workspace suites passed: web-game 7 files/21 tests (including 3 integration tests), game-engine model/state 2 files/6 tests, validation 1 file/4 tests, hints 1 file/4 tests, puzzle-format 2 files/7 tests, catalog-builder 1 file/3 tests, puzzle-analyzer 1 file/4 tests, puzzle-generator 1 file/4 tests, and puzzle-validator 2 files/8 tests."
+  - command: "npm run build"
+    exitCode: 0
+    result: "Vite production build passed and emitted apps/web-game/dist."
+  - command: "npm run test:e2e"
+    exitCode: 1
+    result: "Unavailable: the root package reports Missing script: test:e2e; the P3-02 browser harness has not yet been added."
+deviations:
+  - "Status is PARTIAL because AppShell.tsx and main.tsx are outside the declared P3-01 write scope, so the exported GameIntegration composition surface is not mounted by the current browser entry."
+  - "The required npm run test:e2e check is unavailable until P3-02 adds the browser harness; no root scripts were changed."
+knownRisks:
+  - "The current running page remains the pre-existing static AppShell until an authorized integration step mounts GameIntegration from the app entry."
+  - "Browser-level interaction, responsive layout, and completion flows still need P3-02 coverage once its harness exists."
+  - "The reducer's Assisted-mode rejection uses the runtime hint consistency API; globally search-only contradictions remain outside the runtime hint contract."
+handoffNotes: >-
+  Mount GameIntegration from the authorized app host entry, e.g. replace the
+  current AppShell render with the integration export, then rerun the four
+  required checks. The integration public surface is available from
+  apps/web-game/src/app/integration and its focused tests document the expected
+  real-data and engine-delegation behavior.

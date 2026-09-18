@@ -14,16 +14,19 @@
     "lint": "npm run lint --workspaces --if-present",
     "test": "npm run test --workspaces --if-present",
     "test:unit": "npm run test --workspaces --if-present",
+    "test:e2e": "playwright test",
     "validate:schemas": "npm run validate --workspace @loops/puzzle-format --if-present",
     "generate": "vite-node --config tools/puzzle-generator/pipeline/vite.config.ts tools/puzzle-generator/pipeline/cli.ts",
     "validate:puzzles": "vite-node --config tools/puzzle-generator/pipeline/vite.config.ts tools/puzzle-generator/pipeline/validate-cli.ts",
     "analyze:puzzles": "node --experimental-strip-types tools/puzzle-analyzer/src/cli.ts",
     "build:catalog": "npm run build:catalog --workspace @loops/catalog-builder",
+    "generate:pack": "npm run build:catalog --workspace @loops/catalog-builder -- --output ../../packages/puzzle-data --seed catalog",
     "validate:catalog": "npm run validate:catalog --workspace @loops/catalog-builder",
     "generate:test-candidates": "npm run generate:test-candidates --workspace @loops/puzzle-generator",
     "validate:solver-fixtures": "npm run validate:solver-fixtures --workspace @loops/puzzle-validator"
   },
   "devDependencies": {
+    "@playwright/test": "^1.63.0",
     "@types/node": "^22.20.3"
   }
 }

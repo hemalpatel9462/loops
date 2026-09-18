@@ -264,9 +264,17 @@ An equivalent root-level `vercel.json` may be used:
 ```json
 {
   "buildCommand": "npm run build",
-  "outputDirectory": "apps/web-game/dist"
+  "outputDirectory": "apps/web-game/dist",
+  "installCommand": "npm ci",
+  "framework": "vite"
 }
 ```
+
+The app-local Vite configuration at `apps/web-game/vite.config.ts` resolves
+shared runtime packages from `packages/` and writes its production artifact to
+`apps/web-game/dist`. The root workspace build command uses the same entry and
+output contract, so local builds and Vercel builds produce the same static
+artifact.
 
 The build performs the following:
 
@@ -293,9 +301,14 @@ The deployment does not contain:
 - Development-only scripts
 - A database or server process
 
-Vercel preview deployments should be used for pull requests. The production
-deployment should be created from the production branch after puzzle validation
-and browser tests pass.
+### Preview deployments
+
+Keep Vercel connected to the repository root with automatic preview deployments
+enabled for pull requests. Each preview runs `npm ci` followed by
+`npm run build` and publishes the resulting `apps/web-game/dist` artifact. Use
+preview URLs to exercise browser and responsive checks before merging to the
+production branch; production deployment remains tied to the production branch
+after puzzle validation and browser tests pass.
 
 ## 9. Client-side routing
 

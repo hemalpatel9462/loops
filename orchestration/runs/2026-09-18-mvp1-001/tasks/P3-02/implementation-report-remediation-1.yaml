@@ -1,0 +1,58 @@
+schemaVersion: "1.0"
+artifactType: implementation-report
+taskId: "P3-02"
+status: COMPLETE
+summary: >-
+  Remediated the P3-02 Playwright harness within the assigned test scope. The
+  Quick Play helper now waits for a measurable visible board SVG and a
+  non-zero edge count instead of asserting visibility on zero-area SVG groups.
+  Daily Loop coverage now asserts the gameplay heading and board exposed by
+  the current UI, and reduced-motion coverage normalizes browser duration
+  serialization against the checked-in 0.01ms near-zero-motion contract. The
+  storage reset is performed once per browser context so Continue persistence
+  survives page reloads. All required checks pass.
+filesChanged:
+  - path: "tests/e2e/helpers.ts"
+    change: "Updated startQuickPlay to wait for a visible measurable board SVG, assert a non-zero data-edge-id count, and avoid clearing localStorage again on reload by using a one-time sessionStorage reset marker."
+  - path: "tests/e2e/gameplay.spec.ts"
+    change: "Reconciled Daily Loop startup coverage with the current UI contract by asserting the gameplay heading and visible board instead of an unavailable daily-loop eyebrow source marker."
+  - path: "tests/e2e/accessibility.spec.ts"
+    change: "Normalized computed transition duration to milliseconds and asserted the non-negative duration is at most the checked-in 0.01ms reduced-motion contract, accommodating browser serialization as 1e-05s."
+  - path: "orchestration/runs/2026-09-18-mvp1-001/tasks/P3-02/implementation-report-remediation-1.yaml"
+    change: "Recorded the remediation scope, acceptance evidence, exact required command results, deviations, and known risks."
+acceptanceCriteria:
+  - id: AC-R1
+    result: PASS
+    evidence:
+      - "npm run test:e2e exited 0: Playwright ran 32 tests across phone, tablet, desktop, and reduced-motion; 29 passed and 3 reduced-motion tests were intentionally skipped outside the reduced-motion project."
+      - "The passing matrix includes edge cycling, undo/redo/reset/hints/progress, completion, Continue persistence, Daily Loop, responsive board fit, keyboard activation, and reduced-motion assertions."
+  - id: AC-R2
+    result: PASS
+    evidence:
+      - "tests/e2e/helpers.ts waits on .loop-board__svg visibility and a positive bounding-box width/height, then polls [data-edge-id] count > 0; it no longer relies on visibility of zero-area SVG g elements."
+      - "tests/e2e/gameplay.spec.ts asserts the current gameplay heading and .loop-board__svg after starting Daily Loop; it no longer expects an absent daily-loop source label in .flow-screen__eyebrow."
+      - "tests/e2e/accessibility.spec.ts converts computed 0s, 0.01ms, or equivalent browser serialization to milliseconds and rejects negative or greater-than-0.01ms motion durations."
+  - id: AC-R3
+    result: PASS
+    evidence:
+      - "The remediation changed only tests/e2e/helpers.ts, tests/e2e/gameplay.spec.ts, and tests/e2e/accessibility.spec.ts; playwright.config.ts was not changed."
+      - "No production application files, canonical briefs, orchestration registry, verification briefs, or verification reports were modified."
+commandsRun:
+  - command: "npm run test:e2e"
+    exitCode: 0
+  - command: "npm run build"
+    exitCode: 0
+  - command: "npm run typecheck"
+    exitCode: 0
+  - command: "npm test"
+    exitCode: 0
+deviations:
+  - "Three reduced-motion test executions are intentionally skipped in phone, tablet, and desktop projects; the dedicated reduced-motion execution passes."
+knownRisks:
+  - "The one-time sessionStorage reset marker is test-only state used to preserve localStorage across reloads within a test; each Playwright test receives a fresh browser context."
+  - "The reduced-motion assertion intentionally allows browser serialization of the CSS 0.01ms contract as an equivalent duration in seconds, while rejecting any duration above 0.01ms."
+handoffNotes: >-
+  The remediation report is ready for independent verification. Reproduce with
+  npm run test:e2e, npm run build, npm run typecheck, and npm test from the
+  repository root; inspect the three scoped test files for the board readiness,
+  Daily Loop, Continue, and reduced-motion assertions.

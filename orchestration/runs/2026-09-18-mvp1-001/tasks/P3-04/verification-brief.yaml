@@ -1,0 +1,33 @@
+schemaVersion: "1.0"
+artifactType: verification-brief
+taskId: "P3-04"
+implementationReportPath: "runs/<run-id>/tasks/P3-04/implementation-report.yaml"
+scopeReviewed:
+  - "vercel.json"
+  - "PROJECT_STRUCTURE_AND_DEPLOYMENT.md"
+  - "apps/web-game/vite.config.ts"
+acceptanceCriteria:
+  - id: "AC-1"
+    description: "Root workspace install succeeds with npm ci."
+  - id: "AC-2"
+    description: "npm run build succeeds from repository root."
+  - id: "AC-3"
+    description: "Output is apps/web-game/dist."
+  - id: "AC-4"
+    description: "Generator and test-only files are not bundled."
+  - id: "AC-5"
+    description: "Preview deployment settings are documented."
+requiredChecks:
+  - command: "npm ci"
+    purpose: "Verify the task acceptance criteria and detect regressions."
+  - command: "npm run build"
+    purpose: "Verify the task acceptance criteria and detect regressions."
+  - command: "find apps/web-game/dist -maxdepth 2 -type f"
+    purpose: "Verify the task acceptance criteria and detect regressions."
+constraints:
+  - "Do not modify production code."
+  - "Treat the implementation report as a claim and verify it against the files."
+  - "Check every acceptance criterion independently."
+  - "Record evidence with file paths, test names, or command output."
+verificationReportPath: "runs/<run-id>/tasks/P3-04/verification-report.yaml"
+

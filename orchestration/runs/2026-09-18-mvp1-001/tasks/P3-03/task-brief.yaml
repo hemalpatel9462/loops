@@ -1,0 +1,40 @@
+schemaVersion: "1.0"
+artifactType: task-brief
+taskId: "P3-03"
+title: "Initial validated puzzle pack"
+phase: 3
+goal: "Generate and commit the initial validated puzzle pack for all launch difficulties."
+context:
+  - "loops_game_design_spec.md"
+  - "PROJECT_STRUCTURE_AND_DEPLOYMENT.md"
+  - "orchestration/IMPLEMENTATION_PLAN.md"
+  - "orchestration/task-registry.json"
+dependencies: ["P2-03","P3-01"]
+writeScope:
+  - "packages/puzzle-data/puzzles/**"
+  - "packages/puzzle-data/catalog.json"
+forbiddenScope:
+  - "orchestration/task-registry.json"
+  - "orchestration/briefs/**"
+  - "orchestration/runs/<run-id>/tasks/<task-id>/verification-brief.yaml"
+  - "orchestration/runs/<run-id>/tasks/<task-id>/verification-report.yaml"
+acceptanceCriteria:
+  - id: "AC-1"
+    description: "At least one validated puzzle exists for every difficulty."
+  - id: "AC-2"
+    description: "Pack includes representative 4×4, 5×5, and 7×7 boards."
+  - id: "AC-3"
+    description: "Every puzzle is unique, playable, and schema-valid."
+  - id: "AC-4"
+    description: "Catalog and Daily Loop mapping build successfully."
+requiredChecks:
+  - "npm run generate:pack"
+  - "npm run validate:puzzles"
+  - "npm run validate:catalog"
+implementationReportPath: "runs/<run-id>/tasks/P3-03/implementation-report.yaml"
+instructions:
+  - "Read the task brief and all listed context before editing."
+  - "Modify only the assigned write scope and preserve unrelated work."
+  - "Run the required checks or record why a check is unavailable."
+  - "Write the implementation report before returning."
+

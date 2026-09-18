@@ -1,0 +1,62 @@
+schemaVersion: "1.0"
+artifactType: verification-report
+taskId: "P3-03"
+verdict: PASS
+scopeReviewed:
+  - "packages/puzzle-data/puzzles/**"
+  - "packages/puzzle-data/catalog.json"
+  - "apps/web-game/src/state/game-flow/puzzle-catalog.ts"
+  - "apps/web-game/src/state/game-flow/game-flow.ts"
+  - "apps/web-game/src/state/game-flow/game-flow.test.ts"
+  - "tools/catalog-builder/src/{builder,cli,catalog}.ts"
+  - "package.json"
+  - "package-lock.json"
+  - "orchestration/runs/2026-09-18-mvp1-001/tasks/P3-03/verification-brief.yaml"
+  - "orchestration/runs/2026-09-18-mvp1-001/tasks/P3-03/implementation-report.yaml"
+acceptanceCriteria:
+  - id: AC-1
+    verdict: PASS
+    evidence:
+      - "packages/puzzle-data/catalog.json:5-40 contains five entries covering beginner, easy, medium, hard, and expert; independent enumeration of packages/puzzle-data/puzzles/** found the same five JSON files and no uncataloged files."
+      - "Independent npx tsx parse/solve sweep loaded every catalog entry through parsePuzzleDefinition and reported catalogCount=5 with all five required difficulties present."
+      - "The five checked-in puzzle files are loop-beginner-catalog-beginner-0.json, loop-easy-catalog-easy-0.json, loop-medium-catalog-medium-0.json, loop-hard-catalog-hard-0.json, and loop-expert-catalog-expert-0.json."
+  - id: AC-2
+    verdict: PASS
+    evidence:
+      - "packages/puzzle-data/catalog.json:7-39 declares dimensions 4x4 (beginner), 5x5 (easy), 7x7 (medium), 8x8 (hard), and 10x10 (expert), so the required 4x4, 5x5, and 7x7 representatives are present."
+      - "Independent parse/solve sweep reported dimensions 4x4, 5x5, 7x7, 8x8, and 10x10; each parsed puzzle's clue matrix matched its declared width and height."
+  - id: AC-3
+    verdict: PASS
+    evidence:
+      - "Independent sweep parsed every file with parsePuzzleDefinition, rejected duplicate IDs, checked catalog identity/difficulty/dimensions, and compared canonical difficulty/dimensions/clues/solutionEdges signatures; it reported uniqueIds=5 and uniqueContent=5."
+      - "The same independent solver sweep reported solutionCount=1, valid=true, and unique=true for every puzzle, proving each is playable and uniquely solvable."
+      - "npm run validate:puzzles exited 0 and printed solutionCount=1 and unique=true for loop-beginner-validate-puzzles."
+      - "npm run validate:schemas exited 0; the puzzle-format schema-validation suite passed 2 tests."
+  - id: AC-4
+    verdict: PASS
+    evidence:
+      - "package.json:23 defines the current root generate:pack route; npm run generate:pack exited 0 and emitted a five-entry catalog."
+      - "npm run validate:catalog exited 0 and printed valid=true, puzzleCount=5, catalogVersion=1.0.0 for packages/puzzle-data/catalog.json."
+      - "apps/web-game/src/state/game-flow/puzzle-catalog.ts:23-35 parses the five bundled records and checks each ID against catalog.json; game-flow.ts:67-70 deterministically maps daily:<date> through the validated local list."
+      - "The focused web-game run `npm run test --workspace @loops/web-game -- src/state/game-flow/game-flow.test.ts src/app/integration/integration.test.ts` exited 0 with 2 files and 8 tests passed, including deterministic Daily Loop selection and persisted date/puzzle mapping."
+      - "npm run typecheck exited 0 across web-game, game-engine, puzzle-format, catalog-builder, puzzle-analyzer, puzzle-generator, and puzzle-validator."
+      - "npm run test --workspace @loops/catalog-builder exited 0 with 1 file and 3 tests passed."
+findings:
+  - severity: LOW
+    description: "The implementation report was stale about the root generate:pack route: the current package.json now defines it and the exact required command exits 0."
+    file: "orchestration/runs/2026-09-18-mvp1-001/tasks/P3-03/implementation-report.yaml"
+  - severity: MEDIUM
+    description: "The root generate:pack alias passes --output packages/puzzle-data to an npm workspace command. tools/catalog-builder/src/cli.ts:19 resolves relative output from the catalog-builder workspace, so the observed command wrote tools/catalog-builder/packages/puzzle-data/catalog.json and puzzle files while packages/puzzle-data/catalog.json remained unchanged. The current root catalog is independently valid and Daily Loop tests pass, but future invocations of the convenience alias will not regenerate the intended root data package."
+    file: "package.json"
+requiredRemediation:
+  - "Update the root generate:pack output argument to resolve to the repository packages/puzzle-data directory from the catalog-builder workspace (or make the CLI resolve the root output), then rerun npm run generate:pack and npm run validate:catalog."
+conclusion: |
+  Independent verification confirms the checked-in pack has one schema-valid,
+  uniquely solvable puzzle for each approved difficulty, includes 4x4, 5x5, and
+  7x7 boards, and is fully covered by catalog entries. The required generation,
+  puzzle-validation, and catalog-validation commands all exited 0 in the current
+  tree. The Daily Loop loader parses the catalog-backed records and its focused
+  deterministic mapping/persistence tests passed. Verdict: PASS. A medium-risk
+  integration finding remains because the root generate:pack alias currently
+  writes its relative output under the workspace cwd rather than refreshing the
+  repository-root data package.

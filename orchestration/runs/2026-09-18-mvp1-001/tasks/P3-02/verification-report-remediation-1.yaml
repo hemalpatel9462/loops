@@ -1,0 +1,57 @@
+schemaVersion: "1.0"
+artifactType: verification-report
+taskId: "P3-02"
+remediationAttempt: 1
+verdict: PASS
+scopeReviewed:
+  - "tests/e2e/helpers.ts"
+  - "tests/e2e/gameplay.spec.ts"
+  - "tests/e2e/responsive.spec.ts"
+  - "tests/e2e/accessibility.spec.ts"
+  - "playwright.config.ts"
+  - "orchestration/runs/2026-09-18-mvp1-001/tasks/P3-02/implementation-report-remediation-1.yaml"
+  - "orchestration/runs/2026-09-18-mvp1-001/tasks/P3-02/verification-report.yaml"
+acceptanceCriteria:
+  - id: AC-R1
+    verdict: PASS
+    evidence:
+      - "npm run test:e2e exited 0: Playwright ran 32 tests; 29 passed and 3 were intentionally skipped because the reduced-motion-only test skips phone, tablet, and desktop projects. The dedicated reduced-motion project passed its reduced-motion assertion."
+      - "The passing matrix included phone, tablet, desktop, and reduced-motion executions. tests/e2e/gameplay.spec.ts:11-88 covers Quick Play loading and edge cycling, undo/redo/reset/hints/progress, completion, Continue persistence, and Daily Loop; tests/e2e/responsive.spec.ts:4-20 passed in all four projects; tests/e2e/accessibility.spec.ts:4-14 passed keyboard activation in all four projects and :17-36 passed reduced-motion in the dedicated project."
+  - id: AC-R2
+    verdict: PASS
+    evidence:
+      - "tests/e2e/helpers.ts:34-43 waits for the measurable .loop-board__svg to be visible, verifies a positive bounding box, and polls for a non-zero [data-edge-id] count; it does not assert visibility of zero-area SVG g elements."
+      - "tests/e2e/gameplay.spec.ts:86 asserts the visible gameplay board after starting Daily Loop and no longer expects the unavailable daily-loop eyebrow source marker."
+      - "tests/e2e/accessibility.spec.ts:25-34 normalizes computed transition durations in seconds or milliseconds and accepts only the checked-in zero/0.01ms reduced-motion contract; the assertion passed in the reduced-motion project."
+  - id: AC-R3
+    verdict: PASS
+    evidence:
+      - "The remediation-scoped files are tests/e2e/helpers.ts, tests/e2e/gameplay.spec.ts, and tests/e2e/accessibility.spec.ts; playwright.config.ts was unchanged during remediation. Their filesystem modification times (13:11-13:14) follow the earlier harness/config and package integration changes (12:56-13:04)."
+      - "git status shows unrelated pre-existing integration changes in application/package files, while no application file was modified by the remediation edits; the inspected remediation report, task briefs, verification briefs, and task registry were not edited by the remediation."
+checksPerformed:
+  - command: "npm run test:e2e"
+    exitCode: 0
+    result: "Playwright ran 32 tests across phone, tablet, desktop, and reduced-motion projects: 29 passed and 3 intentional skips; the command completed successfully."
+  - command: "npm run build"
+    exitCode: 0
+    result: "Vite production build completed successfully; 93 modules transformed and apps/web-game/dist assets emitted."
+  - command: "npm run typecheck"
+    exitCode: 0
+    result: "All configured workspace TypeScript checks completed successfully, including web-game, game-engine, puzzle-format, catalog-builder, puzzle-analyzer, puzzle-generator, and puzzle-validator."
+  - command: "npm test"
+    exitCode: 0
+    result: "All workspace Vitest suites passed: 17 web-game tests, 6 game-engine model tests, 4 validator tests, 4 hint tests, 7 puzzle-format tests, 3 catalog-builder tests, 4 analyzer tests, 4 generator tests, and 8 puzzle-validator tests."
+findings:
+  - severity: LOW
+    description: "The reduced-motion smoke test is intentionally skipped in the phone, tablet, and desktop projects and runs only in the dedicated reduced-motion project; that dedicated execution passed."
+    file: "tests/e2e/accessibility.spec.ts"
+  - severity: LOW
+    description: "The working tree contains unrelated pre-existing project integration changes outside the remediation write scope; they were not modified during this verification."
+    file: "git status --short"
+conclusion: |
+  Independent inspection confirms the remediation is implemented within the
+  test-harness scope. The measurable board readiness check, Daily Loop contract,
+  one-time storage reset for Continue, and reduced-motion normalization are
+  present in the checked-in tests. All required commands pass, and the browser
+  matrix completes with 29 passing tests plus only the three documented
+  reduced-motion-only skips. Verdict: PASS.

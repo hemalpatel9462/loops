@@ -1,0 +1,38 @@
+schemaVersion: "1.0"
+artifactType: remediation-brief
+taskId: "P3-02"
+remediationAttempt: 1
+trigger: "P3-02 verification failed: Playwright E2E suite exited 1 with 29 failures and 3 skips."
+finding: "The shared startQuickPlay helper asserts visibility on SVG g elements whose zero-area line geometry is reported hidden by Playwright; the Daily Loop test expects a source label that the current integration does not render; and the reduced-motion test expects 0s while the checked-in accessibility contract uses 0.01ms."
+writeScope:
+  - "tests/e2e/**"
+  - "playwright.config.ts"
+forbiddenScope:
+  - "apps/web-game/**"
+  - "orchestration/task-registry.json"
+  - "orchestration/briefs/**"
+  - "orchestration/runs/<run-id>/tasks/<task-id>/verification-brief.yaml"
+  - "orchestration/runs/<run-id>/tasks/<task-id>/verification-report.yaml"
+requiredChanges:
+  - "Make startQuickPlay wait for a measurable visible board container or SVG root, while retaining a count/readiness assertion for data-edge-id elements; do not rely on zero-area SVG g visibility."
+  - "Reconcile the Daily Loop assertion with the existing UI contract: after opening and starting Daily Loop, assert the gameplay heading and board are present rather than an unavailable daily-loop eyebrow source label."
+  - "Make reduced-motion verification match the checked-in CSS contract by accepting the explicit zero-duration value used by the accessibility stylesheet, while still rejecting non-zero motion durations."
+  - "Preserve coverage for edge cycling, undo/redo/reset, hints, progress, completion, Continue, Daily Loop, responsive viewports, keyboard activation, and reduced motion."
+acceptanceCriteria:
+  - id: AC-R1
+    description: "npm run test:e2e passes across phone, tablet, desktop, and reduced-motion projects with all required gameplay, persistence, responsive, keyboard, and reduced-motion assertions executing."
+  - id: AC-R2
+    description: "The E2E tests assert only observable contracts exposed by the current application and do not depend on a hidden SVG group or an absent source marker."
+  - id: AC-R3
+    description: "The task write scope remains limited to tests/e2e/** and playwright.config.ts."
+requiredChecks:
+  - "npm run test:e2e"
+  - "npm run build"
+  - "npm run typecheck"
+  - "npm test"
+implementationReportPath: "runs/2026-09-18-mvp1-001/tasks/P3-02/implementation-report-remediation-1.yaml"
+instructions:
+  - "Read the original P3-02 brief, implementation report, verification brief, and failed verification report before editing."
+  - "Use a fresh worker context and modify only the assigned test-harness scope."
+  - "Run every required check and record exact results."
+  - "Write the remediation implementation report at the exact path before returning."

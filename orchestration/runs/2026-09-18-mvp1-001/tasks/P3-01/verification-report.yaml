@@ -1,0 +1,79 @@
+schemaVersion: "1.0"
+artifactType: verification-report
+taskId: "P3-01"
+verdict: PASS
+scopeReviewed:
+  - "apps/web-game/src/state/game-reducer.ts"
+  - "apps/web-game/src/app/integration/**"
+  - "apps/web-game/src/app/AppShell.tsx"
+  - "apps/web-game/src/main.tsx"
+  - "apps/web-game/src/state/game-flow/puzzle-catalog.ts"
+  - "apps/web-game/src/state/game-flow/game-flow.ts"
+  - "packages/game-engine/state/**"
+  - "packages/game-engine/hints/**"
+  - "packages/game-engine/validation/**"
+  - "package.json"
+  - "orchestration/runs/2026-09-18-mvp1-001/tasks/P3-01/implementation-report.yaml"
+  - "orchestration/runs/2026-09-18-mvp1-001/tasks/P3-01/orchestrator-integration-handoff.md"
+acceptanceCriteria:
+  - id: AC-1
+    verdict: PASS
+    evidence:
+      - "apps/web-game/src/state/game-flow/puzzle-catalog.ts parses the checked-in beginner, easy, medium, hard, and expert puzzle JSON records with parsePuzzleDefinition and verifies their IDs against catalog.json; puzzle-loader.ts delegates to these validated local records."
+      - "apps/web-game/src/app/integration/GameIntegration.tsx renders GameFlowScreen for selection and passes each selected GameFlowSession puzzle into createGameReducerState/GamePlayScreen."
+      - "apps/web-game/src/app/AppShell.tsx:2,69-70 imports and renders GameIntegration, and apps/web-game/src/main.tsx:12-15 mounts AppShell as the browser root."
+      - "apps/web-game/src/app/integration/integration.test.ts:7-12 passed the real beginner record assertions for schemaVersion, clue dimensions, and non-empty solutionEdges."
+      - "npm run build exited 0; Vite transformed 93 modules and emitted the production web assets."
+  - id: AC-2
+    verdict: PASS
+    evidence:
+      - "apps/web-game/src/state/game-reducer.ts:75-103 delegates cycle-edge, set-edge, undo, redo, and reset transitions to @loops/game-engine/state; assisted-mode consistency checks call the engine's findDeductions."
+      - "apps/web-game/src/app/integration/GamePlayScreen.tsx:37-39 converts LoopBoard edge events to cycle-edge actions, and lines 68-74 expose undo, redo, reset, and completion controls through reducer dispatch rather than local rule mutation."
+      - "apps/web-game/src/app/integration/integration.test.ts:14-24 passed the engine-transition test, asserting a line state and one history transition after a cycle-edge action."
+  - id: AC-3
+    verdict: PASS
+    evidence:
+      - "apps/web-game/src/state/game-reducer.ts:104-121 calls computeHint/findDeductions with the real PuzzleDefinition and current engine state, increments hints only for returned RuntimeHint data, and applies reveals through engine setEdgeState."
+      - "apps/web-game/src/app/integration/GamePlayScreen.tsx:24-30 renders the engine hint target, explanation, and recommendation; lines 77-82 expose the engine suggestion reveal action."
+      - "apps/web-game/src/app/integration/integration.test.ts:26-31 passed the level-two engine hint test and observed a returned hint with hintsUsed incremented."
+  - id: AC-4
+    verdict: PASS
+    evidence:
+      - "apps/web-game/src/state/game-reducer.ts:123-138 calls validateCompletion for both check-progress and complete and sets completed only from validation.complete."
+      - "apps/web-game/src/app/integration/GameIntegration.tsx:84-89 sends reducer-confirmed completion through completeSession, which independently validates before recording completion; the completion screen is rendered only for the resulting completed session at lines 92-110."
+      - "apps/web-game/src/app/integration/integration.test.ts:33-38 filled the real puzzle solution through reducer set-edge actions and passed the engine validation/completion assertions."
+  - id: AC-5
+    verdict: PASS
+    evidence:
+      - "The production integration reducer and screens contain no mock PuzzleDefinition or duplicated clue, hint, connectivity, or completion rules; all transitions and validation delegate to @loops/game-engine and puzzle loading delegates to parsed local catalog data."
+      - "The orchestrator handoff is implemented: AppShell.tsx no longer contains the prior static hero/loop preview JSX and instead mounts GameIntegration; main.tsx still mounts AppShell."
+      - "A production-source search for mock/placeholder/preview/mock-rule tokens found only unused .loop-preview CSS selectors in apps/web-game/src/styles/global.css; no mock runtime markup or mock rule path remains."
+      - "The full required typecheck, test, and build commands passed with the host wiring present."
+checksPerformed:
+  - command: "npm run typecheck"
+    exitCode: 0
+    result: "Workspace TypeScript checks passed for web-game, game-engine, puzzle-format, and all existing tool workspaces."
+  - command: "npm run test"
+    exitCode: 0
+    result: "All workspace suites passed: 7 web-game files/21 tests, game-engine model/state 2 files/6 tests, validation 1 file/4 tests, hints 1 file/4 tests, puzzle-format 2 files/7 tests, catalog-builder 1 file/3 tests, puzzle-analyzer 1 file/4 tests, puzzle-generator 1 file/4 tests, and puzzle-validator 2 files/8 tests."
+  - command: "npm run build"
+    exitCode: 0
+    result: "Vite production build passed; 93 modules transformed and apps/web-game/dist assets emitted."
+  - command: "npm run test:e2e"
+    exitCode: 1
+    result: "Unavailable: npm reported Missing script: test:e2e; package.json has no e2e script and the P3-02 browser harness is not present."
+findings:
+  - severity: LOW
+    description: "Browser-level verification of the running app remains unavailable until P3-02 adds the e2e harness. The exact required command was run and exited 1 with npm Missing script: test:e2e; source inspection, focused integration tests, typecheck, and build independently verify the wired path."
+    file: "package.json"
+requiredRemediation:
+  - "After P3-02 adds the browser harness, rerun npm run test:e2e against the mounted AppShell/GameIntegration flow."
+conclusion: |
+  Independent inspection confirms all five P3-01 acceptance criteria after the
+  orchestrator host wiring. The browser root mounts GameIntegration, local
+  PuzzleDefinition records are parsed from the validated catalog, edge changes
+  and hints use game-engine APIs, completion uses engine validation, and the
+  prior static mock landing path is removed from runtime AppShell content.
+  Typecheck, all workspace tests, and production build pass. The only remaining
+  limitation is the explicitly anticipated absence of the P3-02 e2e script.
+  Verdict: PASS.
