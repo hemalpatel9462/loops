@@ -1,8 +1,3 @@
-import beginnerPuzzle from '../../../../../packages/puzzle-data/puzzles/beginner/loop-beginner-catalog-beginner-0.json';
-import easyPuzzle from '../../../../../packages/puzzle-data/puzzles/easy/loop-easy-catalog-easy-0.json';
-import mediumPuzzle from '../../../../../packages/puzzle-data/puzzles/medium/loop-medium-catalog-medium-0.json';
-import hardPuzzle from '../../../../../packages/puzzle-data/puzzles/hard/loop-hard-catalog-hard-0.json';
-import expertPuzzle from '../../../../../packages/puzzle-data/puzzles/expert/loop-expert-catalog-expert-0.json';
 import catalogJson from '../../../../../packages/puzzle-data/catalog.json';
 import { parsePuzzleDefinition } from '@loops/puzzle-format';
 import type {
@@ -12,24 +7,25 @@ import type {
 } from '@loops/puzzle-format';
 import type { LocalPuzzleSource } from './types';
 
-const puzzleJsonByDifficulty = {
-  beginner: beginnerPuzzle,
-  easy: easyPuzzle,
-  medium: mediumPuzzle,
-  hard: hardPuzzle,
-  expert: expertPuzzle,
-} as const;
+// Vite expands this at build time, keeping every validated puzzle in the
+// static bundle as the catalog grows. The generator remains development-only.
+const puzzleJsonFiles = import.meta.glob('../../../../../packages/puzzle-data/puzzles/**/*.json', {
+  eager: true,
+  import: 'default',
+});
 
 function loadLocalSource(): LocalPuzzleSource {
   const catalog = catalogJson as PuzzleCatalog;
-  const puzzles = Object.values(puzzleJsonByDifficulty)
+  const catalogIds = new Set(catalog.puzzles.map((entry) => entry.id));
+  const puzzles = Object.values(puzzleJsonFiles)
     .map((candidate) => parsePuzzleDefinition(candidate))
+    .filter((puzzle) => catalogIds.has(puzzle.id))
     .sort((left, right) => left.id.localeCompare(right.id, 'en'));
 
-  const catalogIds = new Set(catalog.puzzles.map((entry) => entry.id));
-  for (const puzzle of puzzles) {
-    if (!catalogIds.has(puzzle.id)) {
-      throw new Error(`Local puzzle ${puzzle.id} is missing from the catalog.`);
+  const puzzleIds = new Set(puzzles.map((puzzle) => puzzle.id));
+  for (const entry of catalog.puzzles) {
+    if (!puzzleIds.has(entry.id)) {
+      throw new Error(`Catalog puzzle ${entry.id} is missing from the local bundle.`);
     }
   }
   return Object.freeze({ catalog, puzzles: Object.freeze(puzzles) });

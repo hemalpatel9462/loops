@@ -19,7 +19,7 @@
     "generate": "vite-node --config tools/puzzle-generator/pipeline/vite.config.ts tools/puzzle-generator/pipeline/cli.ts",
     "validate:puzzles": "vite-node --config tools/puzzle-generator/pipeline/vite.config.ts tools/puzzle-generator/pipeline/validate-cli.ts",
     "analyze:puzzles": "node --experimental-strip-types tools/puzzle-analyzer/src/cli.ts",
-    "build:catalog": "npm run build:catalog --workspace @loops/catalog-builder",
+    "build:catalog": "npm run build:catalog --workspace @loops/catalog-builder --",
     "generate:pack": "npm run build:catalog --workspace @loops/catalog-builder -- --output ../../packages/puzzle-data --seed catalog",
     "validate:catalog": "npm run validate:catalog --workspace @loops/catalog-builder",
     "generate:test-candidates": "npm run generate:test-candidates --workspace @loops/puzzle-generator",

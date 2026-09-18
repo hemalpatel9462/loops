@@ -18,8 +18,14 @@ function option(name: string, fallback: string): string {
 const command = process.argv[2] ?? 'build';
 const outputDir = resolve(process.cwd(), option('--output', DEFAULT_OUTPUT_DIR));
 if (command === 'build') {
-  const result = buildCatalog({ outputDir, seed: option('--seed', 'catalog') });
-  process.stdout.write(`${JSON.stringify({ catalog: result.catalog, files: result.puzzlePaths }, null, 2)}\n`);
+  const count = Number(option('--count', '1'));
+  if (!Number.isInteger(count) || count < 1) {
+    process.stderr.write('--count must be a positive integer\n');
+    process.exitCode = 1;
+  } else {
+    const result = buildCatalog({ outputDir, seed: option('--seed', 'catalog'), countPerDifficulty: count });
+    process.stdout.write(`${JSON.stringify({ catalog: result.catalog, files: result.puzzlePaths }, null, 2)}\n`);
+  }
 } else if (command === 'validate') {
   const catalog = assertCatalogValid(resolve(outputDir, 'catalog.json'), { dataRoot: outputDir });
   process.stdout.write(`${JSON.stringify({ valid: true, puzzleCount: catalog.puzzles.length, catalogVersion: catalog.catalogVersion }, null, 2)}\n`);

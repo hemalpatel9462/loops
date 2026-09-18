@@ -280,6 +280,247 @@
       "verificationBriefPath": "runs/<run-id>/tasks/P4-01/verification-brief.yaml",
       "verificationReportPath": "runs/<run-id>/tasks/P4-01/verification-report.yaml",
       "status": "verified"
+    },
+    {
+      "id": "E1-01",
+      "title": "Settings contracts and persistence cleanup",
+      "phase": 4,
+      "dependsOn": ["P0-02", "P2-05"],
+      "writeScope": [
+        "packages/puzzle-format/src/types.ts",
+        "schemas/app-settings.schema.json",
+        "apps/web-game/src/persistence/defaults.ts",
+        "apps/web-game/src/persistence/schema-validation.ts",
+        "apps/web-game/src/persistence/types.ts",
+        "apps/web-game/src/persistence/storage.ts",
+        "apps/web-game/src/persistence/persistence.test.ts"
+      ],
+      "forbiddenScope": [
+        "apps/web-game/src/state/game-flow/**",
+        "apps/web-game/src/screens/**",
+        "apps/web-game/src/app/**",
+        "apps/web-game/src/accessibility/**",
+        "apps/web-game/src/styles/**",
+        "tests/e2e/**",
+        "orchestration/task-registry.json",
+        "orchestration/briefs/**",
+        "orchestration/runs/<run-id>/tasks/<task-id>/verification-brief.yaml",
+        "orchestration/runs/<run-id>/tasks/<task-id>/verification-report.yaml"
+      ],
+      "acceptanceCriteria": [
+        "AppSettings and the app-settings JSON schema no longer contain Theme, theme, or highContrast fields.",
+        "Canonical settings records preserve defaultMode, reducedMotion, line thickness, haptics, sound, tutorial state, and locale behavior.",
+        "Legacy settings containing theme and highContrast are normalized or safely discarded without preventing supported settings from loading.",
+        "Persistence validation rejects malformed canonical settings and persistence tests cover read, write, reset, invalid-record, and legacy-record behavior.",
+        "defaultMode remains persistable for the global gameplay-mode setting."
+      ],
+      "requiredChecks": ["npm run typecheck", "npm run test", "npm run validate:schemas", "npm run build"],
+      "taskBriefPath": "briefs/E1-01/task-brief.yaml",
+      "canonicalVerificationBriefPath": "briefs/E1-01/verification-brief.yaml",
+      "implementationReportPath": "runs/<run-id>/tasks/E1-01/implementation-report.yaml",
+      "verificationBriefPath": "runs/<run-id>/tasks/E1-01/verification-brief.yaml",
+      "verificationReportPath": "runs/<run-id>/tasks/E1-01/verification-report.yaml",
+      "status": "pending"
+    },
+    {
+      "id": "E1-02",
+      "title": "Puzzle progression domain and selection APIs",
+      "phase": 4,
+      "dependsOn": ["P2-03", "P2-05", "P2-06"],
+      "writeScope": [
+        "apps/web-game/src/state/game-flow/types.ts",
+        "apps/web-game/src/state/game-flow/puzzle-catalog.ts",
+        "apps/web-game/src/state/game-flow/game-flow.ts",
+        "apps/web-game/src/state/game-flow/index.ts",
+        "apps/web-game/src/state/game-flow/game-flow.test.ts"
+      ],
+      "forbiddenScope": [
+        "apps/web-game/src/persistence/**",
+        "apps/web-game/src/screens/**",
+        "apps/web-game/src/app/**",
+        "apps/web-game/src/components/**",
+        "tests/e2e/**",
+        "packages/puzzle-data/**",
+        "orchestration/task-registry.json",
+        "orchestration/briefs/**",
+        "orchestration/runs/<run-id>/tasks/<task-id>/verification-brief.yaml",
+        "orchestration/runs/<run-id>/tasks/<task-id>/verification-report.yaml"
+      ],
+      "acceptanceCriteria": [
+        "Each difficulty exposes a deterministic one-based puzzle sequence numbered 1 through N using validated catalog order.",
+        "Puzzle status exposes available, in-progress, completed, and locked states using persisted per-puzzle progress.",
+        "Puzzle 1 is available initially and each later puzzle is blocked until its immediate predecessor has a completed persisted record.",
+        "The selected-puzzle API starts valid available puzzles, resumes unfinished progress, allows completed-puzzle replay, and rejects invalid or locked selections without creating progress.",
+        "Daily Loop remains deterministic and Continue preserves saved edge state, elapsed time, hints, checks, and mode.",
+        "Quick Play is no longer required by the game-flow public path while Daily Loop and Continue sources remain supported."
+      ],
+      "requiredChecks": ["npm run typecheck", "npm run test", "npm run build"],
+      "taskBriefPath": "briefs/E1-02/task-brief.yaml",
+      "canonicalVerificationBriefPath": "briefs/E1-02/verification-brief.yaml",
+      "implementationReportPath": "runs/<run-id>/tasks/E1-02/implementation-report.yaml",
+      "verificationBriefPath": "runs/<run-id>/tasks/E1-02/verification-brief.yaml",
+      "verificationReportPath": "runs/<run-id>/tasks/E1-02/verification-report.yaml",
+      "status": "pending"
+    },
+    {
+      "id": "E1-03",
+      "title": "Start screen and numbered puzzle-selection UI",
+      "phase": 4,
+      "dependsOn": ["E1-02"],
+      "writeScope": [
+        "apps/web-game/src/screens/types.ts",
+        "apps/web-game/src/screens/index.ts",
+        "apps/web-game/src/screens/GameFlowScreen.tsx",
+        "apps/web-game/src/screens/ModeSelectionScreen.tsx",
+        "apps/web-game/src/screens/screens.css",
+        "apps/web-game/src/screens/StartScreen.tsx",
+        "apps/web-game/src/screens/PuzzleSelectionScreen.tsx"
+      ],
+      "forbiddenScope": [
+        "apps/web-game/src/state/game-flow/**",
+        "apps/web-game/src/persistence/**",
+        "apps/web-game/src/app/**",
+        "apps/web-game/src/accessibility/**",
+        "apps/web-game/src/components/**",
+        "apps/web-game/src/styles/**",
+        "tests/e2e/**",
+        "orchestration/task-registry.json",
+        "orchestration/briefs/**",
+        "orchestration/runs/<run-id>/tasks/<task-id>/verification-brief.yaml",
+        "orchestration/runs/<run-id>/tasks/<task-id>/verification-report.yaml"
+      ],
+      "acceptanceCriteria": [
+        "A fresh visit shows a start screen before difficulty or puzzle selection, and its primary action enters selection without starting a puzzle.",
+        "Difficulty controls show each difficulty's available puzzle count and selecting one reveals one-based puzzle numbers.",
+        "Locked puzzle controls are disabled, labelled, and cannot start a session; completed puzzles show a success treatment and non-color status text.",
+        "The Play mode fieldset, Quick Play action, Play at your pace heading, and offline-validation tagline are absent from the selection flow.",
+        "Daily Loop and Continue remain reachable, and back navigation works between start, selection, Daily Loop, and Continue screens.",
+        "The revised screens remain responsive without horizontal overflow at configured viewport sizes."
+      ],
+      "requiredChecks": ["npm run typecheck", "npm run test", "npm run build"],
+      "taskBriefPath": "briefs/E1-03/task-brief.yaml",
+      "canonicalVerificationBriefPath": "briefs/E1-03/verification-brief.yaml",
+      "implementationReportPath": "runs/<run-id>/tasks/E1-03/implementation-report.yaml",
+      "verificationBriefPath": "runs/<run-id>/tasks/E1-03/verification-brief.yaml",
+      "verificationReportPath": "runs/<run-id>/tasks/E1-03/verification-report.yaml",
+      "status": "pending"
+    },
+    {
+      "id": "E1-04",
+      "title": "Global gameplay settings, shell cleanup, and tutorial wiring",
+      "phase": 4,
+      "dependsOn": ["E1-01", "E1-03"],
+      "writeScope": [
+        "apps/web-game/src/app/AppShell.tsx",
+        "apps/web-game/src/app/SettingsPanel.tsx",
+        "apps/web-game/src/app/integration/GameIntegration.tsx",
+        "apps/web-game/src/accessibility/types.ts",
+        "apps/web-game/src/accessibility/preferences.ts",
+        "apps/web-game/src/accessibility/AccessibilitySettings.tsx",
+        "apps/web-game/src/accessibility/index.ts",
+        "apps/web-game/src/accessibility/accessibility.test.ts",
+        "apps/web-game/src/components/tutorial/Tutorial.tsx",
+        "apps/web-game/src/components/tutorial/tutorial.css",
+        "apps/web-game/src/components/tutorial/index.ts",
+        "apps/web-game/src/components/tutorial/tutorial.test.ts",
+        "apps/web-game/src/styles/tokens.css",
+        "apps/web-game/src/styles/global.css"
+      ],
+      "forbiddenScope": [
+        "apps/web-game/src/state/game-flow/**",
+        "apps/web-game/src/screens/**",
+        "apps/web-game/src/persistence/**",
+        "packages/**",
+        "schemas/**",
+        "tests/e2e/**",
+        "orchestration/task-registry.json",
+        "orchestration/briefs/**",
+        "orchestration/runs/<run-id>/tasks/<task-id>/verification-brief.yaml",
+        "orchestration/runs/<run-id>/tasks/<task-id>/verification-report.yaml"
+      ],
+      "acceptanceCriteria": [
+        "Settings exposes Relaxed and Assisted as the global gameplay-mode choice, persists defaultMode, and applies it to newly started selected puzzles.",
+        "Changing the global default does not mutate an active session, and Continue still uses the mode stored with saved progress.",
+        "VisualMode, data-visual-mode, Dark Mode controls, High Contrast controls, dark tokens, high-contrast tokens, and their runtime branches are removed.",
+        "High Contrast is removed from accessibility preference state and controls while reduced-motion behavior remains intact.",
+        "How to play opens the existing Tutorial dialog through controlled application state rather than the dead #how-to-play hash link.",
+        "Tutorial close, skip, Back, Next, and completion actions work with mouse and keyboard input, with focus entering and returning from the dialog safely."
+      ],
+      "requiredChecks": ["npm run typecheck", "npm run test", "npm run build"],
+      "taskBriefPath": "briefs/E1-04/task-brief.yaml",
+      "canonicalVerificationBriefPath": "briefs/E1-04/verification-brief.yaml",
+      "implementationReportPath": "runs/<run-id>/tasks/E1-04/implementation-report.yaml",
+      "verificationBriefPath": "runs/<run-id>/tasks/E1-04/verification-brief.yaml",
+      "verificationReportPath": "runs/<run-id>/tasks/E1-04/verification-report.yaml",
+      "status": "pending"
+    },
+    {
+      "id": "E1-05",
+      "title": "Browser regression and responsive coverage",
+      "phase": 4,
+      "dependsOn": ["E1-03", "E1-04"],
+      "writeScope": [
+        "tests/e2e/helpers.ts",
+        "tests/e2e/gameplay.spec.ts",
+        "tests/e2e/accessibility.spec.ts",
+        "tests/e2e/responsive.spec.ts",
+        "tests/e2e/enhancements.spec.ts"
+      ],
+      "forbiddenScope": [
+        "apps/**",
+        "packages/**",
+        "schemas/**",
+        "orchestration/task-registry.json",
+        "orchestration/briefs/**",
+        "orchestration/runs/<run-id>/tasks/<task-id>/verification-brief.yaml",
+        "orchestration/runs/<run-id>/tasks/<task-id>/verification-report.yaml"
+      ],
+      "acceptanceCriteria": [
+        "Browser coverage verifies the fresh Start screen, transition to selection, difficulty counts, and one-based puzzle numbers.",
+        "Browser coverage verifies that puzzle 1 starts, the next puzzle is locked before completion, and completion unlocks the next puzzle with a success and text status.",
+        "Browser coverage verifies unfinished selected-puzzle reload/resume, Continue, saved mode, Daily Loop, and absence of Quick Play.",
+        "Browser coverage verifies Settings mode persistence and that How to play opens and closes the tutorial with keyboard-reachable controls.",
+        "Browser coverage verifies Dark Mode and High Contrast are absent while reduced-motion behavior remains passing.",
+        "Phone, tablet, and desktop coverage verifies the revised start and selection screens have no horizontal overflow."
+      ],
+      "requiredChecks": ["npm run typecheck", "npm run test:e2e"],
+      "taskBriefPath": "briefs/E1-05/task-brief.yaml",
+      "canonicalVerificationBriefPath": "briefs/E1-05/verification-brief.yaml",
+      "implementationReportPath": "runs/<run-id>/tasks/E1-05/implementation-report.yaml",
+      "verificationBriefPath": "runs/<run-id>/tasks/E1-05/verification-brief.yaml",
+      "verificationReportPath": "runs/<run-id>/tasks/E1-05/verification-report.yaml",
+      "status": "pending"
+    },
+    {
+      "id": "E1-06",
+      "title": "Final integration and release gate",
+      "phase": 4,
+      "dependsOn": ["E1-01", "E1-02", "E1-03", "E1-04", "E1-05"],
+      "writeScope": [],
+      "forbiddenScope": [
+        "apps/**",
+        "packages/**",
+        "schemas/**",
+        "tests/**",
+        "orchestration/task-registry.json",
+        "orchestration/briefs/**",
+        "orchestration/runs/<run-id>/tasks/<task-id>/verification-brief.yaml",
+        "orchestration/runs/<run-id>/tasks/<task-id>/verification-report.yaml"
+      ],
+      "acceptanceCriteria": [
+        "E1-01 through E1-05 each have implementation and verification reports with PASS results and no unresolved remediation.",
+        "The production typecheck, unit tests, schema validation, catalog validation, production build, and browser tests all pass.",
+        "The Start-to-selection-to-puzzle flow, sequential unlocking, persisted completion, global mode setting, tutorial, Daily Loop, Continue, and reduced-motion behavior are integrated without regression.",
+        "No user-facing Quick Play, Dark Mode, or High Contrast path remains, and no release-blocking stale references remain.",
+        "The final report records any differences between planning assumptions and implemented product behavior."
+      ],
+      "requiredChecks": ["npm run typecheck", "npm test", "npm run validate:schemas", "npm run validate:catalog", "npm run build", "npm run test:e2e"],
+      "taskBriefPath": "briefs/E1-06/task-brief.yaml",
+      "canonicalVerificationBriefPath": "briefs/E1-06/verification-brief.yaml",
+      "implementationReportPath": "runs/<run-id>/tasks/E1-06/implementation-report.yaml",
+      "verificationBriefPath": "runs/<run-id>/tasks/E1-06/verification-brief.yaml",
+      "verificationReportPath": "runs/<run-id>/tasks/E1-06/verification-report.yaml",
+      "status": "pending"
     }
   ]
 }
