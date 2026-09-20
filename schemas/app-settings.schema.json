@@ -4,12 +4,10 @@
   "title": "Loops App Settings",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schemaVersion", "defaultMode", "theme", "highContrast", "reducedMotion", "lineThickness", "haptics", "tutorialCompleted"],
+  "required": ["schemaVersion", "defaultMode", "reducedMotion", "lineThickness", "haptics", "tutorialCompleted"],
   "properties": {
     "schemaVersion": { "type": "string", "const": "1.0" },
     "defaultMode": { "enum": ["relaxed", "assisted"] },
-    "theme": { "enum": ["system", "light", "dark"] },
-    "highContrast": { "type": "boolean" },
     "reducedMotion": { "type": "boolean" },
     "lineThickness": { "enum": ["thin", "standard", "thick"] },
     "haptics": { "type": "boolean" },

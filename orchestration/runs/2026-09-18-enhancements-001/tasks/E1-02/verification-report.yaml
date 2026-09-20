@@ -1,0 +1,74 @@
+schemaVersion: "1.0"
+artifactType: verification-report
+taskId: "E1-02"
+verdict: FAIL
+scopeReviewed:
+  - "apps/web-game/src/state/game-flow/types.ts"
+  - "apps/web-game/src/state/game-flow/puzzle-catalog.ts"
+  - "apps/web-game/src/state/game-flow/game-flow.ts"
+  - "apps/web-game/src/state/game-flow/index.ts"
+  - "apps/web-game/src/state/game-flow/game-flow.test.ts"
+  - "apps/web-game/src/screens/ModeSelectionScreen.tsx"
+  - "apps/web-game/src/screens/GameFlowScreen.tsx"
+  - "apps/web-game/src/app/integration/GameIntegration.tsx"
+  - "apps/web-game/src/app/integration/puzzle-loader.ts"
+  - "orchestration/REQUIREMENTS.md"
+  - "orchestration/ENHANCEMENTS_IMPLEMENTATION_PLAN.md"
+  - "orchestration/runs/2026-09-18-enhancements-001/tasks/E1-02/verification-brief.yaml"
+  - "orchestration/runs/2026-09-18-enhancements-001/tasks/E1-02/implementation-report.yaml"
+  - "orchestration/schemas/verification-report.schema.json"
+acceptanceCriteria:
+  - id: AC-1
+    verdict: PASS
+    evidence:
+      - "apps/web-game/src/state/game-flow/puzzle-catalog.ts:17-46 parses every local puzzle, rejects duplicate IDs and catalog/definition mismatches, and materializes puzzles by catalog.puzzles order; :61-66 assigns number: index + 1 after per-difficulty filtering."
+      - "The catalog inspection produced three catalog-ordered IDs for each of beginner, easy, medium, and hard; the unit test game-flow.test.ts:26-33 asserts [1, 2, 3], stable IDs across repeated reads, and count 3."
+  - id: AC-2
+    verdict: PASS
+    evidence:
+      - "apps/web-game/src/state/game-flow/types.ts:15-25 defines available, in-progress, completed, and locked plus an optional persisted PlayerProgress on each progression item."
+      - "apps/web-game/src/state/game-flow/game-flow.ts:76-98 loads per-puzzle and predecessor progress from the repository and derives all four statuses; game-flow.test.ts:35-88 covers initial, in-progress, completed, reload, and resulting statuses."
+      - "The test uses createPersistenceRepository backed by MemoryStorage and reconstructs the repository before asserting completed status, independently exercising persistence reload."
+  - id: AC-3
+    verdict: PASS
+    evidence:
+      - "apps/web-game/src/state/game-flow/game-flow.ts:88-96 locks every puzzle after number 1 unless its immediate predecessor has persisted completed: true."
+      - "apps/web-game/src/state/game-flow/game-flow.test.ts:41-42 asserts [available, locked, locked] initially; :59-75 asserts [completed, available, locked] after puzzle 1 completion; :76-87 asserts the next unlock transition."
+  - id: AC-4
+    verdict: PASS
+    evidence:
+      - "apps/web-game/src/state/game-flow/game-flow.ts:191-212 implements startSelectedPuzzle: invalid/missing and locked progression items return undefined, in-progress items restore saved mode, startedAt, elapsedSeconds, hintsUsed, checksUsed, and edge state, and completed items start a fresh selected-puzzle replay without deleting the completion record."
+      - "apps/web-game/src/state/game-flow/game-flow.test.ts:90-103 covers valid available start and persisted progress; :105-122 covers unfinished resume; :124-138 covers locked, non-positive, out-of-range rejection, no progress creation for rejected selections, and completed replay."
+  - id: AC-5
+    verdict: PASS
+    evidence:
+      - "apps/web-game/src/state/game-flow/game-flow.ts:60-74 selects Daily Loop deterministically from stableHash(daily:<date>); :215-227 persists the date mapping and retains source daily-loop."
+      - "apps/web-game/src/state/game-flow/game-flow.ts:238-253 restores Continue with persisted mode, startedAt, elapsedSeconds, hintsUsed, checksUsed, and edge state; persistence/storage.ts:155-187 persists per-puzzle progress and the Continue pointer."
+      - "apps/web-game/src/state/game-flow/game-flow.test.ts:141-151 verifies same-date Daily Loop determinism and mapping; :153-170 verifies Continue source, mode, elapsed time, hints, checks, and edge state."
+  - id: AC-6
+    verdict: FAIL
+    evidence:
+      - "The brief requires removing Quick Play callers from the active path (task-brief.yaml:45-46, :56), and the plan requires removing the user-facing Quick Play source/API once callers are addressed (orchestration/ENHANCEMENTS_IMPLEMENTATION_PLAN.md:75-80, :209-210)."
+      - "Quick Play remains user-facing and active: apps/web-game/src/screens/ModeSelectionScreen.tsx:55-58 renders the Quick Play button; apps/web-game/src/screens/GameFlowScreen.tsx:46-55 wires it to startQuickPlay; apps/web-game/src/app/integration/GameIntegration.tsx:101-108 uses startQuickPlay for Play Again."
+      - "The game-flow barrel exports the deprecated symbols, while apps/web-game/src/state/game-flow/types.ts:13 retains quick-play in GameFlowSource and game-flow.ts:123-130, :185-188 still exports executable selectQuickPlayPuzzle/startQuickPlay. Deprecation comments document intent but do not remove the public/runtime path."
+      - "Daily Loop and Continue remain supported in game-flow.ts:215-253 and are covered by game-flow.test.ts:141-170, but that does not satisfy the Quick Play removal portion of AC-6."
+checksPerformed:
+  - command: "npm run typecheck"
+    exitCode: 0
+    outputFile: "/Users/hemalpatel/Development/loops/orchestration/runs/2026-09-18-enhancements-001/tasks/E1-02/typecheck-output.txt"
+  - command: "npm run test"
+    exitCode: 0
+    outputFile: "/Users/hemalpatel/Development/loops/orchestration/runs/2026-09-18-enhancements-001/tasks/E1-02/test-output.txt"
+  - command: "npm run build"
+    exitCode: 0
+    outputFile: "/Users/hemalpatel/Development/loops/orchestration/runs/2026-09-18-enhancements-001/tasks/E1-02/build-output.txt"
+findings:
+  - severity: BLOCKER
+    description: "Quick Play is still a live user-facing game-flow path: the mode screen renders it, the flow coordinator starts it, and completion Play Again starts it again. The deprecated exports/types are also still publicly exported and executable. This conflicts with the task's active-path removal requirement, so AC-6 and the overall task fail despite the new selected-puzzle APIs and passing required checks."
+    file: "apps/web-game/src/screens/ModeSelectionScreen.tsx"
+    line: 56
+requiredRemediation:
+  - "Remove the Quick Play action and active callers from the user-facing flow, including ModeSelectionScreen/GameFlowScreen and the GameIntegration Play Again path; route selection through the selected-puzzle API."
+  - "After active callers are removed, remove or isolate the deprecated Quick Play exports/types and update stale integration/e2e helpers that invoke them."
+  - "Re-run npm run typecheck, npm run test, npm run build, and applicable browser regression checks after remediation."
+conclusion: "FAIL: AC-1 through AC-5 are independently supported by direct inspection and passing tests. AC-6 fails because Quick Play remains publicly exported and reachable through active UI/integration callers, although Daily Loop and Continue remain supported."

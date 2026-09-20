@@ -17,4 +17,9 @@ describe('tutorial content', () => {
     expect(clampTutorialStep(Number.POSITIVE_INFINITY)).toBe(0);
     expect(clampTutorialStep(999)).toBe(TUTORIAL_STEPS.length - 1);
   });
+
+  it('keeps the final action as a tutorial completion boundary', () => {
+    expect(TUTORIAL_STEPS.at(-1)?.prompt).toContain('ready for your first puzzle');
+    expect(TUTORIAL_STEPS.at(-1)?.id).toBe('practice');
+  });
 });

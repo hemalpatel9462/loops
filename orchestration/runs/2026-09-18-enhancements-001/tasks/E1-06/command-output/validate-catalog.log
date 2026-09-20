@@ -1,0 +1,13 @@
+
+> loops@0.1.0 validate:catalog
+> npm run validate:catalog --workspace @loops/catalog-builder
+
+
+> @loops/catalog-builder@0.1.0 validate:catalog
+> vite-node --config ../../tools/puzzle-generator/pipeline/vite.config.ts src/cli.ts validate
+
+{
+  "valid": true,
+  "puzzleCount": 15,
+  "catalogVersion": "1.0.0"
+}

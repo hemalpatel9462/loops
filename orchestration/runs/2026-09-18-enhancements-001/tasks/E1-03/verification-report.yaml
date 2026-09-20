@@ -1,0 +1,83 @@
+schemaVersion: "1.0"
+artifactType: verification-report
+taskId: "E1-03"
+verdict: PASS
+scopeReviewed:
+  - "apps/web-game/src/screens/types.ts"
+  - "apps/web-game/src/screens/index.ts"
+  - "apps/web-game/src/screens/GameFlowScreen.tsx"
+  - "apps/web-game/src/screens/ModeSelectionScreen.tsx"
+  - "apps/web-game/src/screens/screens.css"
+  - "apps/web-game/src/screens/StartScreen.tsx"
+  - "apps/web-game/src/screens/PuzzleSelectionScreen.tsx"
+  - "apps/web-game/src/state/game-flow/game-flow.ts"
+  - "apps/web-game/src/state/game-flow/puzzle-catalog.ts"
+  - "apps/web-game/src/state/game-flow/game-flow.test.ts"
+  - "orchestration/schemas/verification-report.schema.json"
+acceptanceCriteria:
+  - id: "AC-1"
+    verdict: PASS
+    evidence:
+      - "apps/web-game/src/screens/GameFlowScreen.tsx:31 initializes screen to start and :57-59 renders StartScreen before selection."
+      - "apps/web-game/src/screens/StartScreen.tsx:10-12 invokes only onStart; the coordinator callback at GameFlowScreen.tsx:58 only sets screen to selection and does not call a session-start API."
+      - "Rendered localhost DOM initially showed heading 'Find your next loop.' and only the Start action; clicking Start showed 'Choose a puzzle.' without a game board."
+  - id: "AC-2"
+    verdict: PASS
+    evidence:
+      - "GameFlowScreen.tsx:41-44 derives all difficulty counts through getPuzzleCount, and :78-80 passes counts and the selected sequence to the screen."
+      - "PuzzleSelectionScreen.tsx:43-55 renders each difficulty count; :64-79 renders item.number and status from getPuzzleSequence output."
+      - "E1-02 game-flow.ts:101-112 exposes getPuzzleSequence/getPuzzleCount, while puzzle-catalog.ts:61-67 assigns one-based numbers."
+      - "Rendered DOM showed Beginner, Easy, Medium, Hard, and Expert each with '3 puzzles'; selected Easy showed Puzzle 1, Puzzle 2, and Puzzle 3."
+  - id: "AC-3"
+    verdict: PASS
+    evidence:
+      - "PuzzleSelectionScreen.tsx:65-74 derives locked from item.status, sets disabled, and uses explicit labels such as 'Locked — complete puzzle 1 first'."
+      - "PuzzleSelectionScreen.tsx:76-81 renders the number and visible status text for every puzzle; completed status is rendered as 'Completed'. screens.css:41-45 supplies the completed success treatment and locked styling."
+      - "E1-02 game-flow.ts:188-210 returns undefined for locked selections; game-flow.test.ts:124-139 verifies locked selection creates no session/progress and completed progression permits replay."
+      - "Rendered DOM showed disabled buttons named 'Puzzle 2: Locked — complete puzzle 1 first' and 'Puzzle 3: Locked — complete puzzle 2 first'."
+  - id: "AC-4"
+    verdict: PASS
+    evidence:
+      - "ModeSelectionScreen.tsx:5-7 is only a compatibility delegate to PuzzleSelectionScreen and contains no mode fieldset or Quick Play action."
+      - "PuzzleSelectionScreen.tsx contains difficulty and puzzle fieldsets only; it has Daily Loop/Continue actions and no Play mode, Quick Play, 'Play at your pace.', or retired validation tagline."
+      - "Search of apps/web-game/src/screens confirmed the retired selection strings are absent; the only offline wording is the separate Daily Loop description in DailyLoopScreen.tsx:10."
+      - "Rendered selection DOM showed no Play mode group, Quick Play action, or retired heading/tagline."
+  - id: "AC-5"
+    verdict: PASS
+    evidence:
+      - "GameFlowScreen.tsx:61-68 routes Daily Loop and Continue back to selection; :73-77 routes their actions from selection and routes selection Back to start."
+      - "DailyLoopScreen.tsx:7 and ContinueScreen.tsx:8 expose Back actions; PuzzleSelectionScreen.tsx:35 exposes Back to start."
+      - "Rendered navigation reached Daily Loop from selection, and clicking its Back returned to the selection screen; selection Back had previously returned to Start."
+      - "Continue reachability is wired at GameFlowScreen.tsx:64-68 and PuzzleSelectionScreen.tsx:90-92, with availability derived from getContinueProgress."
+  - id: "AC-6"
+    verdict: PASS
+    evidence:
+      - "screens.css:1-7 bounds flow-screen with box-sizing and width:min(100%, 42rem); :20-24 uses wrapping flexible controls; :47-57 adds 40rem and 22rem responsive layouts."
+      - "Puzzle controls at screens.css:35-40 use width:100%, min-width:0, and wrapping-safe copy; no fixed screen width is introduced."
+      - "Rendered desktop selection measured flow-screen width 672px within a 1280px viewport with document/body scrollWidth equal to 1280px, showing no horizontal overflow at the inspected desktop width."
+      - "Phone/tablet behavior is independently covered by the explicit 40rem and 22rem breakpoints and grid/flex wrapping rules in screens.css."
+checksPerformed:
+  - command: "npm run typecheck"
+    exitCode: 0
+    outputFile: "orchestration/runs/2026-09-18-enhancements-001/tasks/E1-03/typecheck-output.txt"
+  - command: "npm run test"
+    exitCode: 0
+    outputFile: "orchestration/runs/2026-09-18-enhancements-001/tasks/E1-03/test-output.txt"
+  - command: "npm run build"
+    exitCode: 0
+    outputFile: "orchestration/runs/2026-09-18-enhancements-001/tasks/E1-03/build-output.txt"
+findings:
+  - severity: LOW
+    description: "The worktree contains unrelated E1-01/E1-02 and orchestration changes outside the seven-file E1-03 screen scope; they were preserved and the required checks passed."
+    file: "apps/web-game/src/state/game-flow/game-flow.ts"
+    line: 188
+  - severity: LOW
+    description: "GameFlowScreen retains a local relaxed-mode default; the implementation report identifies persisted global default-mode integration as E1-04 scope."
+    file: "apps/web-game/src/screens/GameFlowScreen.tsx"
+    line: 33
+requiredRemediation: []
+conclusion: >-
+  Independently reviewed the assigned screen implementation, E1-02 progression
+  APIs and tests, relevant diff, worktree state, rendered local flow, responsive
+  bounds, and all required commands. All six acceptance criteria are satisfied;
+  no E1-03 remediation is required.

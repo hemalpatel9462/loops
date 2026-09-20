@@ -1,0 +1,112 @@
+schemaVersion: "1.0"
+artifactType: implementation-report
+taskId: "E1-02-R1"
+status: COMPLETE
+summary: >-
+  Removed the live Quick Play button and application callers, removed
+  quick-play from GameFlowSource, removed the public startQuickPlay API, and
+  changed completion Play Again to return safely to the selection flow while
+  preserving selected-puzzle, Daily Loop, and Continue APIs.
+filesChanged:
+  - path: apps/web-game/src/state/game-flow/types.ts
+    change: >-
+      Removed quick-play from GameFlowSource and documented the retained
+      PuzzleSelectionOptions fields as compatibility-only loader options.
+  - path: apps/web-game/src/state/game-flow/game-flow.ts
+    change: >-
+      Removed startQuickPlay and retained selectQuickPlayPuzzle only as a
+      documented non-user-facing compatibility helper for the existing
+      puzzle-loader tests; selected-puzzle, Daily Loop, and Continue APIs are
+      unchanged and remain exported.
+  - path: apps/web-game/src/screens/GameFlowScreen.tsx
+    change: Removed the startQuickPlay import and active screen caller.
+  - path: apps/web-game/src/screens/ModeSelectionScreen.tsx
+    change: Removed the Quick Play action from the rendered mode screen.
+  - path: apps/web-game/src/screens/types.ts
+    change: Removed the obsolete onQuickPlay prop from ModeSelectionProps.
+  - path: apps/web-game/src/app/integration/GameIntegration.tsx
+    change: >-
+      Removed the startQuickPlay completion caller and made Play Again clear
+      the active session so the user safely returns to selection.
+  - path: orchestration/runs/2026-09-18-enhancements-001/tasks/E1-02/implementation-report-remediation-1.yaml
+    change: Wrote the required remediation implementation report.
+acceptanceCriteria:
+  - id: RM-AC-1
+    result: PASS
+    evidence:
+      - >-
+        apps/web-game/src/state/game-flow/types.ts:13 defines GameFlowSource
+        as selected-puzzle, daily-loop, and continue only; quick-play is no
+        longer a source value.
+      - >-
+        No startQuickPlay reference remains under apps/web-game/src. The
+        ModeSelectionScreen Quick Play button and GameFlowScreen caller were
+        removed, and GameIntegration no longer starts Quick Play on Play Again.
+      - >-
+        apps/web-game/src/app/integration/GameIntegration.tsx:101-104 keeps the
+        completion Play Again callback and clears the session/state to return
+        to the flow selection screen.
+  - id: RM-AC-2
+    result: PASS
+    evidence:
+      - >-
+        apps/web-game/src/state/game-flow/game-flow.ts:102-121 and :189-253
+        continue to export the puzzle sequence/count/status and
+        startSelectedPuzzle APIs alongside startDailyLoop, getContinueProgress,
+        and resumeContinue.
+      - >-
+        apps/web-game/src/screens/GameFlowScreen.tsx:31-42 remains wired to the
+        Daily Loop and Continue callers, and npm run typecheck passes for all
+        active consumers.
+      - >-
+        selectQuickPlayPuzzle remains only as the documented compatibility
+        helper in game-flow.ts for the forbidden-scope puzzle-loader test path;
+        it is not imported by GameFlowScreen or GameIntegration and is not part
+        of the user-facing flow.
+  - id: RM-AC-3
+    result: PASS
+    evidence:
+      - >-
+        npm run typecheck completed with exit code 0; output is recorded in
+        /tmp/loops-e1-02-r1-typecheck.log.
+      - >-
+        npm run test completed with exit code 0; all 23 web-game tests and the
+        remaining workspace test suites passed; output is recorded in
+        /tmp/loops-e1-02-r1-test.log.
+      - >-
+        npm run build completed with exit code 0 and transformed 108 modules;
+        output is recorded in /tmp/loops-e1-02-r1-build.log.
+commandsRun:
+  - command: "npm run typecheck > /tmp/loops-e1-02-r1-typecheck.log 2>&1"
+    exitCode: 0
+    outputFile: /tmp/loops-e1-02-r1-typecheck.log
+  - command: "npm run test > /tmp/loops-e1-02-r1-test.log 2>&1"
+    exitCode: 0
+    outputFile: /tmp/loops-e1-02-r1-test.log
+  - command: "npm run build > /tmp/loops-e1-02-r1-build.log 2>&1"
+    exitCode: 0
+    outputFile: /tmp/loops-e1-02-r1-build.log
+deviations:
+  - >-
+    The broader E1-03 selection-screen redesign was intentionally not
+    implemented; this remediation makes only the required Quick Play removal.
+  - >-
+    selectQuickPlayPuzzle, PuzzleSelectionOptions, and the out-of-scope
+    app/integration/puzzle-loader.ts compatibility path remain for existing
+    integration tests. They are not called by the active user-facing flow and
+    are documented as compatibility-only.
+knownRisks:
+  - >-
+    Out-of-scope E2E helpers and the integration loader still use legacy
+    Quick Play names until their owning follow-up task updates them; no active
+    screen or application flow starts through those helpers.
+  - >-
+    Completion Play Again currently returns to selection rather than starting
+    an immediate replay, as required for safe behavior while the revised
+    selected-puzzle UI is implemented by the dependent task.
+handoffNotes: >-
+  E1-03 can build the numbered selected-puzzle UI on the preserved
+  getPuzzleSequence/getPuzzleCount/getPuzzleStatus/startSelectedPuzzle APIs.
+  E1-05 owns stale browser helper migration. Existing unrelated worktree
+  changes, including persistence, catalog, tests, package/schema, and
+  orchestration registry changes, were preserved.

@@ -1,0 +1,134 @@
+schemaVersion: "1.0"
+artifactType: implementation-report
+taskId: "E1-02"
+status: COMPLETE
+summary: >-
+  Added deterministic, catalog-ordered one-based puzzle progression APIs with
+  persisted available/in-progress/completed/locked status, selected-puzzle
+  start/resume/replay behavior, safe invalid and locked selection rejection,
+  and regression coverage for Daily Loop and Continue semantics.
+filesChanged:
+  - path: apps/web-game/src/state/game-flow/types.ts
+    change: >-
+      Added progression status, numbered sequence, progression item, and
+      selected-puzzle option contracts; retained deprecated Quick Play option
+      types for existing callers during flow migration.
+  - path: apps/web-game/src/state/game-flow/puzzle-catalog.ts
+    change: >-
+      Changed local puzzle materialization to follow validated catalog order,
+      validate catalog/definition identity and dimensions, and expose a stable
+      one-based per-difficulty sequence.
+  - path: apps/web-game/src/state/game-flow/game-flow.ts
+    change: >-
+      Added persisted progression status/count APIs and startSelectedPuzzle,
+      including predecessor unlock checks, unfinished-state restoration, and
+      completed-puzzle replay while preserving Daily Loop and Continue.
+  - path: apps/web-game/src/state/game-flow/game-flow.test.ts
+    change: >-
+      Added coverage for deterministic numbering, all progression statuses,
+      persistence reload, selected-puzzle start/resume/replay/rejection, and
+      Daily Loop/Continue regressions.
+  - path: orchestration/runs/2026-09-18-enhancements-001/tasks/E1-02/implementation-report.yaml
+    change: Wrote the required implementation report and verification evidence.
+acceptanceCriteria:
+  - id: AC-1
+    result: PASS
+    evidence:
+      - >-
+        puzzle-catalog.ts:61-67 derives numbers from filtered validated
+        catalog order, restarting at 1 for each difficulty.
+      - >-
+        game-flow.test.ts test "exposes deterministic one-based sequences in
+        validated catalog order" asserts [1, 2, 3], stable IDs, and count.
+  - id: AC-2
+    result: PASS
+    evidence:
+      - >-
+        types.ts:15-25 defines available, in-progress, completed, and locked
+        status values and persisted progress-bearing progression items.
+      - >-
+        game-flow.ts:76-99 derives status from repository.loadProgress for the
+        puzzle and its immediate predecessor.
+      - >-
+        game-flow.test.ts test "derives available, locked, in-progress, and
+        completed status from per-puzzle progress" covers every status.
+  - id: AC-3
+    result: PASS
+    evidence:
+      - >-
+        game-flow.ts:88-96 locks every puzzle after 1 until the immediate
+        predecessor has completed: true in persisted progress.
+      - >-
+        game-flow.test.ts asserts initial [available, locked, locked], then
+        the unlock transition after persisted completion of puzzle 1.
+  - id: AC-4
+    result: PASS
+    evidence:
+      - >-
+        game-flow.ts:189-210 starts available puzzles, restores unfinished
+        progress using its saved mode and runtime fields, and starts completed
+        puzzles as fresh replays without deleting their completion record.
+      - >-
+        game-flow.test.ts test "rejects invalid and locked selections without
+        creating progress, then allows completed replay" covers invalid,
+        locked, no-progress-creation, and replay behavior.
+  - id: AC-5
+    result: PASS
+    evidence:
+      - >-
+        Existing Daily Loop selection remains date-hash deterministic and
+        stores the date mapping; game-flow.test.ts test "selects Daily Loop
+        deterministically by date and stores the date mapping" passes.
+      - >-
+        Existing Continue restoration remains supported; game-flow.test.ts
+        test "resumes Continue with the saved mode, elapsed time, hints, and
+        edge choices" verifies mode, elapsed seconds, hints, checks, and edge
+        state.
+  - id: AC-6
+    result: PASS
+    evidence:
+      - >-
+        The new selected-puzzle public path uses source selected-puzzle and
+        does not depend on Quick Play; Daily Loop and Continue sources and
+        APIs remain supported.
+      - >-
+        Quick Play compatibility exports are explicitly deprecated in
+        types.ts:64-69 and retained only because current callers are outside
+        this task's write scope and will be migrated by the selection-flow
+        task.
+commandsRun:
+  - command: "npm run typecheck > /tmp/loops-e1-02-typecheck.log 2>&1"
+    exitCode: 0
+    outputFile: /tmp/loops-e1-02-typecheck.log
+  - command: "npm run test > /tmp/loops-e1-02-test.log 2>&1"
+    exitCode: 0
+    outputFile: /tmp/loops-e1-02-test.log
+  - command: "npm run build > /tmp/loops-e1-02-build.log 2>&1"
+    exitCode: 0
+    outputFile: /tmp/loops-e1-02-build.log
+deviations:
+  - >-
+    Quick Play exports and the legacy quick-play GameFlowSource union member
+    remain as deprecated compatibility because active callers in screens,
+    app integration, and e2e helpers are outside E1-02's exclusive write
+    scope; no new progression behavior depends on them.
+  - >-
+    No change was needed in game-flow/index.ts because its existing wildcard
+    exports automatically expose the new types and APIs.
+knownRisks:
+  - >-
+    Until the later selection-flow task removes out-of-scope callers, the
+    existing UI can still expose Quick Play even though the selected-puzzle
+    domain path is available and tested.
+  - >-
+    The progression API treats a persisted current-puzzle attempt as locked
+    when its immediate predecessor is not completed, which is intentional for
+    sequential progression but may hide legacy out-of-order attempts until
+    their predecessor is completed.
+handoffNotes: >-
+  The next selection-flow implementation can import getPuzzleSequence,
+  getPuzzleCount, getPuzzleStatus, and startSelectedPuzzle from the existing
+  game-flow barrel. It should remove the remaining Quick Play callers in its
+  own declared scope and use the saved global mode when starting a selected
+  puzzle. Unrelated concurrent changes observed in persistence, puzzle-format,
+  schemas, task-registry, and orchestration run files were preserved.

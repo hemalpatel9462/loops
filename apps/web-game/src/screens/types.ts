@@ -1,16 +1,32 @@
 import type { Difficulty, GameplayMode, PuzzleDefinition } from '@loops/puzzle-format';
-import type { CompletionStats, FlowProgressSummary } from '../state/game-flow';
+import type {
+  CompletionStats,
+  FlowDependencies,
+  FlowProgressSummary,
+  PuzzleProgressionItem,
+} from '../state/game-flow';
 
-export interface ModeSelectionProps {
-  readonly selectedDifficulty?: Difficulty;
-  readonly selectedMode: GameplayMode;
-  readonly onDifficultyChange: (difficulty: Difficulty) => void;
-  readonly onModeChange: (mode: GameplayMode) => void;
-  readonly onQuickPlay: () => void;
+export interface StartScreenProps {
+  readonly onStart: () => void;
   readonly onDailyLoop: () => void;
   readonly onContinue: () => void;
   readonly continueAvailable: boolean;
 }
+
+export interface PuzzleSelectionProps {
+  readonly dependencies?: FlowDependencies;
+  readonly selectedDifficulty: Difficulty;
+  readonly puzzleSequence: readonly PuzzleProgressionItem[];
+  readonly onDifficultyChange: (difficulty: Difficulty) => void;
+  readonly onPuzzleSelect: (puzzleNumber: number) => void;
+  readonly onBack: () => void;
+  readonly onHowToPlay: () => void;
+}
+
+/** @deprecated Use PuzzleSelectionProps; retained for screen import compatibility. */
+export type ModeSelectionProps = PuzzleSelectionProps & {
+  readonly selectedMode?: GameplayMode;
+};
 
 export interface DailyLoopScreenProps {
   readonly date: string;

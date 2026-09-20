@@ -8,6 +8,10 @@ export interface LoopBoardProps {
   readonly clues: readonly (readonly number[])[];
   readonly edgeStates?: EdgeStateMap;
   readonly fixedEdges?: readonly EdgeId[];
+  readonly hint?: {
+    readonly edge: EdgeId;
+    readonly state: Exclude<EdgeState, 'unknown'>;
+  };
   /** Dispatches a semantic action to the game engine/state owner. */
   readonly onEdgeAction?: (edge: EdgeId, action: EdgeAction) => void;
   readonly ariaLabel?: string;

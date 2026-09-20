@@ -10,7 +10,19 @@ import type { GameState } from '@loops/game-engine/state';
 import type { RuleValidationResult } from '@loops/game-engine/validation';
 import type { RuntimeHint } from '@loops/game-engine/hints';
 
-export type GameFlowSource = 'quick-play' | 'daily-loop' | 'continue';
+export type GameFlowSource = 'selected-puzzle' | 'daily-loop' | 'continue';
+
+export type PuzzleStatus = 'available' | 'in-progress' | 'completed' | 'locked';
+
+export interface PuzzleSequenceItem {
+  readonly number: number;
+  readonly puzzle: PuzzleDefinition;
+}
+
+export interface PuzzleProgressionItem extends PuzzleSequenceItem {
+  readonly status: PuzzleStatus;
+  readonly progress?: PlayerProgress;
+}
 
 export interface CompletionStats {
   readonly puzzleId: string;
@@ -50,9 +62,17 @@ export interface FlowDependencies {
 }
 
 export interface PuzzleSelectionOptions extends FlowDependencies {
+  /** @deprecated Compatibility-only options for the non-user-facing puzzle-loader helper. */
   readonly difficulty?: Difficulty;
+  /** @deprecated Compatibility-only seed for the non-user-facing puzzle-loader helper. */
   readonly seed?: string;
   readonly mode?: GameplayMode;
+}
+
+export interface SelectedPuzzleOptions extends FlowDependencies {
+  readonly difficulty: Difficulty;
+  readonly puzzleNumber: number;
+  readonly mode: GameplayMode;
 }
 
 export interface DailyLoopOptions extends FlowDependencies {

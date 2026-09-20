@@ -1,0 +1,133 @@
+{
+  "schemaVersion": "1.0",
+  "id": "loop-medium-catalog-medium-21",
+  "seed": "catalog-medium-21",
+  "generatorVersion": "pipeline-1.0.0",
+  "width": 7,
+  "height": 7,
+  "difficulty": "medium",
+  "clues": [
+    [
+      2,
+      3,
+      1,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      2,
+      2,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      2,
+      2,
+      0,
+      0,
+      0,
+      0,
+      1
+    ],
+    [
+      1,
+      2,
+      2,
+      1,
+      1,
+      1,
+      3
+    ],
+    [
+      2,
+      0,
+      2,
+      2,
+      2,
+      3,
+      2
+    ],
+    [
+      2,
+      3,
+      2,
+      2,
+      1,
+      2,
+      2
+    ],
+    [
+      0,
+      1,
+      0,
+      1,
+      3,
+      2,
+      1
+    ]
+  ],
+  "solutionEdges": [
+    "v:2:1",
+    "v:1:1",
+    "h:1:1",
+    "v:0:2",
+    "h:0:1",
+    "h:0:0",
+    "v:0:0",
+    "v:1:0",
+    "v:2:0",
+    "v:3:0",
+    "v:4:0",
+    "h:5:0",
+    "v:5:1",
+    "h:6:1",
+    "v:5:2",
+    "h:5:2",
+    "h:5:3",
+    "v:5:4",
+    "v:6:4",
+    "h:7:4",
+    "v:6:5",
+    "h:6:5",
+    "h:6:6",
+    "v:5:7",
+    "v:4:7",
+    "v:3:7",
+    "h:3:6",
+    "v:3:6",
+    "v:4:6",
+    "h:5:5",
+    "v:4:5",
+    "h:4:4",
+    "h:4:3",
+    "h:4:2",
+    "v:3:2",
+    "h:3:1"
+  ],
+  "startingEdges": [
+    "h:4:2",
+    "h:4:3",
+    "h:4:4",
+    "h:5:2",
+    "h:6:6",
+    "v:5:4"
+  ],
+  "metadata": {
+    "loopLength": 36,
+    "complexityScore": 1,
+    "difficultyScore": 0.375,
+    "turnCount": 22,
+    "regionalCoverage": 8,
+    "startingEdgeRatio": 0.16666666666666666,
+    "boundingBoxWidthRatio": 1,
+    "boundingBoxHeightRatio": 1,
+    "rowsUsed": 8,
+    "columnsUsed": 8,
+    "estimatedSolveTimeSeconds": 288
+  }
+}

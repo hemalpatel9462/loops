@@ -1,112 +1,882 @@
 {
   "schemaVersion": "1.0",
   "catalogVersion": "1.0.0",
-  "generatedAt": "2026-09-18T17:53:03.263Z",
+  "generatedAt": "2026-09-20T01:45:51.629Z",
   "puzzles": [
     {
-      "id": "loop-beginner-catalog-expanded-beginner-0",
+      "id": "loop-beginner-catalog-beginner-0",
       "difficulty": "beginner",
       "width": 4,
       "height": 4,
-      "path": "puzzles/beginner/loop-beginner-catalog-expanded-beginner-0.json"
+      "path": "puzzles/beginner/loop-beginner-catalog-beginner-0.json"
     },
     {
-      "id": "loop-beginner-catalog-expanded-beginner-1",
+      "id": "loop-beginner-catalog-beginner-1",
       "difficulty": "beginner",
       "width": 4,
       "height": 4,
-      "path": "puzzles/beginner/loop-beginner-catalog-expanded-beginner-1.json"
+      "path": "puzzles/beginner/loop-beginner-catalog-beginner-1.json"
     },
     {
-      "id": "loop-beginner-catalog-expanded-beginner-2",
+      "id": "loop-beginner-catalog-beginner-10",
       "difficulty": "beginner",
       "width": 4,
       "height": 4,
-      "path": "puzzles/beginner/loop-beginner-catalog-expanded-beginner-2.json"
+      "path": "puzzles/beginner/loop-beginner-catalog-beginner-10.json"
     },
     {
-      "id": "loop-easy-catalog-expanded-easy-0",
+      "id": "loop-beginner-catalog-beginner-11",
+      "difficulty": "beginner",
+      "width": 4,
+      "height": 4,
+      "path": "puzzles/beginner/loop-beginner-catalog-beginner-11.json"
+    },
+    {
+      "id": "loop-beginner-catalog-beginner-12",
+      "difficulty": "beginner",
+      "width": 4,
+      "height": 4,
+      "path": "puzzles/beginner/loop-beginner-catalog-beginner-12.json"
+    },
+    {
+      "id": "loop-beginner-catalog-beginner-13",
+      "difficulty": "beginner",
+      "width": 4,
+      "height": 4,
+      "path": "puzzles/beginner/loop-beginner-catalog-beginner-13.json"
+    },
+    {
+      "id": "loop-beginner-catalog-beginner-14",
+      "difficulty": "beginner",
+      "width": 4,
+      "height": 4,
+      "path": "puzzles/beginner/loop-beginner-catalog-beginner-14.json"
+    },
+    {
+      "id": "loop-beginner-catalog-beginner-15",
+      "difficulty": "beginner",
+      "width": 4,
+      "height": 4,
+      "path": "puzzles/beginner/loop-beginner-catalog-beginner-15.json"
+    },
+    {
+      "id": "loop-beginner-catalog-beginner-16",
+      "difficulty": "beginner",
+      "width": 4,
+      "height": 4,
+      "path": "puzzles/beginner/loop-beginner-catalog-beginner-16.json"
+    },
+    {
+      "id": "loop-beginner-catalog-beginner-17",
+      "difficulty": "beginner",
+      "width": 4,
+      "height": 4,
+      "path": "puzzles/beginner/loop-beginner-catalog-beginner-17.json"
+    },
+    {
+      "id": "loop-beginner-catalog-beginner-18",
+      "difficulty": "beginner",
+      "width": 4,
+      "height": 4,
+      "path": "puzzles/beginner/loop-beginner-catalog-beginner-18.json"
+    },
+    {
+      "id": "loop-beginner-catalog-beginner-19",
+      "difficulty": "beginner",
+      "width": 4,
+      "height": 4,
+      "path": "puzzles/beginner/loop-beginner-catalog-beginner-19.json"
+    },
+    {
+      "id": "loop-beginner-catalog-beginner-2",
+      "difficulty": "beginner",
+      "width": 4,
+      "height": 4,
+      "path": "puzzles/beginner/loop-beginner-catalog-beginner-2.json"
+    },
+    {
+      "id": "loop-beginner-catalog-beginner-20",
+      "difficulty": "beginner",
+      "width": 4,
+      "height": 4,
+      "path": "puzzles/beginner/loop-beginner-catalog-beginner-20.json"
+    },
+    {
+      "id": "loop-beginner-catalog-beginner-21",
+      "difficulty": "beginner",
+      "width": 4,
+      "height": 4,
+      "path": "puzzles/beginner/loop-beginner-catalog-beginner-21.json"
+    },
+    {
+      "id": "loop-beginner-catalog-beginner-22",
+      "difficulty": "beginner",
+      "width": 4,
+      "height": 4,
+      "path": "puzzles/beginner/loop-beginner-catalog-beginner-22.json"
+    },
+    {
+      "id": "loop-beginner-catalog-beginner-23",
+      "difficulty": "beginner",
+      "width": 4,
+      "height": 4,
+      "path": "puzzles/beginner/loop-beginner-catalog-beginner-23.json"
+    },
+    {
+      "id": "loop-beginner-catalog-beginner-24",
+      "difficulty": "beginner",
+      "width": 4,
+      "height": 4,
+      "path": "puzzles/beginner/loop-beginner-catalog-beginner-24.json"
+    },
+    {
+      "id": "loop-beginner-catalog-beginner-3",
+      "difficulty": "beginner",
+      "width": 4,
+      "height": 4,
+      "path": "puzzles/beginner/loop-beginner-catalog-beginner-3.json"
+    },
+    {
+      "id": "loop-beginner-catalog-beginner-4",
+      "difficulty": "beginner",
+      "width": 4,
+      "height": 4,
+      "path": "puzzles/beginner/loop-beginner-catalog-beginner-4.json"
+    },
+    {
+      "id": "loop-beginner-catalog-beginner-5",
+      "difficulty": "beginner",
+      "width": 4,
+      "height": 4,
+      "path": "puzzles/beginner/loop-beginner-catalog-beginner-5.json"
+    },
+    {
+      "id": "loop-beginner-catalog-beginner-6",
+      "difficulty": "beginner",
+      "width": 4,
+      "height": 4,
+      "path": "puzzles/beginner/loop-beginner-catalog-beginner-6.json"
+    },
+    {
+      "id": "loop-beginner-catalog-beginner-7",
+      "difficulty": "beginner",
+      "width": 4,
+      "height": 4,
+      "path": "puzzles/beginner/loop-beginner-catalog-beginner-7.json"
+    },
+    {
+      "id": "loop-beginner-catalog-beginner-8",
+      "difficulty": "beginner",
+      "width": 4,
+      "height": 4,
+      "path": "puzzles/beginner/loop-beginner-catalog-beginner-8.json"
+    },
+    {
+      "id": "loop-beginner-catalog-beginner-9",
+      "difficulty": "beginner",
+      "width": 4,
+      "height": 4,
+      "path": "puzzles/beginner/loop-beginner-catalog-beginner-9.json"
+    },
+    {
+      "id": "loop-easy-catalog-easy-0",
       "difficulty": "easy",
       "width": 5,
       "height": 5,
-      "path": "puzzles/easy/loop-easy-catalog-expanded-easy-0.json"
+      "path": "puzzles/easy/loop-easy-catalog-easy-0.json"
     },
     {
-      "id": "loop-easy-catalog-expanded-easy-1",
+      "id": "loop-easy-catalog-easy-1",
       "difficulty": "easy",
       "width": 5,
       "height": 5,
-      "path": "puzzles/easy/loop-easy-catalog-expanded-easy-1.json"
+      "path": "puzzles/easy/loop-easy-catalog-easy-1.json"
     },
     {
-      "id": "loop-easy-catalog-expanded-easy-2",
+      "id": "loop-easy-catalog-easy-10",
       "difficulty": "easy",
       "width": 5,
       "height": 5,
-      "path": "puzzles/easy/loop-easy-catalog-expanded-easy-2.json"
+      "path": "puzzles/easy/loop-easy-catalog-easy-10.json"
     },
     {
-      "id": "loop-expert-catalog-expanded-expert-0",
+      "id": "loop-easy-catalog-easy-11",
+      "difficulty": "easy",
+      "width": 5,
+      "height": 5,
+      "path": "puzzles/easy/loop-easy-catalog-easy-11.json"
+    },
+    {
+      "id": "loop-easy-catalog-easy-12",
+      "difficulty": "easy",
+      "width": 5,
+      "height": 5,
+      "path": "puzzles/easy/loop-easy-catalog-easy-12.json"
+    },
+    {
+      "id": "loop-easy-catalog-easy-13",
+      "difficulty": "easy",
+      "width": 5,
+      "height": 5,
+      "path": "puzzles/easy/loop-easy-catalog-easy-13.json"
+    },
+    {
+      "id": "loop-easy-catalog-easy-14",
+      "difficulty": "easy",
+      "width": 5,
+      "height": 5,
+      "path": "puzzles/easy/loop-easy-catalog-easy-14.json"
+    },
+    {
+      "id": "loop-easy-catalog-easy-15",
+      "difficulty": "easy",
+      "width": 5,
+      "height": 5,
+      "path": "puzzles/easy/loop-easy-catalog-easy-15.json"
+    },
+    {
+      "id": "loop-easy-catalog-easy-16",
+      "difficulty": "easy",
+      "width": 5,
+      "height": 5,
+      "path": "puzzles/easy/loop-easy-catalog-easy-16.json"
+    },
+    {
+      "id": "loop-easy-catalog-easy-17",
+      "difficulty": "easy",
+      "width": 5,
+      "height": 5,
+      "path": "puzzles/easy/loop-easy-catalog-easy-17.json"
+    },
+    {
+      "id": "loop-easy-catalog-easy-18",
+      "difficulty": "easy",
+      "width": 5,
+      "height": 5,
+      "path": "puzzles/easy/loop-easy-catalog-easy-18.json"
+    },
+    {
+      "id": "loop-easy-catalog-easy-19",
+      "difficulty": "easy",
+      "width": 5,
+      "height": 5,
+      "path": "puzzles/easy/loop-easy-catalog-easy-19.json"
+    },
+    {
+      "id": "loop-easy-catalog-easy-2",
+      "difficulty": "easy",
+      "width": 5,
+      "height": 5,
+      "path": "puzzles/easy/loop-easy-catalog-easy-2.json"
+    },
+    {
+      "id": "loop-easy-catalog-easy-20",
+      "difficulty": "easy",
+      "width": 5,
+      "height": 5,
+      "path": "puzzles/easy/loop-easy-catalog-easy-20.json"
+    },
+    {
+      "id": "loop-easy-catalog-easy-21",
+      "difficulty": "easy",
+      "width": 5,
+      "height": 5,
+      "path": "puzzles/easy/loop-easy-catalog-easy-21.json"
+    },
+    {
+      "id": "loop-easy-catalog-easy-22",
+      "difficulty": "easy",
+      "width": 5,
+      "height": 5,
+      "path": "puzzles/easy/loop-easy-catalog-easy-22.json"
+    },
+    {
+      "id": "loop-easy-catalog-easy-23",
+      "difficulty": "easy",
+      "width": 5,
+      "height": 5,
+      "path": "puzzles/easy/loop-easy-catalog-easy-23.json"
+    },
+    {
+      "id": "loop-easy-catalog-easy-24",
+      "difficulty": "easy",
+      "width": 5,
+      "height": 5,
+      "path": "puzzles/easy/loop-easy-catalog-easy-24.json"
+    },
+    {
+      "id": "loop-easy-catalog-easy-3",
+      "difficulty": "easy",
+      "width": 5,
+      "height": 5,
+      "path": "puzzles/easy/loop-easy-catalog-easy-3.json"
+    },
+    {
+      "id": "loop-easy-catalog-easy-4",
+      "difficulty": "easy",
+      "width": 5,
+      "height": 5,
+      "path": "puzzles/easy/loop-easy-catalog-easy-4.json"
+    },
+    {
+      "id": "loop-easy-catalog-easy-5",
+      "difficulty": "easy",
+      "width": 5,
+      "height": 5,
+      "path": "puzzles/easy/loop-easy-catalog-easy-5.json"
+    },
+    {
+      "id": "loop-easy-catalog-easy-6",
+      "difficulty": "easy",
+      "width": 5,
+      "height": 5,
+      "path": "puzzles/easy/loop-easy-catalog-easy-6.json"
+    },
+    {
+      "id": "loop-easy-catalog-easy-7",
+      "difficulty": "easy",
+      "width": 5,
+      "height": 5,
+      "path": "puzzles/easy/loop-easy-catalog-easy-7.json"
+    },
+    {
+      "id": "loop-easy-catalog-easy-8",
+      "difficulty": "easy",
+      "width": 5,
+      "height": 5,
+      "path": "puzzles/easy/loop-easy-catalog-easy-8.json"
+    },
+    {
+      "id": "loop-easy-catalog-easy-9",
+      "difficulty": "easy",
+      "width": 5,
+      "height": 5,
+      "path": "puzzles/easy/loop-easy-catalog-easy-9.json"
+    },
+    {
+      "id": "loop-expert-catalog-expert-0",
       "difficulty": "expert",
       "width": 10,
       "height": 10,
-      "path": "puzzles/expert/loop-expert-catalog-expanded-expert-0.json"
+      "path": "puzzles/expert/loop-expert-catalog-expert-0.json"
     },
     {
-      "id": "loop-expert-catalog-expanded-expert-1",
+      "id": "loop-expert-catalog-expert-1",
       "difficulty": "expert",
       "width": 10,
       "height": 10,
-      "path": "puzzles/expert/loop-expert-catalog-expanded-expert-1.json"
+      "path": "puzzles/expert/loop-expert-catalog-expert-1.json"
     },
     {
-      "id": "loop-expert-catalog-expanded-expert-2",
+      "id": "loop-expert-catalog-expert-10",
       "difficulty": "expert",
       "width": 10,
       "height": 10,
-      "path": "puzzles/expert/loop-expert-catalog-expanded-expert-2.json"
+      "path": "puzzles/expert/loop-expert-catalog-expert-10.json"
     },
     {
-      "id": "loop-hard-catalog-expanded-hard-0",
+      "id": "loop-expert-catalog-expert-11",
+      "difficulty": "expert",
+      "width": 10,
+      "height": 10,
+      "path": "puzzles/expert/loop-expert-catalog-expert-11.json"
+    },
+    {
+      "id": "loop-expert-catalog-expert-12",
+      "difficulty": "expert",
+      "width": 10,
+      "height": 10,
+      "path": "puzzles/expert/loop-expert-catalog-expert-12.json"
+    },
+    {
+      "id": "loop-expert-catalog-expert-13",
+      "difficulty": "expert",
+      "width": 10,
+      "height": 10,
+      "path": "puzzles/expert/loop-expert-catalog-expert-13.json"
+    },
+    {
+      "id": "loop-expert-catalog-expert-14",
+      "difficulty": "expert",
+      "width": 10,
+      "height": 10,
+      "path": "puzzles/expert/loop-expert-catalog-expert-14.json"
+    },
+    {
+      "id": "loop-expert-catalog-expert-15",
+      "difficulty": "expert",
+      "width": 10,
+      "height": 10,
+      "path": "puzzles/expert/loop-expert-catalog-expert-15.json"
+    },
+    {
+      "id": "loop-expert-catalog-expert-16",
+      "difficulty": "expert",
+      "width": 10,
+      "height": 10,
+      "path": "puzzles/expert/loop-expert-catalog-expert-16.json"
+    },
+    {
+      "id": "loop-expert-catalog-expert-17",
+      "difficulty": "expert",
+      "width": 10,
+      "height": 10,
+      "path": "puzzles/expert/loop-expert-catalog-expert-17.json"
+    },
+    {
+      "id": "loop-expert-catalog-expert-18",
+      "difficulty": "expert",
+      "width": 10,
+      "height": 10,
+      "path": "puzzles/expert/loop-expert-catalog-expert-18.json"
+    },
+    {
+      "id": "loop-expert-catalog-expert-19",
+      "difficulty": "expert",
+      "width": 10,
+      "height": 10,
+      "path": "puzzles/expert/loop-expert-catalog-expert-19.json"
+    },
+    {
+      "id": "loop-expert-catalog-expert-2",
+      "difficulty": "expert",
+      "width": 10,
+      "height": 10,
+      "path": "puzzles/expert/loop-expert-catalog-expert-2.json"
+    },
+    {
+      "id": "loop-expert-catalog-expert-20",
+      "difficulty": "expert",
+      "width": 10,
+      "height": 10,
+      "path": "puzzles/expert/loop-expert-catalog-expert-20.json"
+    },
+    {
+      "id": "loop-expert-catalog-expert-21",
+      "difficulty": "expert",
+      "width": 10,
+      "height": 10,
+      "path": "puzzles/expert/loop-expert-catalog-expert-21.json"
+    },
+    {
+      "id": "loop-expert-catalog-expert-22",
+      "difficulty": "expert",
+      "width": 10,
+      "height": 10,
+      "path": "puzzles/expert/loop-expert-catalog-expert-22.json"
+    },
+    {
+      "id": "loop-expert-catalog-expert-23",
+      "difficulty": "expert",
+      "width": 10,
+      "height": 10,
+      "path": "puzzles/expert/loop-expert-catalog-expert-23.json"
+    },
+    {
+      "id": "loop-expert-catalog-expert-24",
+      "difficulty": "expert",
+      "width": 10,
+      "height": 10,
+      "path": "puzzles/expert/loop-expert-catalog-expert-24.json"
+    },
+    {
+      "id": "loop-expert-catalog-expert-3",
+      "difficulty": "expert",
+      "width": 10,
+      "height": 10,
+      "path": "puzzles/expert/loop-expert-catalog-expert-3.json"
+    },
+    {
+      "id": "loop-expert-catalog-expert-4",
+      "difficulty": "expert",
+      "width": 10,
+      "height": 10,
+      "path": "puzzles/expert/loop-expert-catalog-expert-4.json"
+    },
+    {
+      "id": "loop-expert-catalog-expert-5",
+      "difficulty": "expert",
+      "width": 10,
+      "height": 10,
+      "path": "puzzles/expert/loop-expert-catalog-expert-5.json"
+    },
+    {
+      "id": "loop-expert-catalog-expert-6",
+      "difficulty": "expert",
+      "width": 10,
+      "height": 10,
+      "path": "puzzles/expert/loop-expert-catalog-expert-6.json"
+    },
+    {
+      "id": "loop-expert-catalog-expert-7",
+      "difficulty": "expert",
+      "width": 10,
+      "height": 10,
+      "path": "puzzles/expert/loop-expert-catalog-expert-7.json"
+    },
+    {
+      "id": "loop-expert-catalog-expert-8",
+      "difficulty": "expert",
+      "width": 10,
+      "height": 10,
+      "path": "puzzles/expert/loop-expert-catalog-expert-8.json"
+    },
+    {
+      "id": "loop-expert-catalog-expert-9",
+      "difficulty": "expert",
+      "width": 10,
+      "height": 10,
+      "path": "puzzles/expert/loop-expert-catalog-expert-9.json"
+    },
+    {
+      "id": "loop-hard-catalog-hard-0",
       "difficulty": "hard",
       "width": 8,
       "height": 8,
-      "path": "puzzles/hard/loop-hard-catalog-expanded-hard-0.json"
+      "path": "puzzles/hard/loop-hard-catalog-hard-0.json"
     },
     {
-      "id": "loop-hard-catalog-expanded-hard-1",
+      "id": "loop-hard-catalog-hard-1",
       "difficulty": "hard",
       "width": 8,
       "height": 8,
-      "path": "puzzles/hard/loop-hard-catalog-expanded-hard-1.json"
+      "path": "puzzles/hard/loop-hard-catalog-hard-1.json"
     },
     {
-      "id": "loop-hard-catalog-expanded-hard-2",
+      "id": "loop-hard-catalog-hard-10",
       "difficulty": "hard",
       "width": 8,
       "height": 8,
-      "path": "puzzles/hard/loop-hard-catalog-expanded-hard-2.json"
+      "path": "puzzles/hard/loop-hard-catalog-hard-10.json"
     },
     {
-      "id": "loop-medium-catalog-expanded-medium-0",
+      "id": "loop-hard-catalog-hard-11",
+      "difficulty": "hard",
+      "width": 8,
+      "height": 8,
+      "path": "puzzles/hard/loop-hard-catalog-hard-11.json"
+    },
+    {
+      "id": "loop-hard-catalog-hard-12",
+      "difficulty": "hard",
+      "width": 8,
+      "height": 8,
+      "path": "puzzles/hard/loop-hard-catalog-hard-12.json"
+    },
+    {
+      "id": "loop-hard-catalog-hard-13",
+      "difficulty": "hard",
+      "width": 8,
+      "height": 8,
+      "path": "puzzles/hard/loop-hard-catalog-hard-13.json"
+    },
+    {
+      "id": "loop-hard-catalog-hard-14",
+      "difficulty": "hard",
+      "width": 8,
+      "height": 8,
+      "path": "puzzles/hard/loop-hard-catalog-hard-14.json"
+    },
+    {
+      "id": "loop-hard-catalog-hard-15",
+      "difficulty": "hard",
+      "width": 8,
+      "height": 8,
+      "path": "puzzles/hard/loop-hard-catalog-hard-15.json"
+    },
+    {
+      "id": "loop-hard-catalog-hard-16",
+      "difficulty": "hard",
+      "width": 8,
+      "height": 8,
+      "path": "puzzles/hard/loop-hard-catalog-hard-16.json"
+    },
+    {
+      "id": "loop-hard-catalog-hard-17",
+      "difficulty": "hard",
+      "width": 8,
+      "height": 8,
+      "path": "puzzles/hard/loop-hard-catalog-hard-17.json"
+    },
+    {
+      "id": "loop-hard-catalog-hard-18",
+      "difficulty": "hard",
+      "width": 8,
+      "height": 8,
+      "path": "puzzles/hard/loop-hard-catalog-hard-18.json"
+    },
+    {
+      "id": "loop-hard-catalog-hard-19",
+      "difficulty": "hard",
+      "width": 8,
+      "height": 8,
+      "path": "puzzles/hard/loop-hard-catalog-hard-19.json"
+    },
+    {
+      "id": "loop-hard-catalog-hard-2",
+      "difficulty": "hard",
+      "width": 8,
+      "height": 8,
+      "path": "puzzles/hard/loop-hard-catalog-hard-2.json"
+    },
+    {
+      "id": "loop-hard-catalog-hard-20",
+      "difficulty": "hard",
+      "width": 8,
+      "height": 8,
+      "path": "puzzles/hard/loop-hard-catalog-hard-20.json"
+    },
+    {
+      "id": "loop-hard-catalog-hard-21",
+      "difficulty": "hard",
+      "width": 8,
+      "height": 8,
+      "path": "puzzles/hard/loop-hard-catalog-hard-21.json"
+    },
+    {
+      "id": "loop-hard-catalog-hard-22",
+      "difficulty": "hard",
+      "width": 8,
+      "height": 8,
+      "path": "puzzles/hard/loop-hard-catalog-hard-22.json"
+    },
+    {
+      "id": "loop-hard-catalog-hard-23",
+      "difficulty": "hard",
+      "width": 8,
+      "height": 8,
+      "path": "puzzles/hard/loop-hard-catalog-hard-23.json"
+    },
+    {
+      "id": "loop-hard-catalog-hard-24",
+      "difficulty": "hard",
+      "width": 8,
+      "height": 8,
+      "path": "puzzles/hard/loop-hard-catalog-hard-24.json"
+    },
+    {
+      "id": "loop-hard-catalog-hard-3",
+      "difficulty": "hard",
+      "width": 8,
+      "height": 8,
+      "path": "puzzles/hard/loop-hard-catalog-hard-3.json"
+    },
+    {
+      "id": "loop-hard-catalog-hard-4",
+      "difficulty": "hard",
+      "width": 8,
+      "height": 8,
+      "path": "puzzles/hard/loop-hard-catalog-hard-4.json"
+    },
+    {
+      "id": "loop-hard-catalog-hard-5",
+      "difficulty": "hard",
+      "width": 8,
+      "height": 8,
+      "path": "puzzles/hard/loop-hard-catalog-hard-5.json"
+    },
+    {
+      "id": "loop-hard-catalog-hard-6",
+      "difficulty": "hard",
+      "width": 8,
+      "height": 8,
+      "path": "puzzles/hard/loop-hard-catalog-hard-6.json"
+    },
+    {
+      "id": "loop-hard-catalog-hard-7",
+      "difficulty": "hard",
+      "width": 8,
+      "height": 8,
+      "path": "puzzles/hard/loop-hard-catalog-hard-7.json"
+    },
+    {
+      "id": "loop-hard-catalog-hard-8",
+      "difficulty": "hard",
+      "width": 8,
+      "height": 8,
+      "path": "puzzles/hard/loop-hard-catalog-hard-8.json"
+    },
+    {
+      "id": "loop-hard-catalog-hard-9",
+      "difficulty": "hard",
+      "width": 8,
+      "height": 8,
+      "path": "puzzles/hard/loop-hard-catalog-hard-9.json"
+    },
+    {
+      "id": "loop-medium-catalog-medium-0",
       "difficulty": "medium",
       "width": 7,
       "height": 7,
-      "path": "puzzles/medium/loop-medium-catalog-expanded-medium-0.json"
+      "path": "puzzles/medium/loop-medium-catalog-medium-0.json"
     },
     {
-      "id": "loop-medium-catalog-expanded-medium-1",
+      "id": "loop-medium-catalog-medium-1",
       "difficulty": "medium",
       "width": 7,
       "height": 7,
-      "path": "puzzles/medium/loop-medium-catalog-expanded-medium-1.json"
+      "path": "puzzles/medium/loop-medium-catalog-medium-1.json"
     },
     {
-      "id": "loop-medium-catalog-expanded-medium-2",
+      "id": "loop-medium-catalog-medium-10",
       "difficulty": "medium",
       "width": 7,
       "height": 7,
-      "path": "puzzles/medium/loop-medium-catalog-expanded-medium-2.json"
+      "path": "puzzles/medium/loop-medium-catalog-medium-10.json"
+    },
+    {
+      "id": "loop-medium-catalog-medium-11",
+      "difficulty": "medium",
+      "width": 7,
+      "height": 7,
+      "path": "puzzles/medium/loop-medium-catalog-medium-11.json"
+    },
+    {
+      "id": "loop-medium-catalog-medium-12",
+      "difficulty": "medium",
+      "width": 7,
+      "height": 7,
+      "path": "puzzles/medium/loop-medium-catalog-medium-12.json"
+    },
+    {
+      "id": "loop-medium-catalog-medium-13",
+      "difficulty": "medium",
+      "width": 7,
+      "height": 7,
+      "path": "puzzles/medium/loop-medium-catalog-medium-13.json"
+    },
+    {
+      "id": "loop-medium-catalog-medium-14",
+      "difficulty": "medium",
+      "width": 7,
+      "height": 7,
+      "path": "puzzles/medium/loop-medium-catalog-medium-14.json"
+    },
+    {
+      "id": "loop-medium-catalog-medium-15",
+      "difficulty": "medium",
+      "width": 7,
+      "height": 7,
+      "path": "puzzles/medium/loop-medium-catalog-medium-15.json"
+    },
+    {
+      "id": "loop-medium-catalog-medium-16",
+      "difficulty": "medium",
+      "width": 7,
+      "height": 7,
+      "path": "puzzles/medium/loop-medium-catalog-medium-16.json"
+    },
+    {
+      "id": "loop-medium-catalog-medium-17",
+      "difficulty": "medium",
+      "width": 7,
+      "height": 7,
+      "path": "puzzles/medium/loop-medium-catalog-medium-17.json"
+    },
+    {
+      "id": "loop-medium-catalog-medium-18",
+      "difficulty": "medium",
+      "width": 7,
+      "height": 7,
+      "path": "puzzles/medium/loop-medium-catalog-medium-18.json"
+    },
+    {
+      "id": "loop-medium-catalog-medium-19",
+      "difficulty": "medium",
+      "width": 7,
+      "height": 7,
+      "path": "puzzles/medium/loop-medium-catalog-medium-19.json"
+    },
+    {
+      "id": "loop-medium-catalog-medium-2",
+      "difficulty": "medium",
+      "width": 7,
+      "height": 7,
+      "path": "puzzles/medium/loop-medium-catalog-medium-2.json"
+    },
+    {
+      "id": "loop-medium-catalog-medium-20",
+      "difficulty": "medium",
+      "width": 7,
+      "height": 7,
+      "path": "puzzles/medium/loop-medium-catalog-medium-20.json"
+    },
+    {
+      "id": "loop-medium-catalog-medium-21",
+      "difficulty": "medium",
+      "width": 7,
+      "height": 7,
+      "path": "puzzles/medium/loop-medium-catalog-medium-21.json"
+    },
+    {
+      "id": "loop-medium-catalog-medium-22",
+      "difficulty": "medium",
+      "width": 7,
+      "height": 7,
+      "path": "puzzles/medium/loop-medium-catalog-medium-22.json"
+    },
+    {
+      "id": "loop-medium-catalog-medium-23",
+      "difficulty": "medium",
+      "width": 7,
+      "height": 7,
+      "path": "puzzles/medium/loop-medium-catalog-medium-23.json"
+    },
+    {
+      "id": "loop-medium-catalog-medium-24",
+      "difficulty": "medium",
+      "width": 7,
+      "height": 7,
+      "path": "puzzles/medium/loop-medium-catalog-medium-24.json"
+    },
+    {
+      "id": "loop-medium-catalog-medium-3",
+      "difficulty": "medium",
+      "width": 7,
+      "height": 7,
+      "path": "puzzles/medium/loop-medium-catalog-medium-3.json"
+    },
+    {
+      "id": "loop-medium-catalog-medium-4",
+      "difficulty": "medium",
+      "width": 7,
+      "height": 7,
+      "path": "puzzles/medium/loop-medium-catalog-medium-4.json"
+    },
+    {
+      "id": "loop-medium-catalog-medium-5",
+      "difficulty": "medium",
+      "width": 7,
+      "height": 7,
+      "path": "puzzles/medium/loop-medium-catalog-medium-5.json"
+    },
+    {
+      "id": "loop-medium-catalog-medium-6",
+      "difficulty": "medium",
+      "width": 7,
+      "height": 7,
+      "path": "puzzles/medium/loop-medium-catalog-medium-6.json"
+    },
+    {
+      "id": "loop-medium-catalog-medium-7",
+      "difficulty": "medium",
+      "width": 7,
+      "height": 7,
+      "path": "puzzles/medium/loop-medium-catalog-medium-7.json"
+    },
+    {
+      "id": "loop-medium-catalog-medium-8",
+      "difficulty": "medium",
+      "width": 7,
+      "height": 7,
+      "path": "puzzles/medium/loop-medium-catalog-medium-8.json"
+    },
+    {
+      "id": "loop-medium-catalog-medium-9",
+      "difficulty": "medium",
+      "width": 7,
+      "height": 7,
+      "path": "puzzles/medium/loop-medium-catalog-medium-9.json"
     }
   ]
 }

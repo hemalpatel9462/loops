@@ -320,7 +320,7 @@
       "implementationReportPath": "runs/<run-id>/tasks/E1-01/implementation-report.yaml",
       "verificationBriefPath": "runs/<run-id>/tasks/E1-01/verification-brief.yaml",
       "verificationReportPath": "runs/<run-id>/tasks/E1-01/verification-report.yaml",
-      "status": "pending"
+      "status": "verified"
     },
     {
       "id": "E1-02",
@@ -360,7 +360,50 @@
       "implementationReportPath": "runs/<run-id>/tasks/E1-02/implementation-report.yaml",
       "verificationBriefPath": "runs/<run-id>/tasks/E1-02/verification-brief.yaml",
       "verificationReportPath": "runs/<run-id>/tasks/E1-02/verification-report.yaml",
-      "status": "pending"
+      "status": "verified"
+    },
+    {
+      "id": "E1-02-R1",
+      "title": "Remove the remaining live Quick Play path",
+      "phase": 4,
+      "remediationFor": "E1-02",
+      "dependsOn": ["E1-02"],
+      "writeScope": [
+        "apps/web-game/src/state/game-flow/types.ts",
+        "apps/web-game/src/state/game-flow/game-flow.ts",
+        "apps/web-game/src/screens/GameFlowScreen.tsx",
+        "apps/web-game/src/screens/ModeSelectionScreen.tsx",
+        "apps/web-game/src/screens/types.ts",
+        "apps/web-game/src/app/integration/GameIntegration.tsx"
+      ],
+      "forbiddenScope": [
+        "apps/web-game/src/state/game-flow/puzzle-catalog.ts",
+        "apps/web-game/src/state/game-flow/game-flow.test.ts",
+        "apps/web-game/src/persistence/**",
+        "apps/web-game/src/app/AppShell.tsx",
+        "apps/web-game/src/accessibility/**",
+        "apps/web-game/src/components/**",
+        "apps/web-game/src/styles/**",
+        "tests/**",
+        "packages/**",
+        "schemas/**",
+        "orchestration/task-registry.json",
+        "orchestration/briefs/**",
+        "orchestration/runs/<run-id>/tasks/<task-id>/verification-brief.yaml",
+        "orchestration/runs/<run-id>/tasks/<task-id>/verification-report.yaml"
+      ],
+      "acceptanceCriteria": [
+        "No active screen or application integration path renders or starts Quick Play; GameFlowSource no longer includes quick-play and startQuickPlay is no longer exported or called.",
+        "The selected-puzzle, Daily Loop, and Continue APIs remain available and their active callers compile; any retained puzzle-loader compatibility helper is not part of the user-facing game-flow path.",
+        "The required typecheck, unit tests, and production build pass after the scoped remediation."
+      ],
+      "requiredChecks": ["npm run typecheck", "npm run test", "npm run build"],
+      "taskBriefPath": "runs/2026-09-18-enhancements-001/tasks/E1-02/remediation-1-brief.yaml",
+      "canonicalVerificationBriefPath": "runs/2026-09-18-enhancements-001/tasks/E1-02/remediation-1-verification-brief.yaml",
+      "implementationReportPath": "runs/2026-09-18-enhancements-001/tasks/E1-02/implementation-report-remediation-1.yaml",
+      "verificationBriefPath": "runs/2026-09-18-enhancements-001/tasks/E1-02/remediation-1-verification-brief.yaml",
+      "verificationReportPath": "runs/2026-09-18-enhancements-001/tasks/E1-02/verification-report-remediation-1.yaml",
+      "status": "verified"
     },
     {
       "id": "E1-03",
@@ -403,7 +446,7 @@
       "implementationReportPath": "runs/<run-id>/tasks/E1-03/implementation-report.yaml",
       "verificationBriefPath": "runs/<run-id>/tasks/E1-03/verification-brief.yaml",
       "verificationReportPath": "runs/<run-id>/tasks/E1-03/verification-report.yaml",
-      "status": "pending"
+      "status": "verified"
     },
     {
       "id": "E1-04",
@@ -452,7 +495,7 @@
       "implementationReportPath": "runs/<run-id>/tasks/E1-04/implementation-report.yaml",
       "verificationBriefPath": "runs/<run-id>/tasks/E1-04/verification-brief.yaml",
       "verificationReportPath": "runs/<run-id>/tasks/E1-04/verification-report.yaml",
-      "status": "pending"
+      "status": "verified"
     },
     {
       "id": "E1-05",
@@ -489,7 +532,7 @@
       "implementationReportPath": "runs/<run-id>/tasks/E1-05/implementation-report.yaml",
       "verificationBriefPath": "runs/<run-id>/tasks/E1-05/verification-brief.yaml",
       "verificationReportPath": "runs/<run-id>/tasks/E1-05/verification-report.yaml",
-      "status": "pending"
+      "status": "verified"
     },
     {
       "id": "E1-06",
@@ -520,7 +563,7 @@
       "implementationReportPath": "runs/<run-id>/tasks/E1-06/implementation-report.yaml",
       "verificationBriefPath": "runs/<run-id>/tasks/E1-06/verification-brief.yaml",
       "verificationReportPath": "runs/<run-id>/tasks/E1-06/verification-report.yaml",
-      "status": "pending"
+      "status": "verified"
     }
   ]
 }

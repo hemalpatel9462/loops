@@ -1,0 +1,75 @@
+schemaVersion: "1.0"
+artifactType: verification-report
+taskId: "E1-01"
+verdict: PASS
+scopeReviewed:
+  - "packages/puzzle-format/src/types.ts"
+  - "schemas/app-settings.schema.json"
+  - "apps/web-game/src/persistence/defaults.ts"
+  - "apps/web-game/src/persistence/schema-validation.ts"
+  - "apps/web-game/src/persistence/types.ts"
+  - "apps/web-game/src/persistence/storage.ts"
+  - "apps/web-game/src/persistence/persistence.test.ts"
+  - "orchestration/runs/2026-09-18-enhancements-001/tasks/E1-01/verification-brief.yaml"
+  - "orchestration/runs/2026-09-18-enhancements-001/tasks/E1-01/implementation-report.yaml"
+  - "orchestration/schemas/verification-report.schema.json"
+  - "orchestration/ENHANCEMENTS_IMPLEMENTATION_PLAN.md"
+  - "orchestration/REQUIREMENTS.md"
+acceptanceCriteria:
+  - id: AC-1
+    verdict: PASS
+    evidence:
+      - "packages/puzzle-format/src/types.ts:74-85 defines LineThickness and AppSettings; AppSettings has no Theme type, theme field, or highContrast field."
+      - "schemas/app-settings.schema.json:6-17 has additionalProperties false and no theme/highContrast property or required entry."
+      - "apps/web-game/src/persistence/schema-validation.ts:115-130 validates the canonical settings key set without Theme/theme/highContrast."
+      - "An independent schema/type cross-check returned forbiddenFindings: [] and the canonical schema properties are exactly the supported settings set."
+  - id: AC-2
+    verdict: PASS
+    evidence:
+      - "packages/puzzle-format/src/types.ts:76-85 retains defaultMode, reducedMotion, lineThickness, haptics, sound, tutorialCompleted, and locale in AppSettings."
+      - "schemas/app-settings.schema.json:7-16 retains the corresponding canonical fields and constraints."
+      - "apps/web-game/src/persistence/defaults.ts:9-17 retains canonical defaults for defaultMode, reducedMotion, lineThickness, haptics, sound, and tutorialCompleted."
+      - "apps/web-game/src/persistence/persistence.test.ts:52-75 verifies settings read/write and reset, including defaultMode, reducedMotion, sound, and locale values."
+  - id: AC-3
+    verdict: PASS
+    evidence:
+      - "apps/web-game/src/persistence/schema-validation.ts:133-143 normalizeLegacyAppSettings removes only theme and highContrast before canonical validation."
+      - "apps/web-game/src/persistence/storage.ts:123-143 reads normalized settings, removes invalid records, and best-effort rewrites legacy records to the canonical shape; rewrite failures do not prevent the normalized read."
+      - "apps/web-game/src/persistence/persistence.test.ts:88-109 verifies legacy theme/highContrast records preserve supported settings and no longer remain in writable storage."
+  - id: AC-4
+    verdict: PASS
+    evidence:
+      - "apps/web-game/src/persistence/schema-validation.ts:115-130 rejects malformed or unsupported canonical settings values, including invalid defaultMode, wrong booleans, invalid lineThickness, and unexpected keys."
+      - "apps/web-game/src/persistence/storage.ts:96-106 applies parseAppSettings in saveSettings validation and throws PersistenceValidationError for invalid writes; :123-132 removes malformed reads."
+      - "apps/web-game/src/persistence/persistence.test.ts:52-75 covers settings read/write/reset; :77-86 covers invalid/outdated-record removal; :88-109 covers legacy-record normalization; :111-122 covers malformed canonical settings removal."
+      - "Fresh npm run test output reports 6 web-game test files passed and 23 web-game tests passed, including 7 persistence tests, with all workspace tests passing."
+  - id: AC-5
+    verdict: PASS
+    evidence:
+      - "packages/puzzle-format/src/types.ts:78 retains defaultMode in AppSettings."
+      - "apps/web-game/src/persistence/schema-validation.ts:123 validates defaultMode against relaxed and assisted."
+      - "apps/web-game/src/persistence/storage.ts:193 persists settings through parseAppSettings, and apps/web-game/src/persistence/persistence.test.ts:58-70 saves and reads defaultMode: assisted."
+checksPerformed:
+  - command: "npm run typecheck"
+    exitCode: 0
+    outputFile: "orchestration/runs/2026-09-18-enhancements-001/tasks/E1-01/command-output/typecheck.log"
+  - command: "npm run test"
+    exitCode: 0
+    outputFile: "orchestration/runs/2026-09-18-enhancements-001/tasks/E1-01/command-output/test.log"
+  - command: "npm run validate:schemas"
+    exitCode: 0
+    outputFile: "orchestration/runs/2026-09-18-enhancements-001/tasks/E1-01/command-output/validate-schemas.log"
+  - command: "npm run build"
+    exitCode: 0
+    outputFile: "orchestration/runs/2026-09-18-enhancements-001/tasks/E1-01/command-output/build.log"
+findings:
+  - severity: LOW
+    description: "Legacy appearance values are intentionally discarded. If storage is read-only, storage.ts:136-141 cannot persist the canonical rewrite, but the current read still returns supported settings safely as required."
+    file: "apps/web-game/src/persistence/storage.ts"
+    line: 136
+  - severity: LOW
+    description: "The shared worktree also contains unrelated modified game-flow files and orchestration/task-registry.json outside the E1-01 write scope; these were not changed or evaluated as E1-01 implementation work."
+    file: "orchestration/task-registry.json"
+    line: 1
+requiredRemediation: []
+conclusion: "PASS: Independent source, diff, schema, test-coverage, project-state, and command checks support all five acceptance criteria. All required commands returned exit code 0. No E1-01 remediation is required; the remaining risks are limited to documented best-effort legacy rewrites in read-only storage and unrelated shared-worktree changes."

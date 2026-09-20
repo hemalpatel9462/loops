@@ -1,0 +1,18 @@
+
+> loops@0.1.0 validate:schemas
+> npm run validate --workspace @loops/puzzle-format --if-present
+
+
+> @loops/puzzle-format@0.1.0 validate
+> vitest run --config vitest.config.ts src/schema-validation.test.ts
+
+
+ RUN  v3.2.7 /Users/hemalpatel/Development/loops/packages/puzzle-format
+
+ ✓ src/schema-validation.test.ts (2 tests) 2ms
+
+ Test Files  1 passed (1)
+      Tests  2 passed (2)
+   Start at  15:18:03
+   Duration  230ms (transform 30ms, setup 0ms, collect 36ms, tests 2ms, environment 0ms, prepare 39ms)
+

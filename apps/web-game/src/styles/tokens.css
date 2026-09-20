@@ -17,6 +17,7 @@
   --color-focus: #b75e34;
   --color-loop: #b75e34;
   --color-loop-fixed: #3b6a56;
+  --color-hint: #7658c7;
 
   /* Spacing scale */
   --space-1: 0.25rem;
@@ -54,46 +55,4 @@
   --shadow-soft: 0 1.5rem 4rem rgb(33 40 32 / 8%);
   --shadow-card: 0 0.5rem 1.5rem rgb(33 40 32 / 6%);
   --transition-fast: 140ms ease;
-}
-
-.app-shell[data-visual-mode='dark'] {
-  color-scheme: dark;
-  --color-canvas: #17201b;
-  --color-surface: #202d25;
-  --color-surface-muted: #2b3a30;
-  --color-surface-raised: #26362b;
-  --color-ink: #f2f3e9;
-  --color-ink-muted: #bcc8ba;
-  --color-ink-subtle: #8e9f90;
-  --color-border: #425548;
-  --color-border-strong: #607766;
-  --color-accent: #a9d0af;
-  --color-accent-strong: #c5e4c8;
-  --color-accent-soft: #314e3b;
-  --color-focus: #f1a77c;
-  --color-loop: #f1a77c;
-  --color-loop-fixed: #a9d0af;
-  --shadow-soft: 0 1.5rem 4rem rgb(0 0 0 / 28%);
-  --shadow-card: 0 0.5rem 1.5rem rgb(0 0 0 / 20%);
-}
-
-.app-shell[data-visual-mode='high-contrast'] {
-  color-scheme: light;
-  --color-canvas: #ffffff;
-  --color-surface: #ffffff;
-  --color-surface-muted: #eeeeee;
-  --color-surface-raised: #ffffff;
-  --color-ink: #000000;
-  --color-ink-muted: #252525;
-  --color-ink-subtle: #454545;
-  --color-border: #000000;
-  --color-border-strong: #000000;
-  --color-accent: #004d2a;
-  --color-accent-strong: #00351d;
-  --color-accent-soft: #d9f1df;
-  --color-focus: #8c1d18;
-  --color-loop: #8c1d18;
-  --color-loop-fixed: #004d2a;
-  --shadow-soft: none;
-  --shadow-card: none;
 }

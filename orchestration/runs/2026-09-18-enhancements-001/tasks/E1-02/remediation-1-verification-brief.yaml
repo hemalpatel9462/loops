@@ -1,0 +1,31 @@
+schemaVersion: "1.0"
+artifactType: verification-brief
+taskId: "E1-02-R1"
+implementationReportPath: "runs/2026-09-18-enhancements-001/tasks/E1-02/implementation-report-remediation-1.yaml"
+scopeReviewed:
+  - "apps/web-game/src/state/game-flow/types.ts"
+  - "apps/web-game/src/state/game-flow/game-flow.ts"
+  - "apps/web-game/src/screens/GameFlowScreen.tsx"
+  - "apps/web-game/src/screens/ModeSelectionScreen.tsx"
+  - "apps/web-game/src/screens/types.ts"
+  - "apps/web-game/src/app/integration/GameIntegration.tsx"
+  - "orchestration/runs/2026-09-18-enhancements-001/tasks/E1-02/verification-report.yaml"
+acceptanceCriteria:
+  - id: "RM-AC-1"
+    description: "No active screen or application integration path renders or starts Quick Play; GameFlowSource no longer includes quick-play and startQuickPlay is no longer exported or called."
+  - id: "RM-AC-2"
+    description: "The selected-puzzle, Daily Loop, and Continue APIs remain available and their active callers compile; any retained puzzle-loader compatibility helper is not part of the user-facing game-flow path."
+  - id: "RM-AC-3"
+    description: "The required typecheck, unit tests, and production build pass after the scoped remediation."
+requiredChecks:
+  - command: "npm run typecheck"
+    purpose: "Verify the Quick Play removal does not break active flow contracts."
+  - command: "npm run test"
+    purpose: "Verify existing unit and integration behavior remains intact."
+  - command: "npm run build"
+    purpose: "Verify the application bundles after remediation."
+constraints:
+  - "Do not modify production files outside the explicit remediation scope."
+  - "Do not modify E2E tests, task registry, canonical briefs, or verification artifacts."
+  - "Check every remediation criterion independently and record evidence with file paths or command output."
+verificationReportPath: "runs/2026-09-18-enhancements-001/tasks/E1-02/verification-report-remediation-1.yaml"

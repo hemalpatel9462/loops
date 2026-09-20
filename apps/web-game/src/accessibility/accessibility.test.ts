@@ -11,13 +11,12 @@ function fakeRoot() {
 }
 
 describe('accessibility preferences', () => {
-  it('applies and clears motion and contrast attributes', () => {
+  it('applies and clears the reduced-motion attribute', () => {
     const root = fakeRoot();
-    applyAccessibilityPreferences({ reducedMotion: true, highContrast: true }, root);
+    applyAccessibilityPreferences({ reducedMotion: true }, root);
     expect(root.attributes.get('data-reduced-motion')).toBe('true');
-    expect(root.attributes.get('data-high-contrast')).toBe('true');
 
-    applyAccessibilityPreferences({ reducedMotion: false, highContrast: false }, root);
+    applyAccessibilityPreferences({ reducedMotion: false }, root);
     expect(root.attributes.size).toBe(0);
   });
 });

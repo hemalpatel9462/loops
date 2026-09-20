@@ -67,6 +67,7 @@
   --color-focus: #8c1d18;
   --color-loop: #8c1d18;
   --color-loop-fixed: #004d2a;
+  --color-hint: #5b21b6;
 }
 
 /* Fixed edges use a pattern as well as a color; player lines remain solid. */

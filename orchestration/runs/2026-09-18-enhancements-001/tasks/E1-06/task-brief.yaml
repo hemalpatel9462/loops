@@ -1,0 +1,48 @@
+schemaVersion: "1.0"
+artifactType: task-brief
+taskId: "E1-06"
+title: "Final integration and release gate"
+phase: 4
+goal: "Run the complete enhancement-wave integration and release gate after E1-01 through E1-05 have independently passed verification."
+context:
+  - "PROJECT_STRUCTURE_AND_DEPLOYMENT.md"
+  - "orchestration/REQUIREMENTS.md"
+  - "orchestration/ENHANCEMENTS_IMPLEMENTATION_PLAN.md"
+  - "orchestration/ORCHESTRATOR_INSTRUCTIONS.md"
+  - "orchestration/task-registry.json"
+dependencies: ["E1-01", "E1-02", "E1-03", "E1-04", "E1-05"]
+writeScope: []
+forbiddenScope:
+  - "apps/**"
+  - "packages/**"
+  - "schemas/**"
+  - "tests/**"
+  - "orchestration/task-registry.json"
+  - "orchestration/briefs/**"
+  - "orchestration/runs/<run-id>/tasks/<task-id>/verification-brief.yaml"
+  - "orchestration/runs/<run-id>/tasks/<task-id>/verification-report.yaml"
+acceptanceCriteria:
+  - id: "AC-1"
+    description: "E1-01 through E1-05 each have implementation and verification reports with PASS results and no unresolved remediation."
+  - id: "AC-2"
+    description: "The production typecheck, unit tests, schema validation, catalog validation, production build, and browser tests all pass."
+  - id: "AC-3"
+    description: "The Start-to-selection-to-puzzle flow, sequential unlocking, persisted completion, global mode setting, tutorial, Daily Loop, Continue, and reduced-motion behavior are integrated without regression."
+  - id: "AC-4"
+    description: "No user-facing Quick Play, Dark Mode, or High Contrast path remains, and no release-blocking stale references remain."
+  - id: "AC-5"
+    description: "The final report records any differences between planning assumptions and implemented product behavior."
+requiredChecks:
+  - "npm run typecheck"
+  - "npm test"
+  - "npm run validate:schemas"
+  - "npm run validate:catalog"
+  - "npm run build"
+  - "npm run test:e2e"
+implementationReportPath: "runs/<run-id>/tasks/E1-06/implementation-report.yaml"
+instructions:
+  - "Read this brief and all listed context before running the gate."
+  - "Do not modify production code or tests during this task; report failures as remediation requirements."
+  - "Confirm each dependent verification report is present and PASS before running the release commands."
+  - "Preserve command output under the enhancement run folder as directed by the Orchestrator."
+  - "Write the implementation report as a gate summary before returning, including every command result and any remaining risk."

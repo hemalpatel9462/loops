@@ -1,0 +1,97 @@
+schemaVersion: "1.0"
+artifactType: verification-report
+taskId: "E1-05"
+verdict: PASS
+scopeReviewed:
+  - "orchestration/runs/2026-09-18-enhancements-001/tasks/E1-05/verification-brief.yaml"
+  - "orchestration/runs/2026-09-18-enhancements-001/tasks/E1-05/implementation-report.yaml"
+  - "orchestration/schemas/verification-report.schema.json"
+  - "tests/e2e/helpers.ts"
+  - "tests/e2e/gameplay.spec.ts"
+  - "tests/e2e/accessibility.spec.ts"
+  - "tests/e2e/responsive.spec.ts"
+  - "tests/e2e/enhancements.spec.ts"
+  - "playwright.config.ts"
+  - "apps/web-game/src/screens/GameFlowScreen.tsx"
+  - "apps/web-game/src/screens/StartScreen.tsx"
+  - "apps/web-game/src/screens/PuzzleSelectionScreen.tsx"
+  - "apps/web-game/src/state/game-flow/game-flow.ts"
+  - "apps/web-game/src/app/AppShell.tsx"
+  - "apps/web-game/src/app/SettingsPanel.tsx"
+  - "apps/web-game/src/app/integration/GameIntegration.tsx"
+  - "apps/web-game/src/components/tutorial/Tutorial.tsx"
+  - "apps/web-game/src/accessibility/accessibility.css"
+  - "git status and scoped E2E diff"
+acceptanceCriteria:
+  - id: "AC-1"
+    verdict: PASS
+    evidence:
+      - "tests/e2e/helpers.ts:38-53 test helper clears local/session storage, asserts the fresh 'Find your next loop' Start heading, clicks Start, and asserts the 'Choose a puzzle' selection heading without starting a board."
+      - "tests/e2e/gameplay.spec.ts:53-67 test 'shows one-based counts, locks puzzle 2, and unlocks it after puzzle 1 completes' derives Beginner/Easy/Medium/Hard/Expert counts from packages/puzzle-data/catalog.json, asserts all count buttons, asserts Puzzle 1, and asserts Puzzle 0 is absent."
+      - "The independent npm run test:e2e output shows this test passed in phone, tablet, desktop, and reduced-motion projects; output is recorded in orchestration/runs/2026-09-18-enhancements-001/tasks/E1-05/command-output/test-e2e.log."
+  - id: "AC-2"
+    verdict: PASS
+    evidence:
+      - "tests/e2e/gameplay.spec.ts:60-80 asserts Puzzle 1 is enabled, Puzzle 2 is disabled and labelled Locked before completion, starts Puzzle 1, completes it, then re-enters selection and asserts Puzzle 1 Completed text/class treatment and Puzzle 2 Available/enabled."
+      - "tests/e2e/helpers.ts:78-90 loads the catalog-first beginner solution, clicks Complete loop, and asserts the 'Beautifully done.' heading plus 'You completed the beginner puzzle' text."
+      - "apps/web-game/src/state/game-flow/game-flow.ts:76-90 rejects puzzle numbers below 1 and computes sequential status; :188-210 refuses locked selections and restores or creates selected-puzzle sessions."
+      - "The independent full Playwright run passed the named progression test in all four configured projects; the raw result is in orchestration/runs/2026-09-18-enhancements-001/tasks/E1-05/command-output/test-e2e.log."
+  - id: "AC-3"
+    verdict: PASS
+    evidence:
+      - "tests/e2e/gameplay.spec.ts:83-103 test 'resumes an unfinished selected puzzle after reload through Continue' makes an edge move, reloads, re-enters through Start, enables Continue, resumes, and asserts the saved edge remains line."
+      - "tests/e2e/gameplay.spec.ts:105-116 test 'opens and starts the deterministic Daily Loop while Quick Play is absent' asserts Quick Play is absent, opens Daily Loop, verifies the date heading, starts today's loop, and verifies the puzzle board."
+      - "tests/e2e/gameplay.spec.ts:118-136 changes the saved global mode to Assisted, verifies it on a new selected puzzle, reloads, resumes through Continue, and verifies 'beginner · assisted' remains visible."
+      - "apps/web-game/src/state/game-flow/game-flow.ts:193-205 restores unfinished selected progress with its saved mode, and :235-250 restores Continue with the saved mode; apps/web-game/src/app/integration/GameIntegration.tsx:44-54 preserves those saved modes."
+      - "The independent full Playwright run passed all three named gameplay tests in phone, tablet, desktop, and reduced-motion projects; output is recorded in orchestration/runs/2026-09-18-enhancements-001/tasks/E1-05/command-output/test-e2e.log."
+  - id: "AC-4"
+    verdict: PASS
+    evidence:
+      - "tests/e2e/enhancements.spec.ts:5-22 test 'persists the global gameplay mode and omits removed appearance controls' selects Assisted, asserts it is checked, asserts Dark Mode and High Contrast text are absent, reloads, and asserts Assisted persists."
+      - "tests/e2e/enhancements.spec.ts:24-46 focuses How to play, opens it with Enter, asserts dialog focus, reaches Skip and Next controls, advances by Enter, closes with Escape, and asserts focus returns to the trigger."
+      - "tests/e2e/enhancements.spec.ts:48-67 separately verifies Skip and final Start puzzle completion close the tutorial while remaining on Start and not starting a puzzle."
+      - "apps/web-game/src/app/AppShell.tsx:49-56 wires How to play as a button and :85-90 renders the controlled Tutorial; apps/web-game/src/components/tutorial/Tutorial.tsx:36-81 implements initial focus, Escape, Tab containment, and focus restoration."
+      - "The independent full Playwright run passed all three enhancements tests in all four configured projects; output is recorded in orchestration/runs/2026-09-18-enhancements-001/tasks/E1-05/command-output/test-e2e.log."
+  - id: "AC-5"
+    verdict: PASS
+    evidence:
+      - "tests/e2e/enhancements.spec.ts:11-14 asserts Dark Mode and High Contrast are absent from both Settings and the page."
+      - "tests/e2e/accessibility.spec.ts:21-37 runs the reduced-motion assertion only in the reduced-motion project, verifies prefers-reduced-motion is true, and accepts the normalized 0 or 0.01ms transition contract."
+      - "playwright.config.ts:44-59 defines the dedicated reduced-motion project with reducedMotion: 'reduce'; the independent run passed 'honors the reduced-motion browser preference' in that project and intentionally skipped its three non-reduced-motion copies."
+      - "The independent full run passed 44 tests and recorded 4 intentional skips, including the three non-reduced-motion copies and the reduced-motion responsive copy; raw output is in orchestration/runs/2026-09-18-enhancements-001/tasks/E1-05/command-output/test-e2e.log."
+  - id: "AC-6"
+    verdict: PASS
+    evidence:
+      - "tests/e2e/responsive.spec.ts:12-32 runs the revised Start and selection screens in phone, tablet, and desktop projects, checks document scrollWidth <= clientWidth + 1 on both screens, and verifies each screen bounding box fits the viewport."
+      - "playwright.config.ts:27-43 configures phone as iPhone 13, tablet as iPad gen 7 at 834x1112, and desktop at 1440x900; responsive.spec.ts:13 intentionally skips only reduced-motion."
+      - "The independent full Playwright run passed the responsive test in phone, tablet, and desktop; output is recorded in orchestration/runs/2026-09-18-enhancements-001/tasks/E1-05/command-output/test-e2e.log."
+checksPerformed:
+  - command: "npm run typecheck"
+    exitCode: 0
+    outputFile: "orchestration/runs/2026-09-18-enhancements-001/tasks/E1-05/command-output/typecheck.log"
+  - command: "npm run test:e2e"
+    exitCode: 0
+    outputFile: "orchestration/runs/2026-09-18-enhancements-001/tasks/E1-05/command-output/test-e2e.log"
+findings:
+  - severity: LOW
+    description: "Dormant high-contrast CSS remains in the unimported apps/web-game/src/accessibility/accessibility.css at selectors/tokens on lines 56-70 and 81-87. Browser coverage confirms no user-facing Dark Mode or High Contrast controls or runtime path, but this is residual source-level appearance code."
+    file: "apps/web-game/src/accessibility/accessibility.css"
+    line: 56
+  - severity: LOW
+    description: "The compatibility-only selectQuickPlayPuzzle export and app/integration/puzzle-loader.ts import remain in production code at the legacy API boundary. No user-facing E2E helper or scenario invokes it, and the revised selection UI has no Quick Play control; this remains a stale compatibility risk outside the assigned E2E scope."
+    file: "apps/web-game/src/state/game-flow/game-flow.ts"
+    line: 127
+  - severity: LOW
+    description: "The tutorial keyboard test explicitly focuses Skip and Next before using keyboard input, so it proves focusability and activation but is weaker than a fully sequential Tab-only traversal assertion. The production Tutorial focus trap and the passing browser behavior leave no observed failure."
+    file: "tests/e2e/enhancements.spec.ts"
+    line: 35
+requiredRemediation: []
+conclusion: >-
+  PASS. Independent inspection of the assigned brief, implementation report,
+  schema, final five E2E files, Playwright projects, relevant E1-03/E1-04
+  production behavior, scoped diff, and project state found the six acceptance
+  criteria covered. npm run typecheck exited 0. npm run test:e2e exited 0 with
+  44 passed and 4 intentional skips across phone, tablet, desktop, and
+  reduced-motion projects. The implementation report's earlier failing run was
+  not treated as proof; only the independently reproduced final required
+  commands support this verdict.

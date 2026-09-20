@@ -1,0 +1,169 @@
+schemaVersion: "1.0"
+artifactType: implementation-report
+taskId: E1-04
+status: COMPLETE
+summary: >-
+  Added a persisted global Relaxed/Assisted settings surface, applied the saved
+  default only at new selected-puzzle and Daily Loop session boundaries, and
+  preserved saved modes for selected resumes and Continue. Removed the active
+  appearance-mode shell and tokens, retained reduced-motion support, and wired
+  How to play to the existing controlled Tutorial with modal keyboard and focus
+  behavior. The active production bundle contains no high-contrast runtime
+  references.
+filesChanged:
+  - path: apps/web-game/src/app/AppShell.tsx
+    change: >-
+      Replaced the VisualMode shell with persisted AppSettings loading/saving,
+      SettingsPanel and Tutorial controlled state, reduced-motion application,
+      and a button-based How to play action.
+  - path: apps/web-game/src/app/SettingsPanel.tsx
+    change: >-
+      Added the controlled settings dialog exposing Relaxed/Assisted defaultMode
+      radios and the retained reduced-motion accessibility control.
+  - path: apps/web-game/src/app/integration/GameIntegration.tsx
+    change: >-
+      Added the defaultMode boundary prop and session-mode normalization so new
+      selected/Daily sessions use the global default while unfinished selected
+      resumes and Continue preserve persisted session mode.
+  - path: apps/web-game/src/accessibility/types.ts
+    change: Removed highContrast from accessibility preference state and defaults.
+  - path: apps/web-game/src/accessibility/preferences.ts
+    change: Kept only data-reduced-motion preference application and cleanup.
+  - path: apps/web-game/src/accessibility/AccessibilitySettings.tsx
+    change: Removed the High contrast control and retained Reduce motion.
+  - path: apps/web-game/src/accessibility/accessibility.test.ts
+    change: Updated coverage to verify reduced-motion application and clearing only.
+  - path: apps/web-game/src/components/tutorial/Tutorial.tsx
+    change: >-
+      Added dialog focus entry/restoration, Escape close handling, and a bounded
+      Tab focus loop while preserving existing steps, practice content, actions,
+      and modal semantics.
+  - path: apps/web-game/src/components/tutorial/tutorial.css
+    change: Added bounded modal scrolling and overscroll containment.
+  - path: apps/web-game/src/components/tutorial/tutorial.test.ts
+    change: Extended tutorial content coverage for the completion boundary.
+  - path: apps/web-game/src/styles/tokens.css
+    change: Removed dark and high-contrast appearance token blocks.
+  - path: apps/web-game/src/styles/global.css
+    change: >-
+      Removed obsolete appearance picker styles, added settings/navigation and
+      accessibility control styling, and retained explicit reduced-motion CSS in
+      the active global stylesheet.
+acceptanceCriteria:
+  - id: AC-1
+    result: PASS
+    evidence:
+      - >-
+        apps/web-game/src/app/SettingsPanel.tsx:12-27 defines the two global
+        GameplayMode choices and lines 44-45 emits the canonical AppSettings
+        update with defaultMode.
+      - >-
+        apps/web-game/src/app/AppShell.tsx:10-29 loads getSettings and saves
+        updates through the existing PersistenceRepository; line 71 passes the
+        persisted defaultMode into GameIntegration.
+      - >-
+        apps/web-game/src/app/integration/GameIntegration.tsx:39-54 applies the
+        default to new selected/Daily sessions, and the final npm test/build
+        checks pass.
+  - id: AC-2
+    result: PASS
+    evidence:
+      - >-
+        apps/web-game/src/app/integration/GameIntegration.tsx:44-51 returns
+        Continue unchanged and preserves unfinished selected progress.mode;
+        only new selected/Daily sessions are replaced with the global default.
+      - >-
+        GameIntegration keeps session state independent from the defaultMode
+        prop, so AppShell settings updates do not mutate an active session.
+      - >-
+        apps/web-game/src/state/game-flow/game-flow.ts:150-176 (dependency
+        contract reviewed) supplies saved mode for selected resumes and
+        apps/web-game/src/state/game-flow/game-flow.ts:194-210 supplies saved
+        mode for Continue; those forbidden files were not modified here.
+  - id: AC-3
+    result: PASS
+    evidence:
+      - >-
+        apps/web-game/src/app/AppShell.tsx:37-90 contains no VisualMode,
+        data-visual-mode, Dark Mode, High contrast, or appearance picker branch.
+      - >-
+        apps/web-game/src/styles/tokens.css:1-57 contains only the standard
+        light/default-contrast token set; dark and high-contrast blocks were
+        removed.
+      - >-
+        The active stylesheet import was moved off the out-of-scope legacy
+        accessibility.css, and rg over apps/web-game/dist/assets found no
+        data-high-contrast, high-contrast, Dark Mode, or data-visual-mode text.
+  - id: AC-4
+    result: PASS
+    evidence:
+      - >-
+        apps/web-game/src/accessibility/types.ts:1-7 and
+        apps/web-game/src/accessibility/AccessibilitySettings.tsx:19-29 retain
+        reducedMotion only; no highContrast preference/control remains in the
+        active accessibility module.
+      - >-
+        apps/web-game/src/accessibility/preferences.ts:7-18 applies only
+        data-reduced-motion, while apps/web-game/src/styles/global.css retains
+        both explicit data-reduced-motion and browser prefers-reduced-motion
+        behavior.
+      - >-
+        apps/web-game/src/accessibility/accessibility.test.ts:12-23 verifies
+        reduced-motion application and clearing; npm run test passed.
+  - id: AC-5
+    result: PASS
+    evidence:
+      - >-
+        apps/web-game/src/app/AppShell.tsx:49-56 uses a controlled button for
+        How to play and lines 85-90 render Tutorial from shell state; no dead
+        #how-to-play link remains.
+      - >-
+        Apps/web-game/dist/assets contains the built shell/tutorial bundle and
+        no #how-to-play appearance reference; npm run build exited 0.
+  - id: AC-6
+    result: PASS
+    evidence:
+      - >-
+        apps/web-game/src/components/tutorial/Tutorial.tsx:36-81 focuses the
+        dialog, traps Tab navigation, handles Escape, and restores the trigger
+        focus on close.
+      - >-
+        apps/web-game/src/app/AppShell.tsx:85-90 maps close, skip, and complete
+        to a close-only callback, so the navigation tutorial completion action
+        cannot unexpectedly start a puzzle.
+      - >-
+        Existing Tutorial.tsx action handlers at lines 127-149 preserve Skip,
+        Back, Next, and final completion behavior; tutorial.test.ts and the full
+        workspace test suite pass.
+commandsRun:
+  - command: npm run typecheck
+    exitCode: 0
+    outputFile: /tmp/loops-e1-04-typecheck-final.log
+  - command: npm run test
+    exitCode: 0
+    outputFile: /tmp/loops-e1-04-test-final.log
+  - command: npm run build
+    exitCode: 0
+    outputFile: /tmp/loops-e1-04-build-final.log
+deviations:
+  - >-
+    The task's exclusive write scope does not include
+    apps/web-game/src/accessibility/accessibility.css. Its import was removed
+    and its needed reduced-motion/accessibility-control styles were moved into
+    scoped global.css, but the dormant file itself was not edited.
+knownRisks:
+  - >-
+    The out-of-scope accessibility.css still contains dormant high-contrast
+    selectors at lines 56, 81, and 85. It is no longer imported into the active
+    bundle; removing those source selectors requires an explicit scope change.
+  - >-
+    The required checks are type, unit/regression, and production-build checks;
+    browser-level interaction verification remains assigned to the later E1-05
+    task.
+handoffNotes: >-
+  All implementation changes are confined to the E1-04 production write scope
+  plus this required report. Existing E1-01 persistence, E1-02 flow, E1-03
+  screen, orchestration, package, schema, and other unrelated worktree changes
+  were preserved. Independent verification can reproduce the result with the
+  three commands and output logs listed above; the verifier should also inspect
+  the documented dormant out-of-scope accessibility.css selectors.

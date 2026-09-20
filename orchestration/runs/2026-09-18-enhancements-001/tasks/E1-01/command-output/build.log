@@ -1,0 +1,17 @@
+
+> loops@0.1.0 build
+> npm run build --workspace @loops/web-game
+
+
+> @loops/web-game@0.1.0 build
+> vite build --config ../../vite.config.ts
+
+vite v7.3.6 building client environment for production...
+transforming...
+✓ 108 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                   0.52 kB │ gzip:  0.31 kB
+dist/assets/index-DrP_tPS1.css   14.68 kB │ gzip:  3.79 kB
+dist/assets/index--s4yWeuY.js   293.04 kB │ gzip: 87.77 kB
+✓ built in 558ms

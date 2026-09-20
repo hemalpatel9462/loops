@@ -3,6 +3,7 @@ import {
   parseAppSettings,
   parseContinuePointer,
   parseDailyLoopState,
+  normalizeLegacyAppSettings,
   parsePlayerProgress,
   parsePlayerStatistics,
 } from './schema-validation';
@@ -119,6 +120,29 @@ function readValidated<T>(
   return result.value;
 }
 
+function readSettings(storage: StorageLike, key: string): AppSettings | undefined {
+  const candidate = readJson(storage, key);
+  if (candidate === undefined) return undefined;
+
+  const normalized = normalizeLegacyAppSettings(candidate);
+  const result = parseAppSettings(normalized);
+  if (!result.ok) {
+    remove(storage, key);
+    return undefined;
+  }
+
+  // Canonicalize legacy records so subsequent writes and reads contain only
+  // supported settings fields.
+  if (JSON.stringify(candidate) !== JSON.stringify(normalized)) {
+    try {
+      writeJson(storage, key, result.value);
+    } catch {
+      // A read-only store can still provide the normalized settings for this read.
+    }
+  }
+  return result.value;
+}
+
 function createContinuePointer(progress: PlayerProgress): ContinuePointer {
   return {
     schemaVersion: '1.0',
@@ -167,8 +191,8 @@ function createRepository(storage: StorageLike): PersistenceRepository {
     },
     clearContinue: () => remove(storage, storageKeys.continue),
     saveSettings: (settings) => writeValidated(storage, storageKeys.settings, settings, parseAppSettings, 'app settings'),
-    loadSettings: () => readValidated(storage, storageKeys.settings, parseAppSettings),
-    getSettings: () => readValidated(storage, storageKeys.settings, parseAppSettings) ?? DEFAULT_SETTINGS,
+    loadSettings: () => readSettings(storage, storageKeys.settings),
+    getSettings: () => readSettings(storage, storageKeys.settings) ?? DEFAULT_SETTINGS,
     resetSettings: () => remove(storage, storageKeys.settings),
     saveStatistics: (statistics) => writeValidated(storage, storageKeys.statistics, statistics, parsePlayerStatistics, 'player statistics'),
     loadStatistics: () => readValidated(storage, storageKeys.statistics, parsePlayerStatistics),

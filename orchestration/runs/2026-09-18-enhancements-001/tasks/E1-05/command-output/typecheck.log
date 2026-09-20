@@ -1,0 +1,32 @@
+
+> loops@0.1.0 typecheck
+> npm run typecheck --workspaces --if-present
+
+
+> @loops/web-game@0.1.0 typecheck
+> tsc --noEmit -p tsconfig.app.json
+
+
+> @loops/game-engine@0.1.0 typecheck
+> tsc --noEmit -p tsconfig.json
+
+
+> @loops/puzzle-format@0.1.0 typecheck
+> tsc --noEmit -p tsconfig.json
+
+
+> @loops/catalog-builder@0.1.0 typecheck
+> tsc --noEmit -p tsconfig.json
+
+
+> @loops/puzzle-analyzer@0.1.0 typecheck
+> tsc --noEmit -p tsconfig.json
+
+
+> @loops/puzzle-generator@0.1.0 typecheck
+> tsc --noEmit -p tsconfig.json
+
+
+> @loops/puzzle-validator@0.1.0 typecheck
+> tsc --noEmit -p tsconfig.json
+

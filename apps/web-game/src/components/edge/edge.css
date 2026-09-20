@@ -39,6 +39,15 @@
   transition: stroke var(--transition-fast, 140ms ease), stroke-width var(--transition-fast, 140ms ease);
 }
 
+.loop-edge__hint-line {
+  fill: none;
+  stroke: var(--color-hint, #7658c7);
+  stroke-linecap: round;
+  stroke-dasharray: 0.45rem 0.3rem;
+  stroke-width: var(--edge-width, 0.25rem);
+  pointer-events: none;
+}
+
 .loop-edge--fixed .loop-edge__line {
   stroke: var(--color-loop-fixed, #3b6a56);
   stroke-width: var(--edge-width-fixed, 0.35rem);
@@ -47,9 +56,17 @@
 .loop-edge__x {
   fill: none;
   stroke: var(--color-ink-subtle, #8b928a);
-  stroke-linecap: round;
-  stroke-width: 0.18rem;
   pointer-events: none;
+}
+
+.loop-edge__x-icon {
+  display: block;
+  overflow: visible;
+  stroke-linecap: round;
+}
+
+.loop-edge__x--hint {
+  stroke: var(--color-hint, #7658c7);
 }
 
 .loop-edge--fixed .loop-edge__hit-target,

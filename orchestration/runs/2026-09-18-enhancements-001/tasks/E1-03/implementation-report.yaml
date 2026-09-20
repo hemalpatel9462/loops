@@ -1,0 +1,80 @@
+schemaVersion: "1.0"
+artifactType: implementation-report
+taskId: E1-03
+status: COMPLETE
+summary: >-
+  Implemented the start-to-selection flow with persisted, sequential puzzle
+  statuses, numbered puzzle controls, accessible locked and completed states,
+  and responsive selection-screen styling. Daily Loop and Continue remain in
+  the flow, while the old mode picker, Quick Play action, and retired copy are
+  removed from the screen implementation.
+filesChanged:
+  - path: apps/web-game/src/screens/types.ts
+    change: Added start-screen and puzzle-selection prop contracts and retained a mode-selection compatibility type without mode-picker props.
+  - path: apps/web-game/src/screens/index.ts
+    change: Exported the new StartScreen and PuzzleSelectionScreen components.
+  - path: apps/web-game/src/screens/GameFlowScreen.tsx
+    change: Added start and selection states, wired persisted progression APIs, and kept Daily Loop, Continue, and back navigation reachable.
+  - path: apps/web-game/src/screens/ModeSelectionScreen.tsx
+    change: Replaced the old mode-picker implementation with a compatibility delegate to the revised puzzle-selection screen.
+  - path: apps/web-game/src/screens/screens.css
+    change: Reduced hero typography and added responsive difficulty, puzzle-status, locked, completed, and button styling without horizontal-overflow-prone fixed widths.
+  - path: apps/web-game/src/screens/StartScreen.tsx
+    change: Added the initial start screen whose primary action only reveals puzzle selection.
+  - path: apps/web-game/src/screens/PuzzleSelectionScreen.tsx
+    change: Added counted difficulty controls and one-based persisted-status puzzle buttons with accessible locked and completed treatments.
+acceptanceCriteria:
+  - id: AC-1
+    result: PASS
+    evidence:
+      - GameFlowScreen initializes to screen "start" and renders StartScreen before any selection controls.
+      - StartScreen's Start button calls only the selection-state transition; it does not invoke a puzzle-start API.
+  - id: AC-2
+    result: PASS
+    evidence:
+      - GameFlowScreen derives difficultyCounts through the E1-02 getPuzzleCount API and passes the counts to PuzzleSelectionScreen.
+      - PuzzleSelectionScreen renders each difficulty count and maps the E1-02 getPuzzleSequence result using its one-based item.number.
+  - id: AC-3
+    result: PASS
+    evidence:
+      - PuzzleSelectionScreen derives locked, in-progress, completed, and available labels from PuzzleProgressionItem.status rather than duplicating unlock logic.
+      - Locked puzzle buttons use disabled and an explicit "Locked — complete puzzle N first" accessible label; completed buttons show visible "Completed" text and the completed success treatment.
+  - id: AC-4
+    result: PASS
+    evidence:
+      - Search of apps/web-game/src/screens finds no Play mode, Quick Play, "Play at your pace.", or offline-validation tagline text.
+      - ModeSelectionScreen now delegates to PuzzleSelectionScreen and contains no mode fieldset or Quick Play action.
+  - id: AC-5
+    result: PASS
+    evidence:
+      - GameFlowScreen retains Daily Loop and Continue actions from PuzzleSelectionScreen and routes both screens back to selection.
+      - Selection back routes to start, providing predictable start-to-selection-to-special-screen navigation.
+  - id: AC-6
+    result: PASS
+    evidence:
+      - screens.css uses a 100%-bounded flow card, flexible difficulty controls, and phone breakpoints at 40rem and 22rem with no fixed-width screen layout.
+      - npm run build completed successfully with the revised screen bundle.
+commandsRun:
+  - command: npm run typecheck
+    exitCode: 0
+    outputFile: /tmp/loops-e1-03-typecheck.txt
+  - command: npm run test
+    exitCode: 0
+    outputFile: /tmp/loops-e1-03-test.txt
+  - command: npm run build
+    exitCode: 0
+    outputFile: /tmp/loops-e1-03-build.txt
+deviations: []
+knownRisks:
+  - E1-04 must replace the retained local relaxed-mode default with the persisted global default-mode setting when it integrates the selection flow; no mode picker was reintroduced here.
+  - Existing tests/e2e files still reference the pre-E1-03 flow, but E2E tests are explicitly outside this task's write scope and are assigned to E1-05.
+handoffNotes: >-
+  Only the seven declared screen files were changed for this task; unrelated
+  existing worktree changes, including E1-02 state APIs, E1-01 persistence
+  work, app integration, package/schema files, and orchestration registry
+  changes, were preserved and not modified by this task. The implementation
+  report is written at the exact orchestrator-provided path. The first
+  attempted typecheck shell wrapper
+  exited before invoking npm because zsh rejected a read-only variable name;
+  the required npm run typecheck command was then rerun successfully and its
+  exit code/output are recorded above.

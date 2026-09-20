@@ -71,14 +71,11 @@ export interface PlayerProgress {
   readonly updatedAt: string;
 }
 
-export type Theme = 'system' | 'light' | 'dark';
 export type LineThickness = 'thin' | 'standard' | 'thick';
 
 export interface AppSettings {
   readonly schemaVersion: '1.0';
   readonly defaultMode: GameplayMode;
-  readonly theme: Theme;
-  readonly highContrast: boolean;
   readonly reducedMotion: boolean;
   readonly lineThickness: LineThickness;
   readonly haptics: boolean;

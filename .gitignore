@@ -2,6 +2,7 @@ node_modules/
 dist/
 coverage/
 .vite/
+test-results/
 *.tsbuildinfo
 .DS_Store
 *.local

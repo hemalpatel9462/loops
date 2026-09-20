@@ -1,7 +1,6 @@
 import type { ChangeEvent } from 'react';
 import { useId } from 'react';
 import type { AccessibilityPreferences } from './types.ts';
-import './accessibility.css';
 
 export interface AccessibilitySettingsProps {
   readonly preferences: AccessibilityPreferences;
@@ -24,13 +23,6 @@ export function AccessibilitySettings({ preferences, onChange, className = '' }:
         <span>
           <strong>Reduce motion</strong>
           <small>Minimize animation and movement.</small>
-        </span>
-      </label>
-      <label className="accessibility-settings__option">
-        <input checked={preferences.highContrast} onChange={update('highContrast')} type="checkbox" />
-        <span>
-          <strong>High contrast</strong>
-          <small>Increase contrast and reinforce line styles.</small>
         </span>
       </label>
     </fieldset>

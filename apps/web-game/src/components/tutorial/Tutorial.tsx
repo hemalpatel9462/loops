@@ -1,4 +1,4 @@
-import { useEffect, useId, useState } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 import { clampTutorialStep, TUTORIAL_STEPS } from './steps.ts';
 import type { TutorialProps } from './types.ts';
 import './tutorial.css';
@@ -24,6 +24,7 @@ export function Tutorial({
 }: TutorialProps) {
   const titleId = useId();
   const descriptionId = useId();
+  const dialogRef = useRef<HTMLElement>(null);
   const [stepIndex, setStepIndex] = useState(() => clampTutorialStep(initialStep));
   const step = TUTORIAL_STEPS[stepIndex];
   const isLastStep = stepIndex === TUTORIAL_STEPS.length - 1;
@@ -31,6 +32,53 @@ export function Tutorial({
   useEffect(() => {
     if (open) setStepIndex(clampTutorialStep(initialStep));
   }, [initialStep, open]);
+
+  useEffect(() => {
+    if (!open) return undefined;
+
+    const previouslyFocused = document.activeElement as HTMLElement | null;
+    const dialog = dialogRef.current;
+    if (!dialog) return undefined;
+
+    const focusable = () => Array.from(
+      dialog.querySelectorAll<HTMLElement>(
+        'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
+      ),
+    );
+    const firstFocusable = focusable()[0] ?? dialog;
+    firstFocusable.focus();
+
+    const handleKeyDown = (event: KeyboardEvent): void => {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        onClose?.();
+        return;
+      }
+      if (event.key !== 'Tab') return;
+
+      const elements = focusable();
+      if (elements.length === 0) {
+        event.preventDefault();
+        dialog.focus();
+        return;
+      }
+      const first = elements[0];
+      const last = elements[elements.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+
+    dialog.addEventListener('keydown', handleKeyDown);
+    return () => {
+      dialog.removeEventListener('keydown', handleKeyDown);
+      previouslyFocused?.focus();
+    };
+  }, [open]);
 
   if (!open) return null;
 
@@ -42,7 +90,9 @@ export function Tutorial({
         aria-modal="true"
         className="tutorial-dialog"
         data-step={step.id}
+        ref={dialogRef}
         role="dialog"
+        tabIndex={-1}
       >
         <header className="tutorial-dialog__header">
           <div>

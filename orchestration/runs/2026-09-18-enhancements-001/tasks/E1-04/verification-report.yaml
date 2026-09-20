@@ -1,0 +1,104 @@
+schemaVersion: "1.0"
+artifactType: verification-report
+taskId: "E1-04"
+verdict: PASS
+scopeReviewed:
+  - "orchestration/runs/2026-09-18-enhancements-001/tasks/E1-04/verification-brief.yaml"
+  - "orchestration/runs/2026-09-18-enhancements-001/tasks/E1-04/implementation-report.yaml"
+  - "orchestration/schemas/verification-report.schema.json"
+  - "apps/web-game/src/app/AppShell.tsx"
+  - "apps/web-game/src/app/SettingsPanel.tsx"
+  - "apps/web-game/src/app/integration/GameIntegration.tsx"
+  - "apps/web-game/src/accessibility/**"
+  - "apps/web-game/src/components/tutorial/**"
+  - "apps/web-game/src/styles/tokens.css"
+  - "apps/web-game/src/styles/global.css"
+  - "apps/web-game/src/persistence/** (E1-01 contract and tests)"
+  - "apps/web-game/src/state/game-flow/** (E1-02 contract and tests)"
+  - "apps/web-game/src/screens/GameFlowScreen.tsx (E1-03 flow props)"
+  - "packages/puzzle-format/src/types.ts"
+  - "schemas/app-settings.schema.json"
+  - "apps/web-game/dist/**"
+  - "git status and relevant git diff"
+acceptanceCriteria:
+  - id: "AC-1"
+    verdict: PASS
+    evidence:
+      - "apps/web-game/src/app/SettingsPanel.tsx:12-27 defines only Relaxed and Assisted gameplay choices; :44-45 updates the canonical AppSettings object through defaultMode."
+      - "apps/web-game/src/app/AppShell.tsx:10-11 loads persisted settings from getPersistenceRepository().getSettings(), :27-29 saves the complete canonical settings record, and :70-71 passes settings.defaultMode to GameIntegration."
+      - "apps/web-game/src/app/integration/GameIntegration.tsx:39-55 applies the global default at session-start boundaries while the E1-03 GameFlowScreen still supplies the selected/Daily flow session."
+      - "apps/web-game/src/persistence/defaults.ts:9-17 and apps/web-game/src/persistence/schema-validation.ts:115-130 retain and validate canonical defaultMode values; the persistence test 'returns schema-backed defaults and supports reset' passed."
+      - "npm run test passed the web-game suite (6 files, 24 tests), and npm run build emitted the active shell/tutorial bundle."
+  - id: "AC-2"
+    verdict: PASS
+    evidence:
+      - "apps/web-game/src/app/integration/GameIntegration.tsx:64-73 stores the started session independently from the defaultMode prop; prop changes do not rewrite the existing session state."
+      - "GameIntegration.tsx:44-51 returns Continue unchanged and returns an unfinished selected-puzzle session unchanged when persisted progress exists; :54 changes only a new/replay session mode."
+      - "apps/web-game/src/state/game-flow/game-flow.ts:193-205 restores unfinished selected puzzles with progression.progress.mode, and :235-249 restores Continue with summary.progress.mode."
+      - "game-flow.test.ts tests 'resumes unfinished selected progress and preserves its saved session fields' and 'resumes Continue with the saved mode, elapsed time, hints, and edge choices' passed."
+  - id: "AC-3"
+    verdict: PASS
+    evidence:
+      - "apps/web-game/src/app/AppShell.tsx:37-71 has no VisualMode state, data-visual-mode attribute, appearance picker, Dark Mode control, or High Contrast control."
+      - "apps/web-game/src/styles/tokens.css:1-57 contains the light token set only; no dark or high-contrast token block remains."
+      - "The active import graph contains main.tsx importing styles/global.css and no accessibility.css import. The built CSS asset contains color-scheme:light plus data-reduced-motion and prefers-reduced-motion rules, with no data-visual-mode, data-high-contrast, dark-mode, or high-contrast selector/token."
+      - "The dormant out-of-scope apps/web-game/src/accessibility/accessibility.css still has high-contrast selectors/tokens at lines 56-70 and 81-87, but it is not imported and is not present in the built CSS; this is non-runtime source residue, recorded as a LOW finding below."
+      - "The only highContrast literal found in the built JavaScript is the E1-01 legacy-settings cleanup at apps/web-game/src/persistence/schema-validation.ts:137-142, not an appearance state, control, token, or visual runtime branch."
+  - id: "AC-4"
+    verdict: PASS
+    evidence:
+      - "apps/web-game/src/accessibility/types.ts:1-7 defines reducedMotion as the only active accessibility preference, and AccessibilitySettings.tsx:18-28 renders only the Reduce motion control."
+      - "apps/web-game/src/accessibility/preferences.ts:7-18 applies/removes only data-reduced-motion; no data-high-contrast attribute is set or cleared."
+      - "apps/web-game/src/styles/global.css:499-506 retains explicit reduced-motion CSS and :598-609 retains browser prefers-reduced-motion behavior; tutorial.css:205 also retains the browser preference rule."
+      - "accessibility.test.ts 'applies and clears the reduced-motion attribute' passed, and the built CSS contains both data-reduced-motion and prefers-reduced-motion rules."
+  - id: "AC-5"
+    verdict: PASS
+    evidence:
+      - "apps/web-game/src/app/AppShell.tsx:49-56 renders How to play as a button that sets tutorialOpen, and :85-90 renders the controlled Tutorial from shell state; there is no #how-to-play href."
+      - "The built JavaScript contains the controlled button/Tutorial wiring, while the built asset search found no #how-to-play reference."
+  - id: "AC-6"
+    verdict: PASS
+    evidence:
+      - "apps/web-game/src/components/tutorial/Tutorial.tsx:36-81 focuses the first dialog control, handles Escape, bounds Tab/Shift+Tab within the dialog, removes the key handler, and restores the element that was focused before open."
+      - "Tutorial.tsx:102-105 supplies Close, :128-131 supplies Skip, :134-141 supplies Back with a first-step boundary, and :142-149 supplies Next or the final completion action."
+      - "apps/web-game/src/app/AppShell.tsx:85-89 maps close, skip, and completion to the same close-only callback, so tutorial completion from navigation cannot start a puzzle unexpectedly."
+      - "tutorial.test.ts passed its content, step-clamping, and final completion-boundary tests; the production build includes the dialog focus and navigation handlers."
+checksPerformed:
+  - command: "npm run typecheck"
+    exitCode: 0
+    outputFile: "/Users/hemalpatel/Development/loops/orchestration/runs/2026-09-18-enhancements-001/tasks/E1-04/command-output/typecheck.log"
+  - command: "npm run test"
+    exitCode: 0
+    outputFile: "/Users/hemalpatel/Development/loops/orchestration/runs/2026-09-18-enhancements-001/tasks/E1-04/command-output/test.log"
+  - command: "npm run build"
+    exitCode: 0
+    outputFile: "/Users/hemalpatel/Development/loops/orchestration/runs/2026-09-18-enhancements-001/tasks/E1-04/command-output/build.log"
+findings:
+  - severity: LOW
+    description: "Dormant high-contrast CSS remains in apps/web-game/src/accessibility/accessibility.css at selectors/tokens on lines 56-70 and 81-87. No source import references this file, and the production CSS asset does not contain it. Because this file is outside the E1-04 writeScope and is non-runtime residue, it does not fail the active appearance cleanup criterion; a future source-hygiene pass could remove it if repository-wide textual cleanup is required."
+    file: "apps/web-game/src/accessibility/accessibility.css"
+    line: 56
+  - severity: LOW
+    description: "The active bundle contains one highContrast identifier from the E1-01 backward-compatibility normalizer, which deletes legacy persisted appearance data before canonical validation. This is not an active appearance preference or visual branch, but the implementation report's broader claim that the bundle contains no high-contrast runtime references is imprecise."
+    file: "apps/web-game/src/persistence/schema-validation.ts"
+    line: 137
+  - severity: LOW
+    description: "global.css retains unused responsive .mode-panel and .mode-picker selectors at lines 578-586. No matching markup or appearance control remains, so these selectors have no active behavior; they are stale CSS residue rather than a runtime mode branch."
+    file: "apps/web-game/src/styles/global.css"
+    line: 578
+  - severity: LOW
+    description: "The shared worktree contains unrelated E1-01/E1-02/E1-03 production changes and orchestration/task-registry changes outside E1-04; these were preserved and reviewed only as dependency/project-state context."
+    file: "orchestration/task-registry.json"
+    line: 1
+  - severity: LOW
+    description: "No browser interaction run was possible in this verification environment: the available in-app browser blocked localhost with ERR_BLOCKED_BY_CLIENT. AC-6 is supported by direct component/source inspection, unit coverage, and the successful production build; browser-level interaction remains a residual verification risk for the later E1-05 coverage."
+    file: "apps/web-game/src/components/tutorial/Tutorial.tsx"
+    line: 36
+requiredRemediation: []
+conclusion: >-
+  PASS: Independent review of the E1-01 settings contract, E1-02 mode/resume
+  semantics, E1-03 flow props, E1-04 source and diff, active production bundle,
+  tests, and project state supports all six acceptance criteria. npm run typecheck,
+  npm run test, and npm run build each exited 0. Dormant high-contrast source,
+  legacy persistence cleanup, and stale unused selectors are documented as
+  non-runtime residue/remaining risks; no E1-04 remediation is required.

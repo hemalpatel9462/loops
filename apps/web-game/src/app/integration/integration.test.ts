@@ -33,7 +33,6 @@ describe('web game integration', () => {
     for (const edge of puzzle.solutionEdges) {
       state = gameReducer(state, { type: 'set-edge', edge, state: 'line' });
     }
-    state = gameReducer(state, { type: 'complete' });
     expect(state.validation?.complete).toBe(true);
     expect(state.completed).toBe(true);
   });

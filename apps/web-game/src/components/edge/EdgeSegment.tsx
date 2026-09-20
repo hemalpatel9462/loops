@@ -1,6 +1,9 @@
 import type { KeyboardEvent, PointerEvent } from 'react';
+import { X as XIcon } from 'lucide-react';
 import type { EdgeSegmentProps } from './types.ts';
 import './edge.css';
+
+const X_MARK_SIZE = 24;
 
 function describeEdge(edgeId: string, state: string, fixed: boolean): string {
   const [orientation, row, column] = edgeId.split(':');
@@ -12,6 +15,7 @@ function describeEdge(edgeId: string, state: string, fixed: boolean): string {
 export function EdgeSegment({
   edgeId,
   geometry,
+  hintState,
   state = 'unknown',
   fixed = false,
   onAction,
@@ -34,6 +38,9 @@ export function EdgeSegment({
   };
 
   const { x1, y1, x2, y2 } = geometry;
+  const centerX = (x1 + x2) / 2;
+  const centerY = (y1 + y2) / 2;
+  const showHint = Boolean(hintState && state === hintState && !fixed);
   const className = [
     'loop-edge',
     `loop-edge--${state}`,
@@ -49,6 +56,7 @@ export function EdgeSegment({
       data-edge-id={edgeId}
       data-edge-state={fixed ? 'fixed' : state}
       data-fixed={fixed ? 'true' : 'false'}
+      data-hint-state={showHint ? hintState : undefined}
       onKeyDown={handleKeyDown}
       onPointerUp={handlePointerUp}
       role="button"
@@ -69,7 +77,7 @@ export function EdgeSegment({
         y1={y1}
         y2={y2}
       />
-      {(state === 'line' || fixed) && (
+      {(state === 'line' || fixed) && !showHint && (
         <line
           className="loop-edge__line"
           x1={x1}
@@ -78,10 +86,39 @@ export function EdgeSegment({
           y2={y2}
         />
       )}
-      {state === 'x' && (
+      {state === 'x' && !showHint && (
         <g className="loop-edge__x" aria-hidden="true">
-          <line x1={x1 - 8} x2={x2 + 8} y1={y1 - 8} y2={y2 + 8} />
-          <line x1={x1 - 8} x2={x2 + 8} y1={y1 + 8} y2={y2 - 8} />
+          <XIcon
+            aria-hidden="true"
+            className="loop-edge__x-icon"
+            height={X_MARK_SIZE}
+            strokeWidth={2.5}
+            width={X_MARK_SIZE}
+            x={centerX - X_MARK_SIZE / 2}
+            y={centerY - X_MARK_SIZE / 2}
+          />
+        </g>
+      )}
+      {showHint && hintState === 'line' && (
+        <line
+          className="loop-edge__hint-line"
+          x1={x1}
+          x2={x2}
+          y1={y1}
+          y2={y2}
+        />
+      )}
+      {showHint && hintState === 'x' && (
+        <g className="loop-edge__x loop-edge__x--hint" aria-hidden="true">
+          <XIcon
+            aria-hidden="true"
+            className="loop-edge__x-icon"
+            height={X_MARK_SIZE}
+            strokeWidth={2.5}
+            width={X_MARK_SIZE}
+            x={centerX - X_MARK_SIZE / 2}
+            y={centerY - X_MARK_SIZE / 2}
+          />
         </g>
       )}
     </g>

@@ -22,7 +22,6 @@ export interface GameReducerState {
   readonly validation?: RuleValidationResult;
   readonly completed: boolean;
   readonly hintsUsed: number;
-  readonly checksUsed: number;
 }
 
 export type GameAction =
@@ -33,17 +32,17 @@ export type GameAction =
   | { readonly type: 'reset' }
   | { readonly type: 'request-hint'; readonly level?: 1 | 2 | 3 }
   | { readonly type: 'apply-hint' }
-  | { readonly type: 'check-progress' }
   | { readonly type: 'complete' }
   | { readonly type: 'set-mode'; readonly mode: GameplayMode };
 
-function clearFeedback(state: GameReducerState, gameState: GameState): GameReducerState {
+function evaluateMove(state: GameReducerState, gameState: GameState): GameReducerState {
+  const validation = validateCompletion(state.puzzle, gameState);
   return {
     ...state,
     gameState,
     hint: undefined,
-    validation: undefined,
-    completed: false,
+    validation: validation.complete ? validation : undefined,
+    completed: validation.complete,
   };
 }
 
@@ -62,7 +61,6 @@ export function createGameReducerState(
     }),
     completed: false,
     hintsUsed: 0,
-    checksUsed: 0,
   });
 }
 
@@ -84,20 +82,20 @@ export function gameReducer(state: GameReducerState, action: GameAction): GameRe
       ) {
         return state;
       }
-      return clearFeedback(state, candidate);
+      return evaluateMove(state, candidate);
     }
     case 'set-edge': {
       const candidate = setEdgeState(state.gameState, action.edge, action.state);
       if (candidate === state.gameState) return state;
-      return clearFeedback(state, candidate);
+      return evaluateMove(state, candidate);
     }
     case 'undo': {
       const candidate = undo(state.gameState);
-      return candidate === state.gameState ? state : clearFeedback(state, candidate);
+      return candidate === state.gameState ? state : evaluateMove(state, candidate);
     }
     case 'redo': {
       const candidate = redo(state.gameState);
-      return candidate === state.gameState ? state : clearFeedback(state, candidate);
+      return candidate === state.gameState ? state : evaluateMove(state, candidate);
     }
     case 'reset':
       return createGameReducerState(state.puzzle, state.mode);
@@ -107,9 +105,24 @@ export function gameReducer(state: GameReducerState, action: GameAction): GameRe
         { edgeStates: state.gameState.edgeStates, fixedEdges: state.gameState.fixedEdges },
         action.level ?? 1,
       );
-      return hint
-        ? { ...state, hint, hintsUsed: state.hintsUsed + 1 }
-        : { ...state, hint: undefined };
+      if (!hint) return { ...state, hint: undefined };
+      if (!hint.reveal) return { ...state, hint, hintsUsed: state.hintsUsed + 1 };
+
+      const candidate = setEdgeState(
+        state.gameState,
+        hint.reveal.edge,
+        hint.reveal.state,
+      );
+      if (candidate === state.gameState) return { ...state, hint, hintsUsed: state.hintsUsed + 1 };
+      const validation = validateCompletion(state.puzzle, candidate);
+      return {
+        ...state,
+        gameState: candidate,
+        hint,
+        validation: validation.complete ? validation : undefined,
+        completed: validation.complete,
+        hintsUsed: state.hintsUsed + 1,
+      };
     }
     case 'apply-hint': {
       if (!state.hint?.reveal) return state;
@@ -118,16 +131,7 @@ export function gameReducer(state: GameReducerState, action: GameAction): GameRe
         state.hint.reveal.edge,
         state.hint.reveal.state,
       );
-      return candidate === state.gameState ? state : clearFeedback(state, candidate);
-    }
-    case 'check-progress': {
-      const validation = validateCompletion(state.puzzle, state.gameState);
-      return {
-        ...state,
-        validation,
-        checksUsed: state.checksUsed + 1,
-        completed: validation.complete,
-      };
+      return candidate === state.gameState ? state : evaluateMove(state, candidate);
     }
     case 'complete': {
       const validation = validateCompletion(state.puzzle, state.gameState);

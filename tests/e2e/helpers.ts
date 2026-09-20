@@ -7,33 +7,50 @@ interface PuzzleFixture {
   readonly solutionEdges: readonly string[];
 }
 
-/** The default Quick Play puzzle is the checked-in beginner fixture. */
-export const beginnerPuzzle = JSON.parse(
-  readFileSync(
-    resolve(process.cwd(), 'packages/puzzle-data/puzzles/beginner/loop-beginner-catalog-beginner-0.json'),
-    'utf8',
-  ),
-) as PuzzleFixture;
-
-export async function openModeSelection(page: Page): Promise<void> {
-  await page.addInitScript(() => {
-    const resetKey = '__loops_e2e_storage_reset__';
-    if (window.sessionStorage.getItem(resetKey) === 'true') return;
-    window.localStorage.clear();
-    window.sessionStorage.setItem(resetKey, 'true');
-  });
-  await page.goto('/');
-  await expect(page.getByRole('heading', { name: /Play at your pace/ })).toBeVisible();
+interface CatalogFixture {
+  readonly puzzles: readonly {
+    readonly difficulty: string;
+    readonly path: string;
+  }[];
 }
 
-export async function startQuickPlay(page: Page): Promise<void> {
-  await page.getByRole('button', { name: /Quick Play/ }).click();
-  await expect(page.getByRole('heading', { name: /Complete the loop/ })).toBeVisible();
+const catalog = JSON.parse(
+  readFileSync(resolve(process.cwd(), 'packages/puzzle-data/catalog.json'), 'utf8'),
+) as CatalogFixture;
 
-  // SVG groups containing individual edges have no intrinsic layout box, so
-  // Playwright correctly reports them as hidden even when their child lines
-  // are rendered. Wait on the measurable board root instead, then retain a
-  // readiness check that the edge groups have been mounted.
+export const difficulties = ['beginner', 'easy', 'medium', 'hard', 'expert'] as const;
+
+const firstBeginner = catalog.puzzles.find((entry) => entry.difficulty === 'beginner');
+if (!firstBeginner) throw new Error('The catalog must contain a beginner puzzle for E2E coverage.');
+
+/** The first validated beginner puzzle in catalog order. */
+export const beginnerPuzzle = JSON.parse(
+  readFileSync(resolve(process.cwd(), 'packages/puzzle-data', firstBeginner.path), 'utf8'),
+) as PuzzleFixture;
+
+/** Reset browser state once at the start of each scenario, then render Start. */
+export async function openStartScreen(page: Page): Promise<void> {
+  await page.goto('/');
+  await page.evaluate(() => {
+    window.localStorage.clear();
+    window.sessionStorage.clear();
+  });
+  await page.reload();
+  await expect(page.getByRole('heading', { name: /Find your next loop/ })).toBeVisible();
+}
+
+export async function openPuzzleSelection(page: Page): Promise<void> {
+  await openStartScreen(page);
+  await page.getByRole('button', { name: /^Start$/ }).click();
+  await expect(page.getByRole('heading', { name: /Choose a puzzle/ })).toBeVisible();
+}
+
+export async function startSelectedPuzzle(page: Page, puzzleNumber = 1): Promise<void> {
+  await page.getByRole('button', { name: new RegExp(`^Puzzle ${puzzleNumber}:`) }).click();
+  await expect(page.getByRole('region', { name: 'Loops puzzle', exact: true })).toBeVisible();
+
+  // SVG groups have no intrinsic layout box. Wait for the measurable board root
+  // and mounted edge controls before interacting with the selected puzzle.
   const boardSvg = page.locator('.loop-board__svg');
   await expect(boardSvg).toBeVisible();
   await expect.poll(async () => {
@@ -61,6 +78,6 @@ export async function completeBeginnerPuzzle(page: Page): Promise<void> {
     await expect(edge).toHaveAttribute('data-edge-state', 'line');
   }
 
-  await page.getByRole('button', { name: 'Complete loop' }).click();
-  await expect(page.getByRole('heading', { name: 'Beautifully done.' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Dismiss puzzle complete message' })).toContainText('Puzzle complete!');
+  await expect(page.getByRole('button', { name: 'Next puzzle' })).toBeVisible();
 }

@@ -10,7 +10,6 @@ export function applyAccessibilityPreferences(
 ): void {
   const attributes: Array<[string, boolean]> = [
     ['data-reduced-motion', preferences.reducedMotion],
-    ['data-high-contrast', preferences.highContrast],
   ];
   for (const [name, enabled] of attributes) {
     if (enabled) root.setAttribute(name, 'true');

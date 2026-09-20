@@ -1,0 +1,100 @@
+
+> loops@0.1.0 test:e2e
+> playwright test
+
+[WebServer] (node:64904) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 48 tests using 5 workers
+
+(node:64906) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:64909) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:64908) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:64907) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:64910) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  -   1 [phone] › tests/e2e/accessibility.spec.ts:21:5 › honors the reduced-motion browser preference
+  ✓   5 [phone] › tests/e2e/enhancements.spec.ts:24:7 › enhanced navigation and global settings › opens How to play and reaches its controls with keyboard navigation (1.8s)
+  ✓   3 [phone] › tests/e2e/accessibility.spec.ts:8:5 › supports keyboard activation for an editable edge in a selected puzzle (2.0s)
+  ✓   4 [phone] › tests/e2e/enhancements.spec.ts:5:7 › enhanced navigation and global settings › persists the global gameplay mode and omits removed appearance controls (2.1s)
+  ✓   2 [phone] › tests/e2e/enhancements.spec.ts:48:7 › enhanced navigation and global settings › closes How to play through Skip and final completion without starting a puzzle (2.3s)
+  ✓   6 [phone] › tests/e2e/gameplay.spec.ts:14:7 › Loops gameplay and persistence › starts a selected puzzle and cycles an edge through line, X, and empty (1.4s)
+  ✓   7 [phone] › tests/e2e/gameplay.spec.ts:28:7 › Loops gameplay and persistence › supports undo, redo, reset, hints, and progress checks (1.5s)
+  ✓  10 [phone] › tests/e2e/gameplay.spec.ts:105:7 › Loops gameplay and persistence › opens and starts the deterministic Daily Loop while Quick Play is absent (1.1s)
+  ✓   8 [phone] › tests/e2e/gameplay.spec.ts:53:7 › Loops gameplay and persistence › shows one-based counts, locks puzzle 2, and unlocks it after puzzle 1 completes (1.5s)
+(node:65003) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   9 [phone] › tests/e2e/gameplay.spec.ts:83:7 › Loops gameplay and persistence › resumes an unfinished selected puzzle after reload through Continue (1.7s)
+(node:65004) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  12 [phone] › tests/e2e/responsive.spec.ts:12:5 › renders the revised start and selection screens without horizontal overflow (789ms)
+(node:65013) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  11 [phone] › tests/e2e/gameplay.spec.ts:118:7 › Loops gameplay and persistence › applies and preserves the saved gameplay mode for a new puzzle and Continue (1.6s)
+(node:65022) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  -  14 [tablet] › tests/e2e/accessibility.spec.ts:21:5 › honors the reduced-motion browser preference
+(node:65041) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  13 [tablet] › tests/e2e/accessibility.spec.ts:8:5 › supports keyboard activation for an editable edge in a selected puzzle (1.6s)
+  ✓  16 [tablet] › tests/e2e/enhancements.spec.ts:24:7 › enhanced navigation and global settings › opens How to play and reaches its controls with keyboard navigation (1.5s)
+  ✓  15 [tablet] › tests/e2e/enhancements.spec.ts:5:7 › enhanced navigation and global settings › persists the global gameplay mode and omits removed appearance controls (1.9s)
+  ✓  17 [tablet] › tests/e2e/gameplay.spec.ts:14:7 › Loops gameplay and persistence › starts a selected puzzle and cycles an edge through line, X, and empty (1.7s)
+  ✓  19 [tablet] › tests/e2e/gameplay.spec.ts:28:7 › Loops gameplay and persistence › supports undo, redo, reset, hints, and progress checks (1.7s)
+  ✓  18 [tablet] › tests/e2e/enhancements.spec.ts:48:7 › enhanced navigation and global settings › closes How to play through Skip and final completion without starting a puzzle (1.8s)
+  ✓  22 [tablet] › tests/e2e/gameplay.spec.ts:105:7 › Loops gameplay and persistence › opens and starts the deterministic Daily Loop while Quick Play is absent (1.2s)
+  ✓  21 [tablet] › tests/e2e/gameplay.spec.ts:83:7 › Loops gameplay and persistence › resumes an unfinished selected puzzle after reload through Continue (1.6s)
+  ✓  20 [tablet] › tests/e2e/gameplay.spec.ts:53:7 › Loops gameplay and persistence › shows one-based counts, locks puzzle 2, and unlocks it after puzzle 1 completes (1.7s)
+(node:65100) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  24 [tablet] › tests/e2e/responsive.spec.ts:12:5 › renders the revised start and selection screens without horizontal overflow (986ms)
+(node:65101) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:65103) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:65106) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  -  26 [desktop] › tests/e2e/accessibility.spec.ts:21:5 › honors the reduced-motion browser preference
+  ✓  23 [tablet] › tests/e2e/gameplay.spec.ts:118:7 › Loops gameplay and persistence › applies and preserves the saved gameplay mode for a new puzzle and Continue (1.7s)
+  ✓  25 [desktop] › tests/e2e/accessibility.spec.ts:8:5 › supports keyboard activation for an editable edge in a selected puzzle (906ms)
+(node:65128) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  27 [desktop] › tests/e2e/enhancements.spec.ts:5:7 › enhanced navigation and global settings › persists the global gameplay mode and omits removed appearance controls (852ms)
+  ✓  28 [desktop] › tests/e2e/enhancements.spec.ts:24:7 › enhanced navigation and global settings › opens How to play and reaches its controls with keyboard navigation (713ms)
+  ✓  29 [desktop] › tests/e2e/enhancements.spec.ts:48:7 › enhanced navigation and global settings › closes How to play through Skip and final completion without starting a puzzle (1.2s)
+  ✓  30 [desktop] › tests/e2e/gameplay.spec.ts:28:7 › Loops gameplay and persistence › supports undo, redo, reset, hints, and progress checks (1.1s)
+  ✓  33 [desktop] › tests/e2e/gameplay.spec.ts:83:7 › Loops gameplay and persistence › resumes an unfinished selected puzzle after reload through Continue (1.1s)
+  ✓  32 [desktop] › tests/e2e/gameplay.spec.ts:14:7 › Loops gameplay and persistence › starts a selected puzzle and cycles an edge through line, X, and empty (930ms)
+  ✓  34 [desktop] › tests/e2e/gameplay.spec.ts:105:7 › Loops gameplay and persistence › opens and starts the deterministic Daily Loop while Quick Play is absent (782ms)
+  ✓  31 [desktop] › tests/e2e/gameplay.spec.ts:53:7 › Loops gameplay and persistence › shows one-based counts, locks puzzle 2, and unlocks it after puzzle 1 completes (1.3s)
+(node:65150) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:65151) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  36 [desktop] › tests/e2e/responsive.spec.ts:12:5 › renders the revised start and selection screens without horizontal overflow (500ms)
+(node:65152) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  35 [desktop] › tests/e2e/gameplay.spec.ts:118:7 › Loops gameplay and persistence › applies and preserves the saved gameplay mode for a new puzzle and Continue (947ms)
+(node:65154) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:65171) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  37 [reduced-motion] › tests/e2e/accessibility.spec.ts:8:5 › supports keyboard activation for an editable edge in a selected puzzle (846ms)
+  ✓  38 [reduced-motion] › tests/e2e/accessibility.spec.ts:21:5 › honors the reduced-motion browser preference (848ms)
+  ✓  39 [reduced-motion] › tests/e2e/enhancements.spec.ts:5:7 › enhanced navigation and global settings › persists the global gameplay mode and omits removed appearance controls (1.0s)
+  ✓  40 [reduced-motion] › tests/e2e/enhancements.spec.ts:24:7 › enhanced navigation and global settings › opens How to play and reaches its controls with keyboard navigation (820ms)
+  ✓  42 [reduced-motion] › tests/e2e/gameplay.spec.ts:14:7 › Loops gameplay and persistence › starts a selected puzzle and cycles an edge through line, X, and empty (972ms)
+  ✓  43 [reduced-motion] › tests/e2e/gameplay.spec.ts:28:7 › Loops gameplay and persistence › supports undo, redo, reset, hints, and progress checks (1.1s)
+  ✓  41 [reduced-motion] › tests/e2e/enhancements.spec.ts:48:7 › enhanced navigation and global settings › closes How to play through Skip and final completion without starting a puzzle (1.3s)
+  ✓  44 [reduced-motion] › tests/e2e/gameplay.spec.ts:53:7 › Loops gameplay and persistence › shows one-based counts, locks puzzle 2, and unlocks it after puzzle 1 completes (1.2s)
+  ✓  45 [reduced-motion] › tests/e2e/gameplay.spec.ts:83:7 › Loops gameplay and persistence › resumes an unfinished selected puzzle after reload through Continue (880ms)
+  -  48 [reduced-motion] › tests/e2e/responsive.spec.ts:12:5 › renders the revised start and selection screens without horizontal overflow
+  ✓  46 [reduced-motion] › tests/e2e/gameplay.spec.ts:105:7 › Loops gameplay and persistence › opens and starts the deterministic Daily Loop while Quick Play is absent (650ms)
+  ✓  47 [reduced-motion] › tests/e2e/gameplay.spec.ts:118:7 › Loops gameplay and persistence › applies and preserves the saved gameplay mode for a new puzzle and Continue (852ms)
+
+  4 skipped
+  44 passed (15.5s)

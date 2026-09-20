@@ -1,7 +1,8 @@
 .flow-screen {
+  box-sizing: border-box;
   display: grid;
   gap: 1.25rem;
-  max-width: 42rem;
+  width: min(100%, 42rem);
   margin: 0 auto;
   padding: clamp(1.5rem, 5vw, 4rem);
   color: var(--color-text, #172126);
@@ -11,15 +12,26 @@
 }
 
 .flow-screen__eyebrow { margin: 0; color: var(--color-accent, #087f75); font-size: .78rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
-.flow-screen h1 { margin: 0; font-size: clamp(2rem, 7vw, 4rem); line-height: 1; }
+.flow-screen h1 { margin: 0; font-size: clamp(2rem, 5vw, 3.25rem); line-height: 1.05; }
 .flow-screen__intro { max-width: 34rem; margin: 0; color: color-mix(in srgb, currentColor 72%, transparent); line-height: 1.6; }
 .flow-back { justify-self: start; padding: .4rem 0; color: inherit; background: none; border: 0; cursor: pointer; }
+.flow-screen__header { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: .75rem; }
+.flow-screen__header h1 { min-width: 0; }
+.flow-back--icon { display: grid; width: 2.75rem; height: 2.75rem; padding: 0; place-items: center; color: inherit; background: transparent; border: 1px solid color-mix(in srgb, currentColor 22%, transparent); border-radius: 50%; font-size: 1.25rem; }
+.flow-screen__help { min-height: 2.75rem; white-space: nowrap; }
+.flow-screen--selection { gap: .7rem; padding: clamp(1rem, 3vw, 2rem); }
+.flow-screen--selection .flow-picker { gap: .55rem; }
+.flow-screen--selection .flow-picker__options { gap: .45rem; }
+.flow-screen--selection .flow-choice { padding: .55rem .75rem; }
+.flow-screen--selection .flow-picker--puzzles { gap: .65rem; }
+.flow-screen--selection .puzzle-list { gap: .45rem; }
+.flow-screen--selection .puzzle-choice { padding: .6rem .75rem; }
+.flow-screen--selection .flow-actions--primary { margin-top: 0; }
 .flow-picker { display: grid; gap: .75rem; padding: 0; border: 0; }
 .flow-picker legend { margin-bottom: .25rem; font-weight: 700; }
-.flow-picker__options { display: flex; flex-wrap: wrap; gap: .6rem; }
-.flow-choice { display: grid; gap: .2rem; min-width: 6.5rem; padding: .7rem .9rem; color: inherit; background: transparent; border: 1px solid color-mix(in srgb, currentColor 22%, transparent); border-radius: .8rem; cursor: pointer; text-align: left; }
+.flow-picker__options { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: .45rem; }
+.flow-choice { display: grid; flex: 1 1 7.5rem; gap: .2rem; min-width: 0; padding: .7rem .9rem; color: inherit; background: transparent; border: 1px solid color-mix(in srgb, currentColor 22%, transparent); border-radius: .8rem; cursor: pointer; text-align: left; }
 .flow-choice[aria-pressed="true"] { color: #fff; background: var(--color-accent, #087f75); border-color: var(--color-accent, #087f75); }
-.flow-choice span { font-size: .75rem; opacity: .75; }
 .flow-actions { display: flex; flex-wrap: wrap; gap: .75rem; }
 .flow-actions--primary { margin-top: .5rem; }
 .flow-summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr)); gap: .75rem; margin: .5rem 0; }
@@ -27,8 +39,32 @@
 .flow-summary dt { font-size: .72rem; opacity: .68; text-transform: uppercase; letter-spacing: .08em; }
 .flow-summary dd { margin: .3rem 0 0; font-weight: 700; text-transform: capitalize; }
 .flow-screen .button { min-height: 3rem; }
+.flow-start { justify-self: start; min-width: 10rem; }
+.flow-picker--puzzles { gap: 1rem; }
+.puzzle-list { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: .6rem; margin: 0; padding: 0; list-style: none; }
+.puzzle-list__item { min-width: 0; }
+.puzzle-choice { display: grid; width: min(100%, 5rem); aspect-ratio: 1; min-height: 0; justify-self: center; min-width: 0; padding: 0; place-items: center; color: inherit; background: transparent; border: 1px solid color-mix(in srgb, currentColor 22%, transparent); border-radius: 50%; cursor: pointer; font-size: clamp(1rem, 2.5vw, 1.5rem); font-weight: 800; }
+.puzzle-choice:hover:not(:disabled), .puzzle-choice:focus-visible { border-color: var(--color-accent, #087f75); }
+.puzzle-choice__number { display: block; }
+.puzzle-list__item--available .puzzle-choice,
+.puzzle-list__item--in-progress .puzzle-choice { color: #79521a; background: #fff4d9; border-color: #e3b866; }
+.puzzle-list__item--completed .puzzle-choice { color: #155d3a; background: #eef8f1; border-color: #79c693; }
+.puzzle-list__item--locked .puzzle-choice { color: color-mix(in srgb, currentColor 62%, transparent); background: color-mix(in srgb, currentColor 4%, transparent); cursor: not-allowed; }
+.puzzle-choice:disabled { opacity: .82; }
 
 @media (max-width: 40rem) {
   .flow-screen { border-radius: 1rem; }
+  .flow-screen { padding: 1.25rem; }
+  .flow-screen--selection { padding: 1rem; }
+  .flow-screen__header { gap: .5rem; }
+  .flow-screen__header h1 { font-size: clamp(1.5rem, 7vw, 2rem); }
+  .flow-screen__help { padding-inline: .7rem; font-size: .75rem; }
+  .flow-choice { padding-inline: .35rem; font-size: .8rem; }
   .flow-actions .button { width: 100%; }
+  .flow-start { width: 100%; }
+}
+
+@media (max-width: 22rem) {
+  .flow-choice { font-size: .7rem; }
+  .puzzle-choice { width: min(100%, 4rem); }
 }

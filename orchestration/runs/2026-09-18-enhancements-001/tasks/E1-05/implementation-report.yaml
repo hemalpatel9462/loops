@@ -1,0 +1,155 @@
+schemaVersion: "1.0"
+artifactType: implementation-report
+taskId: E1-05
+status: COMPLETE
+summary: >-
+  Replaced stale Quick Play E2E assumptions with catalog-derived Start to
+  selection to numbered selected-puzzle coverage. Added deterministic browser
+  storage reset per scenario, progression/unlock and completion assertions,
+  selected-puzzle resume and Continue coverage, saved gameplay-mode and Daily
+  Loop coverage, tutorial/settings/accessibility coverage, and start/selection
+  responsive overflow checks. The final Playwright run passed across phone,
+  tablet, desktop, and reduced-motion projects.
+filesChanged:
+  - path: tests/e2e/helpers.ts
+    change: >-
+      Replaced Quick Play helpers and stale fixture path with Start,
+      selection, selected-puzzle helpers, catalog-derived difficulty counts,
+      catalog-order beginner fixture loading, and per-scenario local/session
+      storage reset.
+  - path: tests/e2e/gameplay.spec.ts
+    change: >-
+      Updated gameplay coverage for selected puzzles, one-based difficulty
+      counts, locked/unlocked progression, completion success/text status,
+      unfinished reload/resume, Continue, Daily Loop, Quick Play absence, and
+      saved Assisted mode preservation.
+  - path: tests/e2e/accessibility.spec.ts
+    change: >-
+      Updated edge keyboard and reduced-motion scenarios to enter through the
+      selected-puzzle flow.
+  - path: tests/e2e/responsive.spec.ts
+    change: >-
+      Replaced gameplay-board-only coverage with no-horizontal-overflow and
+      viewport-fit assertions for the revised Start and selection screens in
+      phone, tablet, and desktop projects.
+  - path: tests/e2e/enhancements.spec.ts
+    change: >-
+      Added browser coverage for persisted global gameplay mode, absence of
+      Dark Mode and High Contrast controls, and keyboard-reachable How to play
+      open, navigation, skip, close, completion, and focus-return behavior.
+acceptanceCriteria:
+  - id: AC-1
+    result: PASS
+    evidence:
+      - >-
+        tests/e2e/helpers.ts:38-53 asserts the fresh Start screen and the
+        Start-to-selection transition; tests/e2e/gameplay.spec.ts:53-67
+        derives each difficulty count from packages/puzzle-data/catalog.json,
+        asserts the five count buttons, Puzzle 1 availability, and absence of
+        Puzzle 0.
+      - >-
+        Final npm run test:e2e passed the one-based counts and selection flow
+        in phone, tablet, desktop, and reduced-motion projects.
+  - id: AC-2
+    result: PASS
+    evidence:
+      - >-
+        tests/e2e/gameplay.spec.ts:60-80 asserts Puzzle 1 enabled, Puzzle 2
+        disabled before completion, then completes the catalog-first beginner
+        puzzle and asserts Puzzle 1 Completed text/class success treatment and
+        Puzzle 2 Available/enabled after re-entering selection.
+      - >-
+        tests/e2e/helpers.ts:78-90 completes every non-fixed solution edge and
+        asserts the completion heading and beginner success text.
+  - id: AC-3
+    result: PASS
+    evidence:
+      - >-
+        tests/e2e/gameplay.spec.ts:83-103 changes an edge, reloads, re-enters
+        through Start, enables and opens Continue, resumes the puzzle, and
+        asserts the saved edge state.
+      - >-
+        tests/e2e/gameplay.spec.ts:105-115 opens and starts Daily Loop and
+        asserts Quick Play is absent; lines 118-135 assert saved Assisted mode
+        for a new selected puzzle and after Continue.
+      - >-
+        tests/e2e/gameplay.spec.ts:65-67 also asserts Quick Play and selection
+        Play mode text are absent from the revised selection screen.
+  - id: AC-4
+    result: PASS
+    evidence:
+      - >-
+        tests/e2e/enhancements.spec.ts:5-22 changes the Assisted global mode,
+        reloads, and asserts it remains checked while the removed appearance
+        labels are absent.
+      - >-
+        tests/e2e/enhancements.spec.ts:24-46 opens How to play with Enter,
+        asserts dialog focus, focuses and activates tutorial controls by
+        keyboard, advances a step, closes with Escape, and verifies trigger
+        focus restoration.
+      - >-
+        tests/e2e/enhancements.spec.ts:48-67 separately covers Skip and final
+        Start puzzle completion closing the tutorial without leaving Start or
+        starting a puzzle.
+  - id: AC-5
+    result: PASS
+    evidence:
+      - >-
+        tests/e2e/enhancements.spec.ts:5-21 asserts Dark Mode and High
+        Contrast are absent from Settings and the page, while persisted mode
+        remains available.
+      - >-
+        tests/e2e/accessibility.spec.ts:21-37 runs only in the configured
+        reduced-motion project, asserts the browser preference, and verifies
+        the rendered edge transition is zero or 0.01ms.
+      - >-
+        Final npm run test:e2e reports the reduced-motion test passed and the
+        four non-reduced-motion copies were intentionally skipped.
+  - id: AC-6
+    result: PASS
+    evidence:
+      - >-
+        tests/e2e/responsive.spec.ts:12-32 runs in phone, tablet, and desktop,
+        checks document scrollWidth against clientWidth on both Start and
+        selection, and verifies each screen bounding box fits its viewport.
+      - >-
+        Final npm run test:e2e passed responsive coverage in all three required
+        viewport projects; only the duplicate reduced-motion responsive copy
+        was intentionally skipped.
+commandsRun:
+  - command: npm run typecheck
+    exitCode: 0
+    outputFile: /tmp/loops-e1-05-typecheck.log
+  - command: npx playwright test tests/e2e/gameplay.spec.ts tests/e2e/enhancements.spec.ts
+    exitCode: 0
+    outputFile: /tmp/loops-e1-05-targeted.log
+  - command: npm run test:e2e
+    exitCode: 1
+    outputFile: /tmp/loops-e1-05-test-e2e.log
+  - command: npm run test:e2e
+    exitCode: 0
+    outputFile: /tmp/loops-e1-05-test-e2e-final.log
+deviations:
+  - >-
+    The current production completion branch remounts the flow at the fresh
+    Start screen after Back to modes. The progression test follows that actual
+    path by activating Start before asserting persisted selection state.
+  - >-
+    The responsive scenario is intentionally skipped in the reduced-motion
+    project because AC-6 names phone, tablet, and desktop; reduced-motion has a
+    dedicated passing accessibility scenario. The final run therefore reports
+    44 passed and 4 expected skips.
+knownRisks:
+  - >-
+    The compatibility-only selectQuickPlayPuzzle export remains in production
+    state code, but no user-facing E2E helper or scenario invokes it; removing
+    that out-of-scope API belongs to production-flow ownership.
+  - >-
+    Command output files are stored under /tmp as requested by the existing
+    report convention and may not survive host cleanup; the exact commands and
+    final pass summary are recorded here for independent reproduction.
+handoffNotes: >-
+  All implementation changes are confined to the five assigned E2E files.
+  Reproduce with npm run typecheck and npm run test:e2e from the repository
+  root. The final browser run used the current Playwright config and reported
+  44 passed, 4 expected skips, and exit code 0.

@@ -1,9 +1,13 @@
 import { test, expect } from '@playwright/test';
-import { editableEdgeLocator, openModeSelection, startQuickPlay } from './helpers';
+import {
+  editableEdgeLocator,
+  openPuzzleSelection,
+  startSelectedPuzzle,
+} from './helpers';
 
-test('supports keyboard activation for an editable edge', async ({ page }) => {
-  await openModeSelection(page);
-  await startQuickPlay(page);
+test('supports keyboard activation for an editable edge in a selected puzzle', async ({ page }) => {
+  await openPuzzleSelection(page);
+  await startSelectedPuzzle(page);
 
   const edge = editableEdgeLocator(page).first();
   await edge.focus();
@@ -16,8 +20,8 @@ test('supports keyboard activation for an editable edge', async ({ page }) => {
 
 test('honors the reduced-motion browser preference', async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== 'reduced-motion', 'Runs in the reduced-motion project only.');
-  await openModeSelection(page);
-  await startQuickPlay(page);
+  await openPuzzleSelection(page);
+  await startSelectedPuzzle(page);
 
   const prefersReducedMotion = await page.evaluate(() => window.matchMedia('(prefers-reduced-motion: reduce)').matches);
   expect(prefersReducedMotion).toBe(true);

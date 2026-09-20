@@ -1,0 +1,88 @@
+{
+  "schemaVersion": "1.0",
+  "id": "loop-easy-catalog-easy-11",
+  "seed": "catalog-easy-11",
+  "generatorVersion": "pipeline-1.0.0",
+  "width": 5,
+  "height": 5,
+  "difficulty": "easy",
+  "clues": [
+    [
+      0,
+      0,
+      1,
+      2,
+      3
+    ],
+    [
+      0,
+      1,
+      3,
+      1,
+      2
+    ],
+    [
+      0,
+      0,
+      3,
+      2,
+      2
+    ],
+    [
+      0,
+      1,
+      2,
+      1,
+      2
+    ],
+    [
+      0,
+      1,
+      2,
+      1,
+      3
+    ]
+  ],
+  "solutionEdges": [
+    "v:4:5",
+    "h:5:4",
+    "h:5:3",
+    "h:5:2",
+    "v:4:2",
+    "v:3:2",
+    "h:3:2",
+    "v:2:3",
+    "h:2:2",
+    "v:1:2",
+    "h:1:2",
+    "h:1:3",
+    "v:0:4",
+    "h:0:4",
+    "v:0:5",
+    "v:1:5",
+    "h:2:4",
+    "v:2:4",
+    "v:3:4",
+    "h:4:4"
+  ],
+  "startingEdges": [
+    "h:1:2",
+    "h:1:3",
+    "v:3:2",
+    "v:3:4",
+    "v:4:2"
+  ],
+  "metadata": {
+    "loopLength": 20,
+    "complexityScore": 1,
+    "difficultyScore": 0.125,
+    "turnCount": 14,
+    "regionalCoverage": 5,
+    "startingEdgeRatio": 0.25,
+    "boundingBoxWidthRatio": 0.8,
+    "boundingBoxHeightRatio": 1,
+    "rowsUsed": 6,
+    "columnsUsed": 4,
+    "estimatedSolveTimeSeconds": 160
+  }
+}

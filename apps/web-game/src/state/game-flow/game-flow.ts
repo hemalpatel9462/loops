@@ -23,6 +23,7 @@ import { restoreGameStateFromProgress, toPlayerProgress } from '../persistence';
 import {
   getLocalPuzzleById,
   getLocalPuzzles,
+  getLocalPuzzleSequence,
 } from './puzzle-catalog';
 import type {
   CompletionStats,
@@ -32,7 +33,9 @@ import type {
   FlowProgressSummary,
   GameFlowSession,
   GameFlowSource,
+  PuzzleProgressionItem,
   PuzzleSelectionOptions,
+  SelectedPuzzleOptions,
 } from './types';
 
 function resolveRepository(dependencies?: FlowDependencies): PersistenceRepository {
@@ -70,6 +73,57 @@ export function selectDailyPuzzle(date: string): PuzzleDefinition {
   return puzzles[stableHash(`daily:${date}`) % puzzles.length];
 }
 
+function getPuzzleProgressionItem(
+  difficulty: Difficulty,
+  puzzleNumber: number,
+  dependencies: FlowDependencies = {},
+): PuzzleProgressionItem | undefined {
+  if (!Number.isInteger(puzzleNumber) || puzzleNumber < 1) return undefined;
+  const sequence = getLocalPuzzleSequence(difficulty);
+  const item = sequence[puzzleNumber - 1];
+  if (!item || item.number !== puzzleNumber) return undefined;
+
+  const repository = resolveRepository(dependencies);
+  const progress = repository.loadProgress(item.puzzle.id);
+  const previous = sequence[puzzleNumber - 2];
+  const previousProgress = previous ? repository.loadProgress(previous.puzzle.id) : undefined;
+  const status = puzzleNumber > 1 && !previousProgress?.completed
+    ? 'locked'
+    : progress?.completed
+      ? 'completed'
+      : progress
+        ? 'in-progress'
+        : 'available';
+
+  return Object.freeze({ ...item, status, ...(progress ? { progress } : {}) });
+}
+
+/** Return the numbered puzzles and persisted status for a difficulty. */
+export function getPuzzleSequence(
+  difficulty: Difficulty,
+  dependencies: FlowDependencies = {},
+): readonly PuzzleProgressionItem[] {
+  return Object.freeze(getLocalPuzzleSequence(difficulty)
+    .map((item) => getPuzzleProgressionItem(difficulty, item.number, dependencies)!)
+    .filter((item): item is PuzzleProgressionItem => Boolean(item)));
+}
+
+export function getPuzzleCount(difficulty: Difficulty): number {
+  return getLocalPuzzleSequence(difficulty).length;
+}
+
+export function getPuzzleStatus(
+  difficulty: Difficulty,
+  puzzleNumber: number,
+  dependencies: FlowDependencies = {},
+): PuzzleProgressionItem['status'] | undefined {
+  return getPuzzleProgressionItem(difficulty, puzzleNumber, dependencies)?.status;
+}
+
+/**
+ * @deprecated Compatibility-only helper for the non-user-facing puzzle-loader
+ * tests. User-facing flow uses getPuzzleSequence/startSelectedPuzzle.
+ */
 export function selectQuickPlayPuzzle(options: PuzzleSelectionOptions = {}): PuzzleDefinition {
   const puzzles = getLocalPuzzles(options.difficulty);
   if (puzzles.length === 0) {
@@ -131,9 +185,30 @@ function createSession(
   });
 }
 
-export function startQuickPlay(options: PuzzleSelectionOptions = {}): GameFlowSession {
-  const puzzle = selectQuickPlayPuzzle(options);
-  return createSession(puzzle, 'quick-play', options.mode ?? 'relaxed', options);
+/** Start a numbered puzzle, restoring any persisted attempt or completed solution. */
+export function startSelectedPuzzle(options: SelectedPuzzleOptions): GameFlowSession | undefined {
+  const progression = getPuzzleProgressionItem(options.difficulty, options.puzzleNumber, options);
+  if (!progression || progression.status === 'locked') return undefined;
+
+  if ((progression.status === 'in-progress' || progression.status === 'completed') && progression.progress) {
+    return createSession(
+      progression.puzzle,
+      'selected-puzzle',
+      progression.progress.mode,
+      options,
+      {
+        startedAt: progression.progress.startedAt ?? progression.progress.updatedAt,
+        elapsedSeconds: progression.progress.elapsedSeconds,
+        hintsUsed: progression.progress.hintsUsed,
+        checksUsed: progression.progress.checksUsed ?? 0,
+        restoreProgress: progression.progress,
+      },
+    );
+  }
+
+  const session = createSession(progression.puzzle, 'selected-puzzle', options.mode, options);
+  persistSession(session, resolveRepository(options), isoNow(options));
+  return session;
 }
 
 export function startDailyLoop(options: DailyLoopOptions = {}): GameFlowSession {
@@ -235,13 +310,6 @@ export function applyHintReveal(session: GameFlowSession, dependencies: FlowDepe
   if (!session.lastHint?.reveal) return session;
   const nextState = setEdgeState(session.gameState, session.lastHint.reveal.edge, session.lastHint.reveal.state as EdgeState);
   const next = Object.freeze({ ...session, gameState: nextState });
-  persistSession(next, resolveRepository(dependencies), isoNow(dependencies));
-  return next;
-}
-
-export function checkSessionProgress(session: GameFlowSession, dependencies: FlowDependencies = {}): GameFlowSession {
-  const validation = validateCompletion(session.puzzle, session.gameState);
-  const next = Object.freeze({ ...session, checksUsed: session.checksUsed + 1, lastValidation: validation });
   persistSession(next, resolveRepository(dependencies), isoNow(dependencies));
   return next;
 }

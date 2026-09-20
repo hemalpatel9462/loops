@@ -1,0 +1,61 @@
+schemaVersion: "1.0"
+artifactType: verification-report
+taskId: "E1-02-R1"
+verdict: PASS
+scopeReviewed:
+  - "apps/web-game/src/state/game-flow/types.ts"
+  - "apps/web-game/src/state/game-flow/game-flow.ts"
+  - "apps/web-game/src/state/game-flow/index.ts"
+  - "apps/web-game/src/state/game-flow/game-flow.test.ts"
+  - "apps/web-game/src/screens/ModeSelectionScreen.tsx"
+  - "apps/web-game/src/screens/GameFlowScreen.tsx"
+  - "apps/web-game/src/screens/types.ts"
+  - "apps/web-game/src/app/integration/GameIntegration.tsx"
+  - "apps/web-game/src/app/integration/puzzle-loader.ts"
+  - "apps/web-game/src/app/integration/index.ts"
+  - "apps/web-game/src/app/integration/integration.test.ts"
+  - "orchestration/runs/2026-09-18-enhancements-001/tasks/E1-02/remediation-1-brief.yaml"
+  - "orchestration/runs/2026-09-18-enhancements-001/tasks/E1-02/remediation-1-verification-brief.yaml"
+  - "orchestration/runs/2026-09-18-enhancements-001/tasks/E1-02/implementation-report-remediation-1.yaml"
+  - "orchestration/runs/2026-09-18-enhancements-001/tasks/E1-02/verification-report.yaml"
+  - "orchestration/schemas/verification-report.schema.json"
+acceptanceCriteria:
+  - id: RM-AC-1
+    verdict: PASS
+    evidence:
+      - "apps/web-game/src/state/game-flow/types.ts:13 defines GameFlowSource as selected-puzzle, daily-loop, and continue; quick-play is absent."
+      - "apps/web-game/src/screens/ModeSelectionScreen.tsx:54-57 renders only Daily Loop and Continue actions; no Quick Play action remains."
+      - "apps/web-game/src/screens/GameFlowScreen.tsx:3-8,35-53 imports and starts only Daily Loop/Continue flows; it has no Quick Play caller."
+      - "apps/web-game/src/app/integration/GameIntegration.tsx:3-7 no longer imports startQuickPlay, and :100-103 makes Play Again clear the session and return to the flow selection instead of starting Quick Play."
+      - "Independent rg search for startQuickPlay under apps/web-game/src returned no matches. The only remaining quick-play text is the compatibility seed at apps/web-game/src/state/game-flow/game-flow.ts:132, outside the active screen/application path."
+  - id: RM-AC-2
+    verdict: PASS
+    evidence:
+      - "apps/web-game/src/state/game-flow/game-flow.ts:102-120 exports getPuzzleSequence, getPuzzleCount, and getPuzzleStatus; :189-210 exports startSelectedPuzzle; :212-250 exports startDailyLoop, getContinueProgress, and resumeContinue."
+      - "apps/web-game/src/state/game-flow/index.ts:1-3 re-exports the types, catalog, and game-flow APIs, preserving their package-level availability."
+      - "apps/web-game/src/screens/GameFlowScreen.tsx:33-42 actively calls getContinueProgress, startDailyLoop, and resumeContinue; npm run typecheck passed for these consumers."
+      - "apps/web-game/src/state/game-flow/game-flow.test.ts:7-14 imports the selected-puzzle, Daily Loop, and Continue APIs, and the 9 game-flow tests passed in the fresh npm run test execution."
+      - "apps/web-game/src/state/game-flow/game-flow.ts:123-134 documents selectQuickPlayPuzzle as compatibility-only and non-user-facing. Its only non-test caller is apps/web-game/src/app/integration/puzzle-loader.ts:6,16-18; no active screen or GameIntegration caller imports that loader path."
+  - id: RM-AC-3
+    verdict: PASS
+    evidence:
+      - "npm run typecheck exited 0. Complete output: /Users/hemalpatel/Development/loops/orchestration/runs/2026-09-18-enhancements-001/tasks/E1-02/typecheck-output-remediation-1.txt"
+      - "npm run test exited 0. Complete output: /Users/hemalpatel/Development/loops/orchestration/runs/2026-09-18-enhancements-001/tasks/E1-02/test-output-remediation-1.txt; web-game reported 6 files and 23 tests passed, and all remaining workspace suites passed."
+      - "npm run build exited 0. Complete output: /Users/hemalpatel/Development/loops/orchestration/runs/2026-09-18-enhancements-001/tasks/E1-02/build-output-remediation-1.txt; Vite transformed 108 modules and completed the production build."
+checksPerformed:
+  - command: "npm run typecheck"
+    exitCode: 0
+    outputFile: "/Users/hemalpatel/Development/loops/orchestration/runs/2026-09-18-enhancements-001/tasks/E1-02/typecheck-output-remediation-1.txt"
+  - command: "npm run test"
+    exitCode: 0
+    outputFile: "/Users/hemalpatel/Development/loops/orchestration/runs/2026-09-18-enhancements-001/tasks/E1-02/test-output-remediation-1.txt"
+  - command: "npm run build"
+    exitCode: 0
+    outputFile: "/Users/hemalpatel/Development/loops/orchestration/runs/2026-09-18-enhancements-001/tasks/E1-02/build-output-remediation-1.txt"
+findings:
+  - severity: LOW
+    description: "Legacy Quick Play naming remains in the compatibility loader and its integration tests: apps/web-game/src/app/integration/index.ts:4 re-exports puzzle-loader, while puzzle-loader.ts:16-18 exposes loadQuickPlayPuzzle. No active screen or GameIntegration path calls it; the owning follow-up E1-05 is responsible for stale browser-helper migration."
+    file: "apps/web-game/src/app/integration/puzzle-loader.ts"
+    line: 16
+requiredRemediation: []
+conclusion: "PASS: RM-AC-1, RM-AC-2, and RM-AC-3 are independently satisfied. The live Quick Play UI/application callers and startQuickPlay API are removed, the selected-puzzle/Daily Loop/Continue APIs remain available and compile, and all required verification commands passed. The retained loader compatibility path is non-user-facing and is recorded as a low residual follow-up risk."

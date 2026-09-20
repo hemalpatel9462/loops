@@ -21,7 +21,6 @@ export interface ValidationFailure {
 export type ParseResult<T> = ValidationResult<T> | ValidationFailure;
 
 const MODES = new Set<GameplayMode>(['relaxed', 'assisted']);
-const THEMES = new Set(['system', 'light', 'dark']);
 const THICKNESSES = new Set<LineThickness>(['thin', 'standard', 'thick']);
 const DAILY_STATUSES = new Set(['not-started', 'in-progress', 'completed']);
 const DIFFICULTIES = ['beginner', 'easy', 'medium', 'hard', 'expert'] as const;
@@ -117,13 +116,11 @@ export function parseAppSettings(input: unknown): ParseResult<AppSettings> {
   const issues: string[] = [];
   if (!isRecord(input)) return { ok: false, issues: ['$: must be an object'] };
   hasOnlyKeys(input, new Set([
-    'schemaVersion', 'defaultMode', 'theme', 'highContrast', 'reducedMotion',
+    'schemaVersion', 'defaultMode', 'reducedMotion',
     'lineThickness', 'haptics', 'sound', 'tutorialCompleted', 'locale',
   ]), issues);
   if (input.schemaVersion !== '1.0') issues.push('schemaVersion: must equal 1.0');
   if (!MODES.has(input.defaultMode as GameplayMode)) issues.push('defaultMode: invalid gameplay mode');
-  if (!THEMES.has(input.theme as string)) issues.push('theme: invalid theme');
-  requireBoolean(input.highContrast, 'highContrast', issues);
   requireBoolean(input.reducedMotion, 'reducedMotion', issues);
   if (!THICKNESSES.has(input.lineThickness as LineThickness)) issues.push('lineThickness: invalid line thickness');
   requireBoolean(input.haptics, 'haptics', issues);
@@ -131,6 +128,18 @@ export function parseAppSettings(input: unknown): ParseResult<AppSettings> {
   requireBoolean(input.tutorialCompleted, 'tutorialCompleted', issues);
   if (input.locale !== undefined) requireString(input.locale, 'locale', issues, 2);
   return finish(input as unknown as AppSettings, issues);
+}
+
+/**
+ * Remove settings fields that were persisted by versions that supported
+ * appearance preferences before validating the remaining canonical record.
+ */
+export function normalizeLegacyAppSettings(input: unknown): unknown {
+  if (!isRecord(input)) return input;
+  const normalized = { ...input };
+  delete normalized.theme;
+  delete normalized.highContrast;
+  return normalized;
 }
 
 function parseDifficultyStats(value: unknown, path: string, issues: string[]): boolean {

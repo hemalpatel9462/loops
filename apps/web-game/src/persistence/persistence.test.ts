@@ -55,8 +55,20 @@ describe('local persistence repository', () => {
 
     expect(repository.getSettings()).toEqual(DEFAULT_SETTINGS);
     expect(repository.getStatistics()).toEqual(createDefaultStatistics());
-    repository.saveSettings({ ...DEFAULT_SETTINGS, highContrast: true });
+    repository.saveSettings({
+      ...DEFAULT_SETTINGS,
+      defaultMode: 'assisted',
+      reducedMotion: true,
+      sound: false,
+      locale: 'en-US',
+    });
     repository.saveStatistics(createDefaultStatistics());
+    expect(repository.getSettings()).toMatchObject({
+      defaultMode: 'assisted',
+      reducedMotion: true,
+      sound: false,
+      locale: 'en-US',
+    });
     repository.resetAll();
     expect(repository.loadSettings()).toBeUndefined();
     expect(repository.loadStatistics()).toBeUndefined();
@@ -71,6 +83,42 @@ describe('local persistence repository', () => {
 
     expect(repository.loadProgress(unfinishedProgress.puzzleId)).toBeUndefined();
     expect(storage.getItem(key)).toBeNull();
+  });
+
+  it('normalizes legacy appearance fields while preserving supported settings', () => {
+    const storage = new MemoryStorage();
+    const repository = createPersistenceRepository(storage);
+
+    storage.setItem(storageKeys.settings, JSON.stringify({
+      ...DEFAULT_SETTINGS,
+      defaultMode: 'assisted',
+      reducedMotion: true,
+      locale: 'en-US',
+      theme: 'dark',
+      highContrast: true,
+    }));
+
+    expect(repository.loadSettings()).toEqual({
+      ...DEFAULT_SETTINGS,
+      defaultMode: 'assisted',
+      reducedMotion: true,
+      locale: 'en-US',
+    });
+    expect(storage.getItem(storageKeys.settings)).not.toContain('theme');
+    expect(storage.getItem(storageKeys.settings)).not.toContain('highContrast');
+  });
+
+  it('rejects malformed canonical settings and removes them from storage', () => {
+    const storage = new MemoryStorage();
+    const repository = createPersistenceRepository(storage);
+
+    storage.setItem(storageKeys.settings, JSON.stringify({
+      ...DEFAULT_SETTINGS,
+      defaultMode: 'invalid',
+    }));
+
+    expect(repository.loadSettings()).toBeUndefined();
+    expect(storage.getItem(storageKeys.settings)).toBeNull();
   });
 });
 

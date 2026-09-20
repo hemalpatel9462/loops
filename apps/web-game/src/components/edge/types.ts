@@ -15,6 +15,7 @@ export interface EdgeSegmentProps {
   readonly edgeId: EdgeId;
   readonly geometry: EdgeGeometry;
   readonly state?: EdgeState;
+  readonly hintState?: Exclude<EdgeState, 'unknown'>;
   readonly fixed?: boolean;
   readonly onAction?: (edge: EdgeId, action: EdgeAction) => void;
 }

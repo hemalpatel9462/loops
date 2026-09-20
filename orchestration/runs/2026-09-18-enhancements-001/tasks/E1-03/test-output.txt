@@ -1,0 +1,130 @@
+
+> loops@0.1.0 test
+> npm run test --workspaces --if-present
+
+
+> @loops/web-game@0.1.0 test
+> vitest run
+
+
+ RUN  v3.2.7 /Users/hemalpatel/Development/loops/apps/web-game
+
+ ✓ src/smoke.test.ts (1 test) 1ms
+ ✓ src/components/tutorial/tutorial.test.ts (2 tests) 2ms
+ ✓ src/accessibility/accessibility.test.ts (1 test) 2ms
+ ✓ src/persistence/persistence.test.ts (7 tests) 6ms
+ ✓ src/app/integration/integration.test.ts (3 tests) 26ms
+ ✓ src/state/game-flow/game-flow.test.ts (9 tests) 315ms
+
+ Test Files  6 passed (6)
+      Tests  23 passed (23)
+   Start at  16:27:28
+   Duration  993ms (transform 440ms, setup 0ms, collect 1.07s, tests 352ms, environment 1ms, prepare 565ms)
+
+
+> @loops/game-engine@0.1.0 test
+> vitest run --config model/vitest.config.ts && vitest run --config validation/vitest.config.ts && vitest run --config hints/vitest.config.ts
+
+
+ RUN  v3.2.7 /Users/hemalpatel/Development/loops/packages/game-engine
+
+ ✓ model/edge-state.test.ts (1 test) 2ms
+ ✓ state/game-state.test.ts (5 tests) 4ms
+
+ Test Files  2 passed (2)
+      Tests  6 passed (6)
+   Start at  16:27:30
+   Duration  316ms (transform 80ms, setup 0ms, collect 116ms, tests 6ms, environment 0ms, prepare 109ms)
+
+
+ RUN  v3.2.7 /Users/hemalpatel/Development/loops/packages/game-engine
+
+ ✓ validation/validator.test.ts (4 tests) 11ms
+
+ Test Files  1 passed (1)
+      Tests  4 passed (4)
+   Start at  16:27:30
+   Duration  305ms (transform 70ms, setup 0ms, collect 95ms, tests 11ms, environment 0ms, prepare 48ms)
+
+
+ RUN  v3.2.7 /Users/hemalpatel/Development/loops/packages/game-engine
+
+ ✓ hints/hint-engine.test.ts (4 tests) 23ms
+
+ Test Files  1 passed (1)
+      Tests  4 passed (4)
+   Start at  16:27:31
+   Duration  327ms (transform 59ms, setup 0ms, collect 79ms, tests 23ms, environment 0ms, prepare 50ms)
+
+
+> @loops/puzzle-format@0.1.0 test
+> vitest run --config vitest.config.ts
+
+
+ RUN  v3.2.7 /Users/hemalpatel/Development/loops/packages/puzzle-format
+
+ ✓ src/codecs.test.ts (5 tests) 3ms
+ ✓ src/schema-validation.test.ts (2 tests) 2ms
+
+ Test Files  2 passed (2)
+      Tests  7 passed (7)
+   Start at  16:27:31
+   Duration  273ms (transform 64ms, setup 0ms, collect 100ms, tests 5ms, environment 0ms, prepare 92ms)
+
+
+> @loops/catalog-builder@0.1.0 test
+> vitest run --config vitest.config.ts
+
+
+ RUN  v3.2.7 /Users/hemalpatel/Development/loops/tools/catalog-builder
+
+ ✓ src/catalog-builder.test.ts (3 tests) 7ms
+
+ Test Files  1 passed (1)
+      Tests  3 passed (3)
+   Start at  16:27:32
+   Duration  355ms (transform 85ms, setup 0ms, collect 121ms, tests 7ms, environment 0ms, prepare 45ms)
+
+
+> @loops/puzzle-analyzer@0.1.0 test
+> vitest run --config vitest.config.ts
+
+
+ RUN  v3.2.7 /Users/hemalpatel/Development/loops/tools/puzzle-analyzer
+
+ ✓ src/analyzer.test.ts (4 tests) 5ms
+
+ Test Files  1 passed (1)
+      Tests  4 passed (4)
+   Start at  16:27:33
+   Duration  266ms (transform 35ms, setup 0ms, collect 47ms, tests 5ms, environment 0ms, prepare 39ms)
+
+
+> @loops/puzzle-generator@0.1.0 test
+> vitest run --config vitest.config.ts
+
+
+ RUN  v3.2.7 /Users/hemalpatel/Development/loops/tools/puzzle-generator
+
+ ✓ src/generator.test.ts (4 tests) 29ms
+
+ Test Files  1 passed (1)
+      Tests  4 passed (4)
+   Start at  16:27:33
+   Duration  336ms (transform 62ms, setup 0ms, collect 84ms, tests 29ms, environment 0ms, prepare 46ms)
+
+
+> @loops/puzzle-validator@0.1.0 test
+> vitest run --config vitest.config.ts
+
+
+ RUN  v3.2.7 /Users/hemalpatel/Development/loops/tools/puzzle-validator
+
+ ✓ solver/solver.test.ts (5 tests) 15ms
+ ✓ solver/remediation.test.ts (3 tests) 6ms
+
+ Test Files  2 passed (2)
+      Tests  8 passed (8)
+   Start at  16:27:34
+   Duration  283ms (transform 63ms, setup 0ms, collect 80ms, tests 21ms, environment 0ms, prepare 98ms)
+

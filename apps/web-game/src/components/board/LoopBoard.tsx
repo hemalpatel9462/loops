@@ -46,6 +46,7 @@ export function LoopBoard({
   clues,
   edgeStates,
   fixedEdges = [],
+  hint,
   onEdgeAction,
   ariaLabel = 'Loops puzzle board',
   className = '',
@@ -103,6 +104,7 @@ export function LoopBoard({
                 edgeId={edge}
                 fixed={fixed.has(edge)}
                 geometry={edgeGeometry(edge)}
+                hintState={hint?.edge === edge ? hint.state : undefined}
                 key={edge}
                 onAction={onEdgeAction}
                 state={edgeState(edgeStates, edge)}

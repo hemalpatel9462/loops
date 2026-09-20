@@ -9,8 +9,6 @@ import type {
 export const DEFAULT_SETTINGS: AppSettings = Object.freeze({
   schemaVersion: '1.0',
   defaultMode: 'relaxed',
-  theme: 'system',
-  highContrast: false,
   reducedMotion: false,
   lineThickness: 'standard',
   haptics: true,
