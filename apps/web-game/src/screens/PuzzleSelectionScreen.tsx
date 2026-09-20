@@ -1,9 +1,17 @@
 import type { Difficulty } from '@loops/puzzle-format';
+import { Crown, Flame, Leaf, Mountain, Sprout } from 'lucide-react';
 import type { PuzzleSelectionProps } from './types';
 import { PUZZLE_SLOT_COUNT } from './puzzle-constants';
 import './screens.css';
 
 const difficulties: readonly Difficulty[] = ['beginner', 'easy', 'medium', 'hard', 'expert'];
+const difficultyIcons = {
+  beginner: Sprout,
+  easy: Leaf,
+  medium: Mountain,
+  hard: Flame,
+  expert: Crown,
+} as const;
 
 function titleCase(value: string): string {
   return value[0].toUpperCase() + value.slice(1);
@@ -39,6 +47,7 @@ export function PuzzleSelectionScreen({
       <fieldset aria-label="Difficulty" className="flow-picker">
         <div className="flow-picker__options">
           {difficulties.map((difficulty) => {
+            const Icon = difficultyIcons[difficulty];
             return (
               <button
                 aria-pressed={selectedDifficulty === difficulty}
@@ -47,6 +56,7 @@ export function PuzzleSelectionScreen({
                 onClick={() => onDifficultyChange(difficulty)}
                 type="button"
               >
+                <Icon aria-hidden="true" size={20} strokeWidth={2} />
                 <span>{titleCase(difficulty)}</span>
               </button>
             );

@@ -22,7 +22,7 @@
 .flow-screen--selection { gap: .7rem; padding: clamp(1rem, 3vw, 2rem); }
 .flow-screen--selection .flow-picker { gap: .55rem; }
 .flow-screen--selection .flow-picker__options { gap: .45rem; }
-.flow-screen--selection .flow-choice { padding: .55rem .75rem; }
+.flow-screen--selection .flow-choice { padding: .55rem .45rem; }
 .flow-screen--selection .flow-picker--puzzles { gap: .65rem; }
 .flow-screen--selection .puzzle-list { gap: .45rem; }
 .flow-screen--selection .puzzle-choice { padding: .6rem .75rem; }
@@ -30,7 +30,7 @@
 .flow-picker { display: grid; gap: .75rem; padding: 0; border: 0; }
 .flow-picker legend { margin-bottom: .25rem; font-weight: 700; }
 .flow-picker__options { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: .45rem; }
-.flow-choice { display: grid; flex: 1 1 7.5rem; gap: .2rem; min-width: 0; padding: .7rem .9rem; color: inherit; background: transparent; border: 1px solid color-mix(in srgb, currentColor 22%, transparent); border-radius: .8rem; cursor: pointer; text-align: left; }
+.flow-choice { display: grid; flex: 1 1 7.5rem; justify-items: center; gap: .35rem; min-width: 0; padding: .7rem .9rem; color: inherit; background: transparent; border: 1px solid color-mix(in srgb, currentColor 22%, transparent); border-radius: .8rem; cursor: pointer; text-align: center; }
 .flow-choice[aria-pressed="true"] { color: #fff; background: var(--color-accent, #087f75); border-color: var(--color-accent, #087f75); }
 .flow-actions { display: flex; flex-wrap: wrap; gap: .75rem; }
 .flow-actions--primary { margin-top: .5rem; }
@@ -59,7 +59,8 @@
   .flow-screen__header { gap: .5rem; }
   .flow-screen__header h1 { font-size: clamp(1.5rem, 7vw, 2rem); }
   .flow-screen__help { padding-inline: .7rem; font-size: .75rem; }
-  .flow-choice { padding-inline: .35rem; font-size: .8rem; }
+  .flow-screen--selection .flow-picker__options { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .flow-screen--selection .flow-choice { padding-inline: .35rem; font-size: .8rem; }
   .flow-actions .button { width: 100%; }
   .flow-start { width: 100%; }
 }
