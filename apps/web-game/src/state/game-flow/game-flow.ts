@@ -21,6 +21,7 @@ import {
 import type { PersistenceRepository } from '../../persistence';
 import { restoreGameStateFromProgress, toPlayerProgress } from '../persistence';
 import {
+  getDailyPuzzle,
   getLocalPuzzleById,
   getLocalPuzzles,
   getLocalPuzzleSequence,
@@ -28,6 +29,7 @@ import {
 import type {
   CompletionStats,
   ContinueOptions,
+  DailyLoopPuzzleOption,
   DailyLoopOptions,
   FlowDependencies,
   FlowProgressSummary,
@@ -50,14 +52,14 @@ function isoNow(dependencies?: FlowDependencies): string {
   return resolveNow(dependencies).toISOString();
 }
 
-function dateKey(value: Date): string {
+export function getDailyDateKey(value: Date): string {
   const year = value.getFullYear();
   const month = `${value.getMonth() + 1}`.padStart(2, '0');
   const day = `${value.getDate()}`.padStart(2, '0');
   return `${year}-${month}-${day}`;
 }
 
-/** Stable, small string hash used for offline Daily Loop selection. */
+/** Stable, small string hash retained for compatibility-only puzzle selection. */
 export function stableHash(value: string): number {
   let hash = 2166136261;
   for (let index = 0; index < value.length; index += 1) {
@@ -67,10 +69,8 @@ export function stableHash(value: string): number {
   return hash >>> 0;
 }
 
-export function selectDailyPuzzle(date: string): PuzzleDefinition {
-  const puzzles = getLocalPuzzles();
-  if (puzzles.length === 0) throw new Error('No validated local puzzles are available.');
-  return puzzles[stableHash(`daily:${date}`) % puzzles.length];
+export function selectDailyPuzzle(date: string, difficulty: Difficulty): PuzzleDefinition | undefined {
+  return getDailyPuzzle(date, difficulty);
 }
 
 function getPuzzleProgressionItem(
@@ -154,7 +154,7 @@ function createSession(
   source: GameFlowSource,
   mode: GameplayMode,
   dependencies: FlowDependencies = {},
-  extra: { readonly startedAt?: string; readonly elapsedSeconds?: number; readonly hintsUsed?: number; readonly checksUsed?: number; readonly dailyDate?: string; readonly restoreProgress?: Parameters<typeof restoreGameStateFromProgress>[0] } = {},
+  extra: { readonly startedAt?: string; readonly elapsedSeconds?: number; readonly hintsUsed?: number; readonly checksUsed?: number; readonly dailyDate?: string; readonly dailyDifficulty?: Difficulty; readonly restoreProgress?: Parameters<typeof restoreGameStateFromProgress>[0] } = {},
 ): GameFlowSession {
   const repository = resolveRepository(dependencies);
   const startedAt = extra.startedAt ?? isoNow(dependencies);
@@ -182,6 +182,7 @@ function createSession(
     checksUsed: extra.checksUsed ?? 0,
     completed: Boolean(extra.restoreProgress?.completed),
     ...(extra.dailyDate ? { dailyDate: extra.dailyDate } : {}),
+    ...(extra.dailyDifficulty ? { dailyDifficulty: extra.dailyDifficulty } : {}),
   });
 }
 
@@ -213,17 +214,53 @@ export function startSelectedPuzzle(options: SelectedPuzzleOptions): GameFlowSes
 
 export function startDailyLoop(options: DailyLoopOptions = {}): GameFlowSession {
   const now = resolveNow(options);
-  const date = options.date ?? dateKey(now);
-  const puzzle = selectDailyPuzzle(date);
+  const date = options.date ?? getDailyDateKey(now);
+  const difficulty = options.difficulty ?? 'beginner';
+  const puzzle = selectDailyPuzzle(date, difficulty);
+  if (!puzzle) throw new Error(`No Daily Loop puzzle is scheduled for ${date}/${difficulty}.`);
   const repository = resolveRepository(options);
-  const current = repository.loadDailyState(date) ?? createDefaultDailyState(date, `daily:${date}`, puzzle.id);
+  const seed = `daily:${date}:${difficulty}`;
+  const current = repository.loadDailyState(date, difficulty);
+  const previous = current?.puzzleId === puzzle.id
+    ? current
+    : createDefaultDailyState(date, difficulty, seed, puzzle.id);
   repository.saveDailyState({
-    ...current,
+    ...previous,
+    difficulty,
     puzzleId: puzzle.id,
-    seed: `daily:${date}`,
-    status: current.status === 'completed' ? 'completed' : 'in-progress',
+    seed,
+    status: previous.status === 'completed' ? 'completed' : 'in-progress',
   });
-  return createSession(puzzle, 'daily-loop', options.mode ?? 'relaxed', options, { dailyDate: date });
+  const dailyProgress = repository.loadDailyProgress(date, difficulty);
+  const session = createSession(puzzle, 'daily-loop', dailyProgress?.mode ?? options.mode ?? 'relaxed', options, {
+    dailyDate: date,
+    dailyDifficulty: difficulty,
+    startedAt: dailyProgress?.startedAt ?? dailyProgress?.updatedAt,
+    elapsedSeconds: dailyProgress?.elapsedSeconds,
+    hintsUsed: dailyProgress?.hintsUsed,
+    checksUsed: dailyProgress?.checksUsed,
+    restoreProgress: dailyProgress?.puzzleId === puzzle.id ? dailyProgress : undefined,
+  });
+  if (!dailyProgress || dailyProgress.puzzleId !== puzzle.id) {
+    persistSession(session, repository, isoNow(options));
+  }
+  return session;
+}
+
+export function getDailyLoopPuzzles(
+  date: string,
+  dependencies: FlowDependencies = {},
+): readonly DailyLoopPuzzleOption[] {
+  const repository = resolveRepository(dependencies);
+  return Object.freeze((['beginner', 'easy', 'medium', 'hard', 'expert'] as const).map((difficulty) => {
+    const puzzle = selectDailyPuzzle(date, difficulty);
+    const state = repository.loadDailyState(date, difficulty);
+    return Object.freeze({
+      difficulty,
+      puzzle,
+      status: state && puzzle && state.puzzleId === puzzle.id ? state.status : 'not-started',
+    });
+  }));
 }
 
 export function getContinueProgress(options: ContinueOptions = {}): FlowProgressSummary | undefined {
@@ -247,13 +284,15 @@ export function resumeContinue(options: ContinueOptions = {}): GameFlowSession |
       elapsedSeconds: summary.progress.elapsedSeconds,
       hintsUsed: summary.progress.hintsUsed,
       checksUsed: summary.progress.checksUsed ?? 0,
+      dailyDate: summary.progress.dailyDate,
+      dailyDifficulty: summary.progress.dailyDifficulty,
       restoreProgress: summary.progress,
     },
   );
 }
 
 function persistSession(session: GameFlowSession, repository: PersistenceRepository, updatedAt: string): void {
-  repository.saveContinue(toPlayerProgress({
+  const progress = toPlayerProgress({
     puzzleId: session.puzzle.id,
     mode: session.mode,
     edgeStates: session.gameState.edgeStates,
@@ -263,8 +302,15 @@ function persistSession(session: GameFlowSession, repository: PersistenceReposit
     completed: session.completed,
     startedAt: session.startedAt,
     completedAt: session.completion?.completedAt,
+    dailyDate: session.dailyDate,
+    dailyDifficulty: session.dailyDifficulty,
     updatedAt,
-  }));
+  });
+  if (session.dailyDate && session.dailyDifficulty) {
+    repository.saveDailyProgress(session.dailyDate, session.dailyDifficulty, progress);
+  } else {
+    repository.saveContinue(progress);
+  }
 }
 
 export function updateElapsedTime(session: GameFlowSession, elapsedSeconds: number, dependencies: FlowDependencies = {}): GameFlowSession {
@@ -366,7 +412,7 @@ export function completeSession(session: GameFlowSession, dependencies: FlowDepe
   const next = Object.freeze({ ...session, completed: true, completion, lastValidation: validation });
   const repository = resolveRepository(dependencies);
   recordCompletion(repository, session, completion);
-  repository.saveProgress(toPlayerProgress({
+  const progress = toPlayerProgress({
     puzzleId: session.puzzle.id,
     mode: session.mode,
     edgeStates: session.gameState.edgeStates,
@@ -376,13 +422,22 @@ export function completeSession(session: GameFlowSession, dependencies: FlowDepe
     completed: true,
     startedAt: session.startedAt,
     completedAt,
+    dailyDate: session.dailyDate,
+    dailyDifficulty: session.dailyDifficulty,
     updatedAt: completedAt,
-  }));
-  repository.clearContinue();
+  });
+  if (session.dailyDate && session.dailyDifficulty) {
+    repository.saveDailyProgress(session.dailyDate, session.dailyDifficulty, progress);
+  } else {
+    repository.saveProgress(progress);
+    repository.clearContinue();
+  }
   if (session.dailyDate) {
-    const previous = repository.loadDailyState(session.dailyDate) ?? createDefaultDailyState(session.dailyDate, `daily:${session.dailyDate}`, session.puzzle.id);
+    const difficulty = session.dailyDifficulty ?? session.puzzle.difficulty;
+    const previous = repository.loadDailyState(session.dailyDate, difficulty) ?? createDefaultDailyState(session.dailyDate, difficulty, `daily:${session.dailyDate}:${difficulty}`, session.puzzle.id);
     repository.saveDailyState({
       ...previous,
+      difficulty,
       puzzleId: session.puzzle.id,
       status: 'completed',
       completedAt,

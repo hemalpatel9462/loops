@@ -14,6 +14,7 @@
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "generate:test-candidates": "node --experimental-strip-types src/cli.ts",
     "generate": "vite-node --config pipeline/vite.config.ts pipeline/cli.ts",
+    "generate:daily": "vite-node --config pipeline/vite.config.ts pipeline/generate-daily-pack.ts",
     "validate:puzzles": "vite-node --config pipeline/vite.config.ts pipeline/validate-cli.ts"
   },
   "dependencies": {

@@ -1,0 +1,326 @@
+{
+  "schemaVersion": "1.0",
+  "catalogVersion": "1.0.0",
+  "days": [
+    {
+      "date": "2026-09-18",
+      "puzzles": {
+        "beginner": "loop-beginner-catalog-beginner-0",
+        "easy": "loop-easy-catalog-easy-0",
+        "medium": "loop-medium-catalog-medium-0",
+        "hard": "loop-hard-catalog-hard-0",
+        "expert": "loop-expert-catalog-expert-0"
+      }
+    },
+    {
+      "date": "2026-09-21",
+      "puzzles": {
+        "beginner": "loop-beginner-catalog-beginner-1",
+        "easy": "loop-easy-catalog-easy-1",
+        "medium": "loop-medium-catalog-medium-1",
+        "hard": "loop-hard-catalog-hard-1",
+        "expert": "loop-expert-catalog-expert-1"
+      }
+    },
+    {
+      "date": "2026-09-22",
+      "puzzles": {
+        "beginner": "loop-beginner-daily-2026-09-22-beginner",
+        "easy": "loop-easy-daily-2026-09-22-easy",
+        "medium": "loop-medium-daily-2026-09-22-medium",
+        "hard": "loop-hard-daily-2026-09-22-hard",
+        "expert": "loop-expert-daily-2026-09-22-expert"
+      }
+    },
+    {
+      "date": "2026-09-23",
+      "puzzles": {
+        "beginner": "loop-beginner-daily-2026-09-23-beginner",
+        "easy": "loop-easy-daily-2026-09-23-easy",
+        "medium": "loop-medium-daily-2026-09-23-medium",
+        "hard": "loop-hard-daily-2026-09-23-hard",
+        "expert": "loop-expert-daily-2026-09-23-expert"
+      }
+    },
+    {
+      "date": "2026-09-24",
+      "puzzles": {
+        "beginner": "loop-beginner-daily-2026-09-24-beginner",
+        "easy": "loop-easy-daily-2026-09-24-easy",
+        "medium": "loop-medium-daily-2026-09-24-medium",
+        "hard": "loop-hard-daily-2026-09-24-hard",
+        "expert": "loop-expert-daily-2026-09-24-expert"
+      }
+    },
+    {
+      "date": "2026-09-25",
+      "puzzles": {
+        "beginner": "loop-beginner-daily-2026-09-25-beginner",
+        "easy": "loop-easy-daily-2026-09-25-easy",
+        "medium": "loop-medium-daily-2026-09-25-medium",
+        "hard": "loop-hard-daily-2026-09-25-hard",
+        "expert": "loop-expert-daily-2026-09-25-expert"
+      }
+    },
+    {
+      "date": "2026-09-26",
+      "puzzles": {
+        "beginner": "loop-beginner-daily-2026-09-26-beginner",
+        "easy": "loop-easy-daily-2026-09-26-easy",
+        "medium": "loop-medium-daily-2026-09-26-medium",
+        "hard": "loop-hard-daily-2026-09-26-hard",
+        "expert": "loop-expert-daily-2026-09-26-expert"
+      }
+    },
+    {
+      "date": "2026-09-27",
+      "puzzles": {
+        "beginner": "loop-beginner-daily-2026-09-27-beginner",
+        "easy": "loop-easy-daily-2026-09-27-easy",
+        "medium": "loop-medium-daily-2026-09-27-medium",
+        "hard": "loop-hard-daily-2026-09-27-hard",
+        "expert": "loop-expert-daily-2026-09-27-expert"
+      }
+    },
+    {
+      "date": "2026-09-28",
+      "puzzles": {
+        "beginner": "loop-beginner-daily-2026-09-28-beginner",
+        "easy": "loop-easy-daily-2026-09-28-easy",
+        "medium": "loop-medium-daily-2026-09-28-medium",
+        "hard": "loop-hard-daily-2026-09-28-hard",
+        "expert": "loop-expert-daily-2026-09-28-expert"
+      }
+    },
+    {
+      "date": "2026-09-29",
+      "puzzles": {
+        "beginner": "loop-beginner-daily-2026-09-29-beginner",
+        "easy": "loop-easy-daily-2026-09-29-easy",
+        "medium": "loop-medium-daily-2026-09-29-medium",
+        "hard": "loop-hard-daily-2026-09-29-hard",
+        "expert": "loop-expert-daily-2026-09-29-expert"
+      }
+    },
+    {
+      "date": "2026-09-30",
+      "puzzles": {
+        "beginner": "loop-beginner-daily-2026-09-30-beginner",
+        "easy": "loop-easy-daily-2026-09-30-easy",
+        "medium": "loop-medium-daily-2026-09-30-medium",
+        "hard": "loop-hard-daily-2026-09-30-hard",
+        "expert": "loop-expert-daily-2026-09-30-expert"
+      }
+    },
+    {
+      "date": "2026-10-01",
+      "puzzles": {
+        "beginner": "loop-beginner-daily-2026-10-01-beginner",
+        "easy": "loop-easy-daily-2026-10-01-easy",
+        "medium": "loop-medium-daily-2026-10-01-medium",
+        "hard": "loop-hard-daily-2026-10-01-hard",
+        "expert": "loop-expert-daily-2026-10-01-expert"
+      }
+    },
+    {
+      "date": "2026-10-02",
+      "puzzles": {
+        "beginner": "loop-beginner-daily-2026-10-02-beginner",
+        "easy": "loop-easy-daily-2026-10-02-easy",
+        "medium": "loop-medium-daily-2026-10-02-medium",
+        "hard": "loop-hard-daily-2026-10-02-hard",
+        "expert": "loop-expert-daily-2026-10-02-expert"
+      }
+    },
+    {
+      "date": "2026-10-03",
+      "puzzles": {
+        "beginner": "loop-beginner-daily-2026-10-03-beginner",
+        "easy": "loop-easy-daily-2026-10-03-easy",
+        "medium": "loop-medium-daily-2026-10-03-medium",
+        "hard": "loop-hard-daily-2026-10-03-hard",
+        "expert": "loop-expert-daily-2026-10-03-expert"
+      }
+    },
+    {
+      "date": "2026-10-04",
+      "puzzles": {
+        "beginner": "loop-beginner-daily-2026-10-04-beginner",
+        "easy": "loop-easy-daily-2026-10-04-easy",
+        "medium": "loop-medium-daily-2026-10-04-medium",
+        "hard": "loop-hard-daily-2026-10-04-hard",
+        "expert": "loop-expert-daily-2026-10-04-expert"
+      }
+    },
+    {
+      "date": "2026-10-05",
+      "puzzles": {
+        "beginner": "loop-beginner-daily-2026-10-05-beginner",
+        "easy": "loop-easy-daily-2026-10-05-easy",
+        "medium": "loop-medium-daily-2026-10-05-medium",
+        "hard": "loop-hard-daily-2026-10-05-hard",
+        "expert": "loop-expert-daily-2026-10-05-expert"
+      }
+    },
+    {
+      "date": "2026-10-06",
+      "puzzles": {
+        "beginner": "loop-beginner-daily-2026-10-06-beginner",
+        "easy": "loop-easy-daily-2026-10-06-easy",
+        "medium": "loop-medium-daily-2026-10-06-medium",
+        "hard": "loop-hard-daily-2026-10-06-hard",
+        "expert": "loop-expert-daily-2026-10-06-expert"
+      }
+    },
+    {
+      "date": "2026-10-07",
+      "puzzles": {
+        "beginner": "loop-beginner-daily-2026-10-07-beginner",
+        "easy": "loop-easy-daily-2026-10-07-easy",
+        "medium": "loop-medium-daily-2026-10-07-medium",
+        "hard": "loop-hard-daily-2026-10-07-hard",
+        "expert": "loop-expert-daily-2026-10-07-expert"
+      }
+    },
+    {
+      "date": "2026-10-08",
+      "puzzles": {
+        "beginner": "loop-beginner-daily-2026-10-08-beginner",
+        "easy": "loop-easy-daily-2026-10-08-easy",
+        "medium": "loop-medium-daily-2026-10-08-medium",
+        "hard": "loop-hard-daily-2026-10-08-hard",
+        "expert": "loop-expert-daily-2026-10-08-expert"
+      }
+    },
+    {
+      "date": "2026-10-09",
+      "puzzles": {
+        "beginner": "loop-beginner-daily-2026-10-09-beginner",
+        "easy": "loop-easy-daily-2026-10-09-easy",
+        "medium": "loop-medium-daily-2026-10-09-medium",
+        "hard": "loop-hard-daily-2026-10-09-hard",
+        "expert": "loop-expert-daily-2026-10-09-expert"
+      }
+    },
+    {
+      "date": "2026-10-10",
+      "puzzles": {
+        "beginner": "loop-beginner-daily-2026-10-10-beginner",
+        "easy": "loop-easy-daily-2026-10-10-easy",
+        "medium": "loop-medium-daily-2026-10-10-medium",
+        "hard": "loop-hard-daily-2026-10-10-hard",
+        "expert": "loop-expert-daily-2026-10-10-expert"
+      }
+    },
+    {
+      "date": "2026-10-11",
+      "puzzles": {
+        "beginner": "loop-beginner-daily-2026-10-11-beginner",
+        "easy": "loop-easy-daily-2026-10-11-easy",
+        "medium": "loop-medium-daily-2026-10-11-medium",
+        "hard": "loop-hard-daily-2026-10-11-hard",
+        "expert": "loop-expert-daily-2026-10-11-expert"
+      }
+    },
+    {
+      "date": "2026-10-12",
+      "puzzles": {
+        "beginner": "loop-beginner-daily-2026-10-12-beginner",
+        "easy": "loop-easy-daily-2026-10-12-easy",
+        "medium": "loop-medium-daily-2026-10-12-medium",
+        "hard": "loop-hard-daily-2026-10-12-hard",
+        "expert": "loop-expert-daily-2026-10-12-expert"
+      }
+    },
+    {
+      "date": "2026-10-13",
+      "puzzles": {
+        "beginner": "loop-beginner-daily-2026-10-13-beginner",
+        "easy": "loop-easy-daily-2026-10-13-easy",
+        "medium": "loop-medium-daily-2026-10-13-medium",
+        "hard": "loop-hard-daily-2026-10-13-hard",
+        "expert": "loop-expert-daily-2026-10-13-expert"
+      }
+    },
+    {
+      "date": "2026-10-14",
+      "puzzles": {
+        "beginner": "loop-beginner-daily-2026-10-14-beginner",
+        "easy": "loop-easy-daily-2026-10-14-easy",
+        "medium": "loop-medium-daily-2026-10-14-medium",
+        "hard": "loop-hard-daily-2026-10-14-hard",
+        "expert": "loop-expert-daily-2026-10-14-expert"
+      }
+    },
+    {
+      "date": "2026-10-15",
+      "puzzles": {
+        "beginner": "loop-beginner-daily-2026-10-15-beginner",
+        "easy": "loop-easy-daily-2026-10-15-easy",
+        "medium": "loop-medium-daily-2026-10-15-medium",
+        "hard": "loop-hard-daily-2026-10-15-hard",
+        "expert": "loop-expert-daily-2026-10-15-expert"
+      }
+    },
+    {
+      "date": "2026-10-16",
+      "puzzles": {
+        "beginner": "loop-beginner-daily-2026-10-16-beginner",
+        "easy": "loop-easy-daily-2026-10-16-easy",
+        "medium": "loop-medium-daily-2026-10-16-medium",
+        "hard": "loop-hard-daily-2026-10-16-hard",
+        "expert": "loop-expert-daily-2026-10-16-expert"
+      }
+    },
+    {
+      "date": "2026-10-17",
+      "puzzles": {
+        "beginner": "loop-beginner-daily-2026-10-17-beginner",
+        "easy": "loop-easy-daily-2026-10-17-easy",
+        "medium": "loop-medium-daily-2026-10-17-medium",
+        "hard": "loop-hard-daily-2026-10-17-hard",
+        "expert": "loop-expert-daily-2026-10-17-expert"
+      }
+    },
+    {
+      "date": "2026-10-18",
+      "puzzles": {
+        "beginner": "loop-beginner-daily-2026-10-18-beginner",
+        "easy": "loop-easy-daily-2026-10-18-easy",
+        "medium": "loop-medium-daily-2026-10-18-medium",
+        "hard": "loop-hard-daily-2026-10-18-hard",
+        "expert": "loop-expert-daily-2026-10-18-expert"
+      }
+    },
+    {
+      "date": "2026-10-19",
+      "puzzles": {
+        "beginner": "loop-beginner-daily-2026-10-19-beginner",
+        "easy": "loop-easy-daily-2026-10-19-easy",
+        "medium": "loop-medium-daily-2026-10-19-medium",
+        "hard": "loop-hard-daily-2026-10-19-hard",
+        "expert": "loop-expert-daily-2026-10-19-expert"
+      }
+    },
+    {
+      "date": "2026-10-20",
+      "puzzles": {
+        "beginner": "loop-beginner-daily-2026-10-20-beginner",
+        "easy": "loop-easy-daily-2026-10-20-easy",
+        "medium": "loop-medium-daily-2026-10-20-medium",
+        "hard": "loop-hard-daily-2026-10-20-hard",
+        "expert": "loop-expert-daily-2026-10-20-expert"
+      }
+    },
+    {
+      "date": "2026-10-21",
+      "puzzles": {
+        "beginner": "loop-beginner-daily-2026-10-21-beginner",
+        "easy": "loop-easy-daily-2026-10-21-easy",
+        "medium": "loop-medium-daily-2026-10-21-medium",
+        "hard": "loop-hard-daily-2026-10-21-hard",
+        "expert": "loop-expert-daily-2026-10-21-expert"
+      }
+    }
+  ]
+}

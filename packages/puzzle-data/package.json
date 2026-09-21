@@ -5,7 +5,9 @@
   "type": "module",
   "exports": {
     "./catalog.json": "./catalog.json",
-    "./puzzles/*": "./puzzles/*"
+    "./daily-catalog.json": "./daily-catalog.json",
+    "./puzzles/*": "./puzzles/*",
+    "./daily-puzzles/*": "./daily-puzzles/*"
   },
-  "files": ["catalog.json", "puzzles"]
+  "files": ["catalog.json", "daily-catalog.json", "puzzles", "daily-puzzles"]
 }

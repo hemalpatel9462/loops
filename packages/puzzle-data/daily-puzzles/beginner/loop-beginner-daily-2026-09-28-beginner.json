@@ -1,0 +1,81 @@
+{
+  "schemaVersion": "1.0",
+  "id": "loop-beginner-daily-2026-09-28-beginner",
+  "seed": "daily-2026-09-28-beginner",
+  "generatorVersion": "pipeline-1.0.0",
+  "width": 4,
+  "height": 4,
+  "difficulty": "beginner",
+  "clues": [
+    [
+      1,
+      1,
+      2,
+      3
+    ],
+    [
+      2,
+      2,
+      1,
+      2
+    ],
+    [
+      3,
+      3,
+      2,
+      3
+    ],
+    [
+      1,
+      1,
+      2,
+      3
+    ]
+  ],
+  "solutionEdges": [
+    "v:2:1",
+    "h:3:0",
+    "v:2:0",
+    "v:1:0",
+    "h:1:0",
+    "h:1:1",
+    "h:1:2",
+    "v:0:3",
+    "h:0:3",
+    "v:0:4",
+    "v:1:4",
+    "h:2:3",
+    "v:2:3",
+    "h:3:3",
+    "v:3:4",
+    "h:4:3",
+    "h:4:2",
+    "v:3:2",
+    "v:2:2",
+    "h:2:1"
+  ],
+  "startingEdges": [
+    "h:1:0",
+    "h:1:1",
+    "h:1:2",
+    "h:2:1",
+    "h:2:3",
+    "h:3:0",
+    "v:0:3",
+    "v:2:2",
+    "v:3:2"
+  ],
+  "metadata": {
+    "loopLength": 20,
+    "complexityScore": 1,
+    "difficultyScore": 0,
+    "turnCount": 14,
+    "regionalCoverage": 7,
+    "startingEdgeRatio": 0.45,
+    "boundingBoxWidthRatio": 1,
+    "boundingBoxHeightRatio": 1,
+    "rowsUsed": 5,
+    "columnsUsed": 5,
+    "estimatedSolveTimeSeconds": 80
+  }
+}

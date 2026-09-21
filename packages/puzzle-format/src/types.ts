@@ -55,6 +55,17 @@ export interface PuzzleCatalog {
   readonly puzzles: readonly PuzzleCatalogEntry[];
 }
 
+export interface DailyPuzzleCatalogDay {
+  readonly date: string;
+  readonly puzzles: Readonly<Record<Difficulty, string>>;
+}
+
+export interface DailyPuzzleCatalog {
+  readonly schemaVersion: '1.0';
+  readonly catalogVersion: string;
+  readonly days: readonly DailyPuzzleCatalogDay[];
+}
+
 export type GameplayMode = 'relaxed' | 'assisted';
 
 export interface PlayerProgress {
@@ -69,6 +80,8 @@ export interface PlayerProgress {
   readonly startedAt?: string;
   readonly completedAt?: string;
   readonly updatedAt: string;
+  readonly dailyDate?: string;
+  readonly dailyDifficulty?: Difficulty;
 }
 
 export type LineThickness = 'thin' | 'standard' | 'thick';
@@ -89,6 +102,7 @@ export type DailyLoopStatus = 'not-started' | 'in-progress' | 'completed';
 export interface DailyLoopState {
   readonly schemaVersion: '1.0';
   readonly date: string;
+  readonly difficulty: Difficulty;
   readonly seed: string;
   readonly puzzleId: string;
   readonly status: DailyLoopStatus;

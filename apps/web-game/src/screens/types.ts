@@ -1,6 +1,7 @@
 import type { Difficulty, GameplayMode, PuzzleDefinition } from '@loops/puzzle-format';
 import type {
   CompletionStats,
+  DailyLoopPuzzleOption,
   FlowDependencies,
   FlowProgressSummary,
   PuzzleProgressionItem,
@@ -29,8 +30,12 @@ export type ModeSelectionProps = PuzzleSelectionProps & {
 
 export interface DailyLoopScreenProps {
   readonly date: string;
-  readonly puzzle: PuzzleDefinition;
+  readonly dailyPuzzles: readonly DailyLoopPuzzleOption[];
+  readonly selectedDifficulty: Difficulty;
+  readonly puzzle?: PuzzleDefinition;
+  readonly status: DailyLoopPuzzleOption['status'];
   readonly mode: GameplayMode;
+  readonly onDifficultyChange: (difficulty: Difficulty) => void;
   readonly onStart: () => void;
   readonly onBack: () => void;
 }

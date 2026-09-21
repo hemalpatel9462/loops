@@ -1,4 +1,5 @@
 import type {
+  DailyLoopStatus,
   Difficulty,
   EdgeId,
   GameplayMode,
@@ -51,6 +52,7 @@ export interface GameFlowSession {
   readonly completed: boolean;
   readonly completion?: CompletionStats;
   readonly dailyDate?: string;
+  readonly dailyDifficulty?: Difficulty;
   readonly lastValidation?: RuleValidationResult;
   readonly lastHint?: RuntimeHint;
   readonly lastMove?: AssistedMoveFeedback;
@@ -77,7 +79,14 @@ export interface SelectedPuzzleOptions extends FlowDependencies {
 
 export interface DailyLoopOptions extends FlowDependencies {
   readonly date?: string;
+  readonly difficulty?: Difficulty;
   readonly mode?: GameplayMode;
+}
+
+export interface DailyLoopPuzzleOption {
+  readonly difficulty: Difficulty;
+  readonly puzzle?: PuzzleDefinition;
+  readonly status: DailyLoopStatus;
 }
 
 export interface ContinueOptions extends FlowDependencies {

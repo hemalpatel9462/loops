@@ -1,4 +1,5 @@
 import appSettingsSchema from '../../../schemas/app-settings.schema.json';
+import dailyPuzzleCatalogSchema from '../../../schemas/daily-puzzle-catalog.schema.json';
 import dailyLoopStateSchema from '../../../schemas/daily-loop-state.schema.json';
 import generatorConfigSchema from '../../../schemas/generator-config.schema.json';
 import hintRecordSchema from '../../../schemas/hint-record.schema.json';
@@ -11,6 +12,7 @@ import solverReportSchema from '../../../schemas/solver-report.schema.json';
 
 export const approvedSchemas = {
   appSettings: appSettingsSchema,
+  dailyPuzzleCatalog: dailyPuzzleCatalogSchema,
   dailyLoopState: dailyLoopStateSchema,
   generatorConfig: generatorConfigSchema,
   hintRecord: hintRecordSchema,

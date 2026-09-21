@@ -18,6 +18,8 @@ export interface ProgressSnapshotInput {
   readonly startedAt?: string;
   readonly completedAt?: string;
   readonly updatedAt?: string;
+  readonly dailyDate?: string;
+  readonly dailyDifficulty?: PlayerProgress['dailyDifficulty'];
 }
 
 export interface RestoreProgressOptions {
@@ -48,6 +50,8 @@ export function toPlayerProgress(input: ProgressSnapshotInput): PlayerProgress {
     completed: input.completed,
     ...(input.startedAt ? { startedAt: input.startedAt } : {}),
     ...(input.completedAt ? { completedAt: input.completedAt } : {}),
+    ...(input.dailyDate ? { dailyDate: input.dailyDate } : {}),
+    ...(input.dailyDifficulty ? { dailyDifficulty: input.dailyDifficulty } : {}),
     updatedAt: input.updatedAt ?? nowIso(),
   };
 }

@@ -1,0 +1,126 @@
+{
+  "schemaVersion": "1.0",
+  "id": "loop-medium-daily-2026-10-07-medium",
+  "seed": "daily-2026-10-07-medium",
+  "generatorVersion": "pipeline-1.0.0",
+  "width": 7,
+  "height": 7,
+  "difficulty": "medium",
+  "clues": [
+    [
+      2,
+      3,
+      1,
+      1,
+      2,
+      1,
+      2
+    ],
+    [
+      2,
+      3,
+      1,
+      2,
+      1,
+      0,
+      1
+    ],
+    [
+      1,
+      1,
+      1,
+      2,
+      0,
+      0,
+      1
+    ],
+    [
+      2,
+      1,
+      2,
+      3,
+      2,
+      1,
+      2
+    ],
+    [
+      1,
+      1,
+      1,
+      0,
+      1,
+      1,
+      1
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ]
+  ],
+  "solutionEdges": [
+    "v:1:4",
+    "v:0:4",
+    "h:0:4",
+    "h:0:5",
+    "h:0:6",
+    "v:0:7",
+    "v:1:7",
+    "v:2:7",
+    "v:3:7",
+    "h:4:6",
+    "h:4:5",
+    "h:4:4",
+    "v:3:4",
+    "h:3:3",
+    "v:3:3",
+    "h:4:2",
+    "h:4:1",
+    "h:4:0",
+    "v:3:0",
+    "v:2:0",
+    "v:1:0",
+    "v:0:0",
+    "h:0:0",
+    "h:0:1",
+    "v:0:2",
+    "h:1:1",
+    "v:1:1",
+    "h:2:1",
+    "h:2:2",
+    "h:2:3"
+  ],
+  "startingEdges": [
+    "h:2:2",
+    "h:4:0",
+    "h:4:1",
+    "h:4:2",
+    "h:4:5"
+  ],
+  "metadata": {
+    "loopLength": 30,
+    "complexityScore": 0.9333333333333333,
+    "difficultyScore": 0.375,
+    "turnCount": 14,
+    "regionalCoverage": 9,
+    "startingEdgeRatio": 0.16666666666666666,
+    "boundingBoxWidthRatio": 1,
+    "boundingBoxHeightRatio": 0.7142857142857143,
+    "rowsUsed": 5,
+    "columnsUsed": 8,
+    "estimatedSolveTimeSeconds": 240
+  }
+}

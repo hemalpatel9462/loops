@@ -2,10 +2,11 @@ import { useMemo, useState } from 'react';
 import type { Difficulty, GameplayMode } from '@loops/puzzle-format';
 import {
   getContinueProgress,
+  getDailyLoopPuzzles,
+  getDailyDateKey,
   getPuzzleSequence,
   startDailyLoop,
   startSelectedPuzzle as startSelectedPuzzleSession,
-  selectDailyPuzzle,
   resumeContinue,
 } from '../state/game-flow';
 import { getPersistenceRepository } from '../persistence';
@@ -42,7 +43,7 @@ export function GameFlowScreen({
   const repository = dependencies?.repository ?? getPersistenceRepository();
   const currentDate = useMemo(() => {
     const now = dependencies?.now?.() ?? new Date();
-    return now.toISOString().slice(0, 10);
+    return getDailyDateKey(now);
   }, [dependencies]);
   const continueSummary = getContinueProgress({ ...dependencies, repository });
   const puzzleSequence = getPuzzleSequence(difficulty, { ...dependencies, repository });
@@ -69,7 +70,25 @@ export function GameFlowScreen({
   }
 
   if (screen === 'daily') {
-    return <DailyLoopScreen date={currentDate} puzzle={selectDailyPuzzle(currentDate)} mode={mode} onBack={() => setScreen('start')} onStart={() => onSessionStart?.(startDailyLoop({ ...dependencies, repository, date: currentDate, mode }))} />;
+    const dailyPuzzles = getDailyLoopPuzzles(currentDate, { ...dependencies, repository });
+    const selectedDailyPuzzle = dailyPuzzles.find((candidate) => candidate.difficulty === difficulty);
+    return (
+      <DailyLoopScreen
+        dailyPuzzles={dailyPuzzles}
+        date={currentDate}
+        mode={mode}
+        onBack={() => setScreen('start')}
+        onDifficultyChange={setDifficulty}
+        onStart={() => {
+          if (selectedDailyPuzzle?.puzzle) {
+            onSessionStart?.(startDailyLoop({ ...dependencies, repository, date: currentDate, difficulty, mode }));
+          }
+        }}
+        puzzle={selectedDailyPuzzle?.puzzle}
+        selectedDifficulty={difficulty}
+        status={selectedDailyPuzzle?.status ?? 'not-started'}
+      />
+    );
   }
   if (screen === 'continue' && continueSummary) {
     return <ContinueScreen summary={continueSummary} onBack={() => setScreen('start')} onResume={() => {

@@ -8,6 +8,7 @@ import {
   getPuzzleSequence,
   getPuzzleStatus,
   getContinueProgress,
+  getDailyLoopPuzzles,
   resumeContinue,
   selectDailyPuzzle,
   startDailyLoop,
@@ -144,16 +145,38 @@ describe('game flow', () => {
     expect(flow.repository.loadProgress(first!.puzzle.id)?.completed).toBe(true);
   });
 
-  it('selects Daily Loop deterministically by date and stores the date mapping', () => {
-    const first = selectDailyPuzzle('2026-09-18');
-    const second = selectDailyPuzzle('2026-09-18');
-    expect(first.id).toBe(second.id);
+  it('selects the manually assigned Daily Loop puzzle by date and difficulty', () => {
+    const first = selectDailyPuzzle('2026-09-18', 'beginner');
+    const second = selectDailyPuzzle('2026-09-18', 'beginner');
+    expect(first?.id).toBe(second?.id);
 
     const flow = dependencies();
-    const session = startDailyLoop({ date: '2026-09-18', ...flow });
+    const session = startDailyLoop({ date: '2026-09-18', difficulty: 'beginner', ...flow });
     expect(session.source).toBe('daily-loop');
     expect(session.dailyDate).toBe('2026-09-18');
-    expect(flow.repository.loadDailyState('2026-09-18')?.puzzleId).toBe(session.puzzle.id);
+    expect(session.dailyDifficulty).toBe('beginner');
+    expect(flow.repository.loadDailyState('2026-09-18', 'beginner')?.puzzleId).toBe(session.puzzle.id);
+    expect(selectDailyPuzzle('2026-09-18', 'expert')?.difficulty).toBe('expert');
+    expect(selectDailyPuzzle('2026-09-22', 'hard')?.id).toBe('loop-hard-daily-2026-09-22-hard');
+    expect(selectDailyPuzzle('2026-09-19', 'beginner')).toBeUndefined();
+  });
+
+  it('tracks and restores Daily Loop progress independently for each difficulty', () => {
+    const flow = dependencies();
+    const started = startDailyLoop({ date: '2026-09-18', difficulty: 'beginner', ...flow });
+    const edge = allBoardEdges(started.puzzle.width, started.puzzle.height)
+      .find((candidate) => !started.gameState.fixedEdges.includes(candidate));
+    expect(edge).toBeDefined();
+    const moved = cycleSessionEdge(started, edge!, flow);
+
+    startDailyLoop({ date: '2026-09-18', difficulty: 'expert', ...flow });
+    expect(getDailyLoopPuzzles('2026-09-18', flow).map((item) => item.status)).toEqual([
+      'in-progress', 'not-started', 'not-started', 'not-started', 'in-progress',
+    ]);
+
+    const resumed = startDailyLoop({ date: '2026-09-18', difficulty: 'beginner', ...flow });
+    expect(resumed.gameState.edgeStates[edge!]).toBe(moved.gameState.edgeStates[edge!]);
+    expect(resumed.elapsedSeconds).toBe(moved.elapsedSeconds);
   });
 
   it('resumes Continue with the saved mode, elapsed time, hints, and edge choices', () => {

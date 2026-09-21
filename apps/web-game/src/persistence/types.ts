@@ -1,6 +1,7 @@
 import type {
   AppSettings,
   DailyLoopState,
+  Difficulty,
   PlayerProgress,
   PlayerStatistics,
 } from '@loops/puzzle-format';
@@ -35,6 +36,10 @@ export interface PersistenceRepository {
   loadContinue(expectedPuzzleId?: string): PlayerProgress | undefined;
   clearContinue(): void;
 
+  saveDailyProgress(date: string, difficulty: Difficulty, progress: PlayerProgress): void;
+  loadDailyProgress(date: string, difficulty: Difficulty): PlayerProgress | undefined;
+  removeDailyProgress(date: string, difficulty: Difficulty): void;
+
   saveSettings(settings: AppSettings): void;
   loadSettings(): AppSettings | undefined;
   getSettings(): AppSettings;
@@ -46,8 +51,8 @@ export interface PersistenceRepository {
   resetStatistics(): void;
 
   saveDailyState(state: DailyLoopState): void;
-  loadDailyState(date?: string): DailyLoopState | undefined;
-  removeDailyState(date?: string): void;
+  loadDailyState(date?: string, difficulty?: Difficulty): DailyLoopState | undefined;
+  removeDailyState(date?: string, difficulty?: Difficulty): void;
 
   resetAll(): void;
 }
@@ -65,7 +70,9 @@ export const storageKeys = {
   continue: `${STORAGE_NAMESPACE}:${STORAGE_VERSION}:continue`,
   settings: `${STORAGE_NAMESPACE}:${STORAGE_VERSION}:settings`,
   statistics: `${STORAGE_NAMESPACE}:${STORAGE_VERSION}:statistics`,
-  daily: (date: string): string =>
-    `${STORAGE_NAMESPACE}:${STORAGE_VERSION}:daily:${encodeKeyPart(date)}`,
+  daily: (date: string, difficulty: Difficulty): string =>
+    `${STORAGE_NAMESPACE}:${STORAGE_VERSION}:daily:${encodeKeyPart(date)}:${encodeKeyPart(difficulty)}`,
+  dailyProgress: (date: string, difficulty: Difficulty): string =>
+    `${STORAGE_NAMESPACE}:${STORAGE_VERSION}:daily-progress:${encodeKeyPart(date)}:${encodeKeyPart(difficulty)}`,
   prefix: `${STORAGE_NAMESPACE}:${STORAGE_VERSION}:`,
 } as const;

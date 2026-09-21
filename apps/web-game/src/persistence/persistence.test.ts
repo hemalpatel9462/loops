@@ -39,6 +39,17 @@ describe('local persistence repository', () => {
     expect(repository.loadContinue()).toEqual(unfinishedProgress);
   });
 
+  it('keeps Daily Loop progress in a date-and-difficulty-specific slot', () => {
+    const storage = new MemoryStorage();
+    const repository = createPersistenceRepository(storage);
+
+    repository.saveDailyProgress('2026-09-21', 'expert', unfinishedProgress);
+
+    expect(storage.getItem(storageKeys.dailyProgress('2026-09-21', 'expert'))).toContain('loop-persistence-1');
+    expect(repository.loadDailyProgress('2026-09-21', 'expert')).toEqual(unfinishedProgress);
+    expect(repository.loadDailyProgress('2026-09-21', 'beginner')).toBeUndefined();
+  });
+
   it('restores only the pointer target and clears completed progress from Continue', () => {
     const storage = new MemoryStorage();
     const repository = createPersistenceRepository(storage);

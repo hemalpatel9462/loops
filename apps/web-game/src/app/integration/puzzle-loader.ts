@@ -17,8 +17,10 @@ export function loadQuickPlayPuzzle(difficulty?: Difficulty): PuzzleDefinition {
   return selectQuickPlayPuzzle({ difficulty });
 }
 
-export function loadDailyPuzzle(date: string): PuzzleDefinition {
-  return selectDailyPuzzle(date);
+export function loadDailyPuzzle(date: string, difficulty: Difficulty = 'beginner'): PuzzleDefinition {
+  const puzzle = selectDailyPuzzle(date, difficulty);
+  if (!puzzle) throw new Error(`No ${difficulty} Daily Loop puzzle is scheduled for ${date}.`);
+  return puzzle;
 }
 
 export function loadAvailablePuzzles(difficulty?: Difficulty): readonly PuzzleDefinition[] {

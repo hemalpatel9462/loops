@@ -124,7 +124,7 @@ test.describe('Loops gameplay and persistence', () => {
     await expect(page.getByRole('button', { name: 'Continue' })).toHaveCount(0);
   });
 
-  test('opens and starts the deterministic Daily Loop while Quick Play is absent', async ({ page }) => {
+  test('opens and starts the manually curated Daily Loop while Quick Play is absent', async ({ page }) => {
     await openStartScreen(page);
     await expect(page.getByText(/Quick Play/i)).toHaveCount(0);
     await page.getByRole('button', { name: 'Daily Loop' }).click();

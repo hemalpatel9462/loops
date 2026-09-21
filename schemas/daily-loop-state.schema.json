@@ -4,10 +4,11 @@
   "title": "Loops Daily Loop State",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schemaVersion", "date", "seed", "puzzleId", "status", "streakCount"],
+  "required": ["schemaVersion", "date", "difficulty", "seed", "puzzleId", "status", "streakCount"],
   "properties": {
     "schemaVersion": { "type": "string", "const": "1.0" },
     "date": { "type": "string", "format": "date" },
+    "difficulty": { "enum": ["beginner", "easy", "medium", "hard", "expert"] },
     "seed": { "type": "string", "minLength": 1 },
     "puzzleId": { "type": "string", "minLength": 1 },
     "status": { "enum": ["not-started", "in-progress", "completed"] },

@@ -17,6 +17,7 @@
     "test:e2e": "playwright test",
     "validate:schemas": "npm run validate --workspace @loops/puzzle-format --if-present",
     "generate": "vite-node --config tools/puzzle-generator/pipeline/vite.config.ts tools/puzzle-generator/pipeline/cli.ts",
+    "generate:daily": "npm run generate:daily --workspace @loops/puzzle-generator --",
     "validate:puzzles": "vite-node --config tools/puzzle-generator/pipeline/vite.config.ts tools/puzzle-generator/pipeline/validate-cli.ts",
     "analyze:puzzles": "node --experimental-strip-types tools/puzzle-analyzer/src/cli.ts",
     "build:catalog": "npm run build:catalog --workspace @loops/catalog-builder --",

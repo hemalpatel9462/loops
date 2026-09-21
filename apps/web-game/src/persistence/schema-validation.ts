@@ -96,7 +96,7 @@ export function parsePlayerProgress(input: unknown): ParseResult<PlayerProgress>
   if (!isRecord(input)) return { ok: false, issues: ['$: must be an object'] };
   hasOnlyKeys(input, new Set([
     'schemaVersion', 'puzzleId', 'mode', 'edgeStates', 'elapsedSeconds', 'hintsUsed',
-    'checksUsed', 'completed', 'startedAt', 'completedAt', 'updatedAt',
+    'checksUsed', 'completed', 'startedAt', 'completedAt', 'updatedAt', 'dailyDate', 'dailyDifficulty',
   ]), issues);
   if (input.schemaVersion !== '1.0') issues.push('schemaVersion: must equal 1.0');
   requireString(input.puzzleId, 'puzzleId', issues);
@@ -109,6 +109,15 @@ export function parsePlayerProgress(input: unknown): ParseResult<PlayerProgress>
   requireDateTime(input.startedAt, 'startedAt', issues, true);
   requireDateTime(input.completedAt, 'completedAt', issues, true);
   requireDateTime(input.updatedAt, 'updatedAt', issues);
+  if (input.dailyDate !== undefined &&
+      (!requireString(input.dailyDate, 'dailyDate', issues) ||
+       !DATE_PATTERN.test(input.dailyDate) ||
+       Number.isNaN(Date.parse(`${input.dailyDate}T00:00:00Z`)))) {
+    issues.push('dailyDate: must be an ISO calendar date');
+  }
+  if (input.dailyDifficulty !== undefined && !DIFFICULTIES.includes(input.dailyDifficulty as typeof DIFFICULTIES[number])) {
+    issues.push('dailyDifficulty: invalid difficulty');
+  }
   return finish(input as unknown as PlayerProgress, issues);
 }
 
@@ -186,7 +195,7 @@ export function parseDailyLoopState(input: unknown): ParseResult<DailyLoopState>
   const issues: string[] = [];
   if (!isRecord(input)) return { ok: false, issues: ['$: must be an object'] };
   hasOnlyKeys(input, new Set([
-    'schemaVersion', 'date', 'seed', 'puzzleId', 'status', 'streakCount',
+    'schemaVersion', 'date', 'difficulty', 'seed', 'puzzleId', 'status', 'streakCount',
     'completedAt', 'hintsUsed', 'completionTimeSeconds',
   ]), issues);
   if (input.schemaVersion !== '1.0') issues.push('schemaVersion: must equal 1.0');
@@ -194,6 +203,7 @@ export function parseDailyLoopState(input: unknown): ParseResult<DailyLoopState>
   if (!requireString(date, 'date', issues) || !DATE_PATTERN.test(date) || Number.isNaN(Date.parse(`${date}T00:00:00Z`))) {
     issues.push('date: must be an ISO calendar date');
   }
+  if (!DIFFICULTIES.includes(input.difficulty as typeof DIFFICULTIES[number])) issues.push('difficulty: invalid difficulty');
   requireString(input.seed, 'seed', issues);
   requireString(input.puzzleId, 'puzzleId', issues);
   if (!DAILY_STATUSES.has(input.status as string)) issues.push('status: invalid daily status');

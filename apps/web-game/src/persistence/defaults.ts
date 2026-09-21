@@ -36,12 +36,14 @@ export function createDefaultStatistics(): PlayerStatistics {
 
 export function createDefaultDailyState(
   date: string,
+  difficulty: DailyLoopState['difficulty'],
   seed: string,
   puzzleId: string,
 ): DailyLoopState {
   return {
     schemaVersion: '1.0',
     date,
+    difficulty,
     seed,
     puzzleId,
     status: 'not-started',

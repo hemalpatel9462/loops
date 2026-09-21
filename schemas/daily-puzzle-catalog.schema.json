@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://loops.game/schemas/daily-puzzle-catalog.schema.json",
+  "title": "Loops Daily Puzzle Catalog",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "catalogVersion", "days"],
+  "properties": {
+    "schemaVersion": { "type": "string", "const": "1.0" },
+    "catalogVersion": { "type": "string", "minLength": 1 },
+    "days": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["date", "puzzles"],
+        "properties": {
+          "date": { "type": "string", "format": "date" },
+          "puzzles": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["beginner", "easy", "medium", "hard", "expert"],
+            "properties": {
+              "beginner": { "type": "string", "minLength": 1 },
+              "easy": { "type": "string", "minLength": 1 },
+              "medium": { "type": "string", "minLength": 1 },
+              "hard": { "type": "string", "minLength": 1 },
+              "expert": { "type": "string", "minLength": 1 }
+            }
+          }
+        }
+      }
+    }
+  }
+}

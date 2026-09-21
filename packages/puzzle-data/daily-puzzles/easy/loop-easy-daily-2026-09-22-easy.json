@@ -1,0 +1,88 @@
+{
+  "schemaVersion": "1.0",
+  "id": "loop-easy-daily-2026-09-22-easy",
+  "seed": "daily-2026-09-22-easy",
+  "generatorVersion": "pipeline-1.0.0",
+  "width": 5,
+  "height": 5,
+  "difficulty": "easy",
+  "clues": [
+    [
+      2,
+      2,
+      3,
+      3,
+      1
+    ],
+    [
+      2,
+      0,
+      1,
+      1,
+      2
+    ],
+    [
+      2,
+      2,
+      1,
+      0,
+      2
+    ],
+    [
+      0,
+      1,
+      2,
+      2,
+      2
+    ],
+    [
+      0,
+      0,
+      0,
+      1,
+      1
+    ]
+  ],
+  "solutionEdges": [
+    "h:0:3",
+    "v:0:4",
+    "v:1:4",
+    "h:2:4",
+    "v:2:5",
+    "v:3:5",
+    "h:4:4",
+    "h:4:3",
+    "v:3:3",
+    "h:3:2",
+    "h:3:1",
+    "v:2:1",
+    "h:2:0",
+    "v:1:0",
+    "v:0:0",
+    "h:0:0",
+    "h:0:1",
+    "v:0:2",
+    "h:1:2",
+    "v:0:3"
+  ],
+  "startingEdges": [
+    "h:3:1",
+    "h:3:2",
+    "h:4:3",
+    "h:4:4",
+    "v:1:4"
+  ],
+  "metadata": {
+    "loopLength": 20,
+    "complexityScore": 1,
+    "difficultyScore": 0.125,
+    "turnCount": 14,
+    "regionalCoverage": 8,
+    "startingEdgeRatio": 0.25,
+    "boundingBoxWidthRatio": 1,
+    "boundingBoxHeightRatio": 1,
+    "rowsUsed": 5,
+    "columnsUsed": 6,
+    "estimatedSolveTimeSeconds": 160
+  }
+}

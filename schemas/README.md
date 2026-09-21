@@ -10,6 +10,7 @@ These schemas use JSON Schema Draft 2020-12.
 - `app-settings.schema.json` — device-local gameplay and accessibility settings.
 - `player-statistics.schema.json` — device-local aggregate progression statistics.
 - `daily-loop-state.schema.json` — device-local Daily Loop state.
+- `daily-puzzle-catalog.schema.json` — manually curated date/difficulty-to-puzzle assignments.
 - `hint-record.schema.json` — a solver-backed hint shown to the player.
 
 ## Generator and validation data

@@ -10,6 +10,7 @@ import {
 import type {
   AppSettings,
   DailyLoopState,
+  Difficulty,
   PlayerProgress,
   PlayerStatistics,
 } from '@loops/puzzle-format';
@@ -190,6 +191,19 @@ function createRepository(storage: StorageLike): PersistenceRepository {
       return progress;
     },
     clearContinue: () => remove(storage, storageKeys.continue),
+    saveDailyProgress: (date, difficulty, progress) => writeValidated(
+      storage,
+      storageKeys.dailyProgress(date, difficulty),
+      progress,
+      parsePlayerProgress,
+      'Daily Loop progress',
+    ),
+    loadDailyProgress: (date, difficulty) => readValidated(
+      storage,
+      storageKeys.dailyProgress(date, difficulty),
+      parsePlayerProgress,
+    ),
+    removeDailyProgress: (date, difficulty) => remove(storage, storageKeys.dailyProgress(date, difficulty)),
     saveSettings: (settings) => writeValidated(storage, storageKeys.settings, settings, parseAppSettings, 'app settings'),
     loadSettings: () => readSettings(storage, storageKeys.settings),
     getSettings: () => readSettings(storage, storageKeys.settings) ?? DEFAULT_SETTINGS,
@@ -198,13 +212,13 @@ function createRepository(storage: StorageLike): PersistenceRepository {
     loadStatistics: () => readValidated(storage, storageKeys.statistics, parsePlayerStatistics),
     getStatistics: () => readValidated(storage, storageKeys.statistics, parsePlayerStatistics) ?? createDefaultStatistics(),
     resetStatistics: () => remove(storage, storageKeys.statistics),
-    saveDailyState: (state) => writeValidated(storage, storageKeys.daily(state.date), state, parseDailyLoopState, 'Daily Loop state'),
-    loadDailyState: (date) => {
-      if (!date) return undefined;
-      return readValidated(storage, storageKeys.daily(date), parseDailyLoopState);
+    saveDailyState: (state) => writeValidated(storage, storageKeys.daily(state.date, state.difficulty), state, parseDailyLoopState, 'Daily Loop state'),
+    loadDailyState: (date, difficulty) => {
+      if (!date || !difficulty) return undefined;
+      return readValidated(storage, storageKeys.daily(date, difficulty), parseDailyLoopState);
     },
-    removeDailyState: (date) => {
-      if (date) remove(storage, storageKeys.daily(date));
+    removeDailyState: (date, difficulty) => {
+      if (date && difficulty) remove(storage, storageKeys.daily(date, difficulty));
     },
     resetAll: () => {
       remove(storage, storageKeys.continue);
@@ -239,8 +253,8 @@ export function resetPersistenceRepositoryForTests(): void {
   defaultRepository = undefined;
 }
 
-export function getDefaultDailyState(date: string, seed: string, puzzleId: string): DailyLoopState {
-  return createDefaultDailyState(date, seed, puzzleId);
+export function getDefaultDailyState(date: string, difficulty: Difficulty, seed: string, puzzleId: string): DailyLoopState {
+  return createDefaultDailyState(date, difficulty, seed, puzzleId);
 }
 
 export type { AppSettings, DailyLoopState, PlayerProgress, PlayerStatistics };
