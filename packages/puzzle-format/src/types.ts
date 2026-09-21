@@ -98,7 +98,7 @@ export interface DailyLoopState {
   readonly completionTimeSeconds?: number;
 }
 
-export type DeductionType = 'direct-clue' | 'vertex' | 'connectivity' | 'contradiction';
+export type DeductionType = 'player-mistake' | 'direct-clue' | 'vertex' | 'connectivity' | 'contradiction';
 
 export interface HintRecord {
   readonly schemaVersion: '1.0';
@@ -107,7 +107,7 @@ export interface HintRecord {
   readonly deductionType: DeductionType;
   readonly targetEdge?: string;
   readonly targetCell?: GridCoordinate;
-  readonly recommendedState?: PlayerEdgeState;
+  readonly recommendedState?: PlayerEdgeState | 'unknown';
   readonly explanation: string;
   readonly createdAt?: string;
 }

@@ -299,6 +299,10 @@ export function requestSessionHint(session: GameFlowSession, level: 1 | 2 | 3 = 
   const hint = computeHint(session.puzzle, {
     edgeStates: session.gameState.edgeStates,
     fixedEdges: session.gameState.fixedEdges,
+    recentEdges: session.gameState.history.past
+      .slice()
+      .reverse()
+      .map(({ edge }) => edge),
   }, level);
   if (!hint) return session;
   const next = Object.freeze({ ...session, hintsUsed: session.hintsUsed + 1, lastHint: hint });

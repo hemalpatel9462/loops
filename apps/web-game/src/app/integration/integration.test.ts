@@ -36,4 +36,19 @@ describe('web game integration', () => {
     expect(state.validation?.complete).toBe(true);
     expect(state.completed).toBe(true);
   });
+
+  it('confirms an already-applied hint without cycling it to the next edge state', () => {
+    const puzzle = loadQuickPlayPuzzle('beginner');
+    let state = createGameReducerState(puzzle);
+    state = gameReducer(state, { type: 'request-hint', level: 3 });
+
+    const hint = state.hint?.reveal;
+    expect(hint).toBeDefined();
+    expect(state.gameState.edgeStates[hint!.edge]).toBe(hint!.state);
+
+    const confirmed = gameReducer(state, { type: 'apply-hint' });
+
+    expect(confirmed.gameState.edgeStates[hint!.edge]).toBe(hint!.state);
+    expect(confirmed.hint).toBeUndefined();
+  });
 });

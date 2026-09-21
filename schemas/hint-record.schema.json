@@ -9,7 +9,7 @@
     "schemaVersion": { "type": "string", "const": "1.0" },
     "puzzleId": { "type": "string", "minLength": 1 },
     "hintLevel": { "type": "integer", "minimum": 1, "maximum": 3 },
-    "deductionType": { "enum": ["direct-clue", "vertex", "connectivity", "contradiction"] },
+    "deductionType": { "enum": ["player-mistake", "direct-clue", "vertex", "connectivity", "contradiction"] },
     "targetEdge": { "type": "string", "pattern": "^[hv]:[0-9]+:[0-9]+$" },
     "targetCell": {
       "type": "object",
@@ -20,7 +20,7 @@
         "column": { "type": "integer", "minimum": 0 }
       }
     },
-    "recommendedState": { "enum": ["line", "x"] },
+    "recommendedState": { "enum": ["unknown", "line", "x"] },
     "explanation": { "type": "string", "minLength": 1 },
     "createdAt": { "type": "string", "format": "date-time" }
   }

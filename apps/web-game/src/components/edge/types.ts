@@ -1,7 +1,7 @@
 import type { EdgeId } from '@loops/puzzle-format';
 import type { EdgeState } from '@loops/game-engine/model';
 
-export type EdgeAction = 'cycle';
+export type EdgeAction = 'cycle' | 'apply-hint';
 
 export interface EdgeGeometry {
   readonly x1: number;
@@ -15,7 +15,7 @@ export interface EdgeSegmentProps {
   readonly edgeId: EdgeId;
   readonly geometry: EdgeGeometry;
   readonly state?: EdgeState;
-  readonly hintState?: Exclude<EdgeState, 'unknown'>;
+  readonly hintState?: EdgeState;
   readonly fixed?: boolean;
   readonly onAction?: (edge: EdgeId, action: EdgeAction) => void;
 }

@@ -4,14 +4,16 @@ import type { EdgeId, PuzzleDefinition } from '@loops/puzzle-format';
 import { createEdgeId, parseEdgeId } from '@loops/puzzle-format';
 
 export type HintLevel = 1 | 2 | 3;
-export type DeductionType = 'direct-clue' | 'vertex' | 'connectivity' | 'contradiction';
-export type RecommendedState = 'line' | 'x';
+export type DeductionType = 'player-mistake' | 'direct-clue' | 'vertex' | 'connectivity' | 'contradiction';
+export type RecommendedState = EdgeState;
 
 export interface HintPuzzle {
   readonly width: number;
   readonly height: number;
   readonly clues: readonly (readonly number[])[];
   readonly id?: string;
+  /** The canonical solution is used only to locate incorrect player marks. */
+  readonly solutionEdges?: readonly EdgeId[];
 }
 
 export interface HintState {
@@ -19,6 +21,8 @@ export interface HintState {
   readonly height?: number;
   readonly edgeStates: EdgeStateMap;
   readonly fixedEdges?: readonly EdgeId[];
+  /** Most recent first. Used to keep hints near the player's active area. */
+  readonly recentEdges?: readonly EdgeId[];
 }
 
 export interface HintHighlight {
@@ -72,6 +76,7 @@ export interface HintSearchResult {
 interface NormalizedState {
   readonly edgeStates: EdgeStateMap;
   readonly fixedEdges: ReadonlySet<EdgeId>;
+  readonly recentEdges: readonly EdgeId[];
 }
 
 interface CellObservation {
@@ -99,6 +104,7 @@ interface PartialChecks {
 }
 
 const DEDUCTION_ORDER: readonly DeductionType[] = [
+  'player-mistake',
   'direct-clue',
   'vertex',
   'connectivity',
@@ -126,6 +132,9 @@ function normalizeState(
   const fixedEdges = isHintState(state) && state.fixedEdges
     ? new Set<EdgeId>(state.fixedEdges)
     : new Set<EdgeId>();
+  const recentEdges = isHintState(state) && state.recentEdges
+    ? state.recentEdges
+    : [];
   const canonical: Record<string, EdgeState> = {};
   for (const edge of allBoardEdges(puzzle.width, puzzle.height)) {
     canonical[edge] = edgeStates[edge] ?? 'unknown';
@@ -133,7 +142,11 @@ function normalizeState(
   for (const edge of fixedEdges) {
     canonical[edge] = 'line';
   }
-  return { edgeStates: canonical, fixedEdges };
+  return {
+    edgeStates: canonical,
+    fixedEdges,
+    recentEdges: recentEdges.filter((edge) => Object.prototype.hasOwnProperty.call(canonical, edge)),
+  };
 }
 
 function cellEdges(row: number, column: number): readonly EdgeId[] {
@@ -205,6 +218,7 @@ function cloneWithMove(
   return {
     edgeStates: { ...state.edgeStates, [edge]: nextState },
     fixedEdges: state.fixedEdges,
+    recentEdges: state.recentEdges,
   };
 }
 
@@ -309,6 +323,74 @@ function evidence(
     relatedEdges: [...relatedEdges].sort(edgeSort),
     alternatives,
   };
+}
+
+function cellsForEdge(
+  puzzle: HintPuzzle,
+  edge: EdgeId,
+): readonly (readonly [number, number])[] {
+  const parsed = parseEdgeId(edge);
+  if (!parsed) return [];
+
+  const candidates: readonly (readonly [number, number])[] = parsed.orientation === 'h'
+    ? [[parsed.row, parsed.column], [parsed.row - 1, parsed.column]]
+    : [[parsed.row, parsed.column], [parsed.row, parsed.column - 1]];
+
+  return candidates.filter(([row, column]) => (
+    row >= 0 && row < puzzle.height && column >= 0 && column < puzzle.width
+  ));
+}
+
+function cellForEdge(
+  puzzle: HintPuzzle,
+  edge: EdgeId,
+): readonly [number, number] | undefined {
+  return cellsForEdge(puzzle, edge)[0];
+}
+
+function playerMistakeDeductions(
+  puzzle: HintPuzzle,
+  state: NormalizedState,
+): readonly HintDeduction[] {
+  if (!puzzle.solutionEdges) return [];
+
+  const solution = new Set(puzzle.solutionEdges);
+  const deductions: HintDeduction[] = [];
+  for (const edge of [...allBoardEdges(puzzle.width, puzzle.height)].sort(edgeSort)) {
+    if (state.fixedEdges.has(edge)) continue;
+
+    const current = state.edgeStates[edge];
+    const expected: RecommendedState = solution.has(edge) ? 'line' : 'unknown';
+    const isIncorrect = (current === 'line' && expected === 'unknown')
+      || (current === 'x' && expected === 'line');
+    if (!isIncorrect) continue;
+
+    const targetCell = cellForEdge(puzzle, edge);
+    deductions.push({
+      deductionType: 'player-mistake',
+      targetEdge: edge,
+      targetCell,
+      recommendedState: expected,
+      evidence: evidence(
+        'player-mistake',
+        expected === 'line'
+          ? 'This edge is part of the solution, so the X mark here should be a line.'
+          : 'This line is not part of the solution. Remove it; leaving the edge blank is valid.',
+        [edge],
+        expected === 'line'
+          ? [
+              { state: 'line', allowed: true },
+              { state: 'x', allowed: false },
+            ]
+          : [
+              { state: 'unknown', allowed: true },
+              { state: 'line', allowed: false },
+            ],
+        true,
+      ),
+    });
+  }
+  return deductions;
 }
 
 function directClueDeductions(
@@ -481,9 +563,76 @@ function contradictionDeductions(
   return deductions;
 }
 
-function sortDeductions(deductions: readonly HintDeduction[]): readonly HintDeduction[] {
+function edgeDistance(first: EdgeId, second: EdgeId): number {
+  const firstParsed = parseEdgeId(first);
+  const secondParsed = parseEdgeId(second);
+  if (!firstParsed || !secondParsed) return Number.MAX_SAFE_INTEGER;
+
+  const firstRow = firstParsed.row + (firstParsed.orientation === 'v' ? 0.5 : 0);
+  const firstColumn = firstParsed.column + (firstParsed.orientation === 'h' ? 0.5 : 0);
+  const secondRow = secondParsed.row + (secondParsed.orientation === 'v' ? 0.5 : 0);
+  const secondColumn = secondParsed.column + (secondParsed.orientation === 'h' ? 0.5 : 0);
+  return Math.abs(firstRow - secondRow) + Math.abs(firstColumn - secondColumn);
+}
+
+function knownEdgeCount(edges: readonly EdgeId[], state: NormalizedState): number {
+  return edges.filter((edge) => !isUnknown(state, edge)).length;
+}
+
+function frontierScore(
+  puzzle: HintPuzzle,
+  state: NormalizedState,
+  deduction: HintDeduction,
+): number {
+  if (!deduction.targetEdge) return 0;
+
+  const target = parseEdgeId(deduction.targetEdge);
+  if (!target) return 0;
+
+  const endpoints: readonly (readonly [number, number])[] = target.orientation === 'h'
+    ? [[target.row, target.column], [target.row, target.column + 1]]
+    : [[target.row, target.column], [target.row + 1, target.column]];
+  const adjacentEdges = endpoints.flatMap(([row, column]) => vertexEdges(row, column, puzzle.width, puzzle.height));
+  const relatedEdges = new Set([
+    ...adjacentEdges,
+    ...deduction.evidence.relatedEdges,
+  ]);
+  relatedEdges.delete(deduction.targetEdge);
+  return knownEdgeCount([...relatedEdges], state);
+}
+
+function sortDeductions(
+  puzzle: HintPuzzle,
+  state: NormalizedState,
+  deductions: readonly HintDeduction[],
+): readonly HintDeduction[] {
   return [...deductions].sort((a, b) => {
     const typeOrder = DEDUCTION_ORDER.indexOf(a.deductionType) - DEDUCTION_ORDER.indexOf(b.deductionType);
+    const aIsMistake = a.deductionType === 'player-mistake';
+    const bIsMistake = b.deductionType === 'player-mistake';
+    if (aIsMistake !== bIsMistake) return aIsMistake ? -1 : 1;
+
+    const latestEdge = state.recentEdges[0];
+    if (aIsMistake && bIsMistake) {
+      const aRecency = a.targetEdge ? state.recentEdges.indexOf(a.targetEdge) : -1;
+      const bRecency = b.targetEdge ? state.recentEdges.indexOf(b.targetEdge) : -1;
+      if (aRecency !== bRecency) {
+        if (aRecency < 0) return 1;
+        if (bRecency < 0) return -1;
+        return aRecency - bRecency;
+      }
+    }
+
+    if (latestEdge && a.targetEdge && b.targetEdge) {
+      const distanceOrder = edgeDistance(a.targetEdge, latestEdge) - edgeDistance(b.targetEdge, latestEdge);
+      if (distanceOrder !== 0) return distanceOrder;
+    }
+
+    // After a reload there is no move history. Prefer the unresolved edge
+    // surrounded by the most player decisions, so hints resume at the
+    // current frontier instead of restarting at the first cell.
+    const frontierOrder = frontierScore(puzzle, state, b) - frontierScore(puzzle, state, a);
+    if (frontierOrder !== 0) return frontierOrder;
     if (typeOrder !== 0) return typeOrder;
     return (a.targetEdge ?? '').localeCompare(b.targetEdge ?? '', 'en');
   });
@@ -495,7 +644,8 @@ export function findDeductions(
 ): HintSearchResult {
   const state = normalizeState(puzzle, stateInput);
   const current = partialChecks(puzzle, state);
-  const deductions = sortDeductions([
+  const deductions = sortDeductions(puzzle, state, [
+    ...playerMistakeDeductions(puzzle, state),
     ...directClueDeductions(puzzle, state),
     ...vertexDeductions(puzzle, state),
     ...connectivityDeductions(puzzle, state),
@@ -545,8 +695,11 @@ export function computeHint(
     throw new RangeError('Hint level must be 1, 2, or 3.');
   }
   const result = findDeductions(puzzle, state);
-  const deduction = result.deductions.find((candidate) => candidate.evidence.forced)
-    ?? result.deductions[0];
+  // X marks are optional player notes. Keep those deductions available to
+  // rule analysis, but never turn one into a user-facing or auto-applied hint.
+  const actionable = result.deductions.filter((candidate) => candidate.recommendedState !== 'x');
+  const deduction = actionable.find((candidate) => candidate.evidence.forced)
+    ?? actionable[0];
   return deduction ? toRuntimeHint(puzzle, deduction, hintLevel) : undefined;
 }
 

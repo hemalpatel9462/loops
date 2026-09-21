@@ -3,6 +3,7 @@ import type { Dispatch } from 'react';
 import { ArrowRight, Check, Clock3, Lightbulb, Redo2, RotateCcw, Undo2 } from 'lucide-react';
 import type { EdgeId } from '@loops/puzzle-format';
 import { LoopBoard } from '../../components/board';
+import type { EdgeAction } from '../../components/edge';
 import { getLocalPuzzleSequence } from '../../state/game-flow';
 import type { GameAction, GameReducerState } from '../../state/game-reducer';
 import { PUZZLE_SLOT_COUNT } from '../../screens/puzzle-constants';
@@ -58,7 +59,11 @@ export function GamePlayScreen({ state, elapsedSeconds, dispatch, onExit, onNext
     return () => window.clearTimeout(timeout);
   }, [state.completed, state.puzzle.id]);
 
-  const onEdgeAction = (edge: EdgeId) => {
+  const onEdgeAction = (edge: EdgeId, action: EdgeAction) => {
+    if (action === 'apply-hint' && state.hint?.reveal?.edge === edge) {
+      dispatch({ type: 'apply-hint' });
+      return;
+    }
     dispatch({ type: 'cycle-edge', edge });
   };
 

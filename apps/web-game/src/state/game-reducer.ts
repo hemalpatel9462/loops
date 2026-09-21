@@ -102,7 +102,14 @@ export function gameReducer(state: GameReducerState, action: GameAction): GameRe
     case 'request-hint': {
       const hint = computeHint(
         state.puzzle,
-        { edgeStates: state.gameState.edgeStates, fixedEdges: state.gameState.fixedEdges },
+        {
+          edgeStates: state.gameState.edgeStates,
+          fixedEdges: state.gameState.fixedEdges,
+          recentEdges: state.gameState.history.past
+            .slice()
+            .reverse()
+            .map(({ edge }) => edge),
+        },
         action.level ?? 1,
       );
       if (!hint) return { ...state, hint: undefined };
@@ -131,7 +138,11 @@ export function gameReducer(state: GameReducerState, action: GameAction): GameRe
         state.hint.reveal.edge,
         state.hint.reveal.state,
       );
-      return candidate === state.gameState ? state : evaluateMove(state, candidate);
+      // Level-three hints are already applied when requested. A click on the
+      // dotted overlay confirms that state and only dismisses the overlay.
+      return candidate === state.gameState
+        ? { ...state, hint: undefined }
+        : evaluateMove(state, candidate);
     }
     case 'complete': {
       const validation = validateCompletion(state.puzzle, state.gameState);

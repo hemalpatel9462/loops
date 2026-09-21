@@ -54,7 +54,14 @@ test.describe('Loops gameplay and persistence', () => {
     await expect(edge).toHaveAttribute('data-edge-state', 'unknown');
 
     await page.getByRole('button', { name: 'Hint' }).click();
-    await expect(page.locator('[data-hint-state="line"], [data-hint-state="x"]')).toHaveCount(1);
+    const hintedEdge = page.locator('[data-hint-state="line"]');
+    await expect(hintedEdge).toHaveCount(1);
+    const hintedEdgeId = await hintedEdge.getAttribute('data-edge-id');
+    expect(hintedEdgeId).toBeTruthy();
+    await hintedEdge.click({ force: true });
+    const confirmedEdge = page.locator(`[data-edge-id="${hintedEdgeId}"]`);
+    await expect(confirmedEdge).toHaveAttribute('data-edge-state', 'line');
+    await expect(confirmedEdge).not.toHaveAttribute('data-hint-state', 'line');
     await expect(page.getByRole('button', { name: 'Apply engine suggestion' })).toHaveCount(0);
 
   });

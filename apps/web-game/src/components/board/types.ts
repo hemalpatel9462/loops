@@ -10,7 +10,7 @@ export interface LoopBoardProps {
   readonly fixedEdges?: readonly EdgeId[];
   readonly hint?: {
     readonly edge: EdgeId;
-    readonly state: Exclude<EdgeState, 'unknown'>;
+    readonly state: EdgeState;
   };
   /** Dispatches a semantic action to the game engine/state owner. */
   readonly onEdgeAction?: (edge: EdgeId, action: EdgeAction) => void;

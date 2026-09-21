@@ -20,8 +20,9 @@ export function EdgeSegment({
   fixed = false,
   onAction,
 }: EdgeSegmentProps) {
+  const showHint = Boolean(hintState && state === hintState && !fixed);
   const handleAction = () => {
-    if (!fixed) onAction?.(edgeId, 'cycle');
+    if (!fixed) onAction?.(edgeId, showHint ? 'apply-hint' : 'cycle');
   };
 
   const handleKeyDown = (event: KeyboardEvent<SVGGElement>) => {
@@ -40,7 +41,6 @@ export function EdgeSegment({
   const { x1, y1, x2, y2 } = geometry;
   const centerX = (x1 + x2) / 2;
   const centerY = (y1 + y2) / 2;
-  const showHint = Boolean(hintState && state === hintState && !fixed);
   const className = [
     'loop-edge',
     `loop-edge--${state}`,

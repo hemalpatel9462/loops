@@ -30,18 +30,61 @@ const state = Object.freeze({
   fixedEdges: Object.freeze([topLeft]),
 });
 
+const linePuzzle = {
+  id: 'loop-hint-line-fixture',
+  width: 2,
+  height: 2,
+  clues: [
+    [3, 0],
+    [0, 0],
+  ],
+} as const;
+
+const lineState = Object.freeze({
+  edgeStates: Object.freeze({
+    [topLeft]: 'line' as const,
+  }),
+  fixedEdges: Object.freeze([topLeft]),
+});
+
+const completedLinesPuzzle = {
+  id: 'loop-hint-optional-x-fixture',
+  width: 2,
+  height: 2,
+  clues: [
+    [2, 2],
+    [2, 2],
+  ],
+  solutionEdges: [
+    createEdgeId('h', 0, 0),
+    createEdgeId('h', 0, 1),
+    createEdgeId('h', 2, 0),
+    createEdgeId('h', 2, 1),
+    createEdgeId('v', 0, 0),
+    createEdgeId('v', 0, 2),
+    createEdgeId('v', 1, 0),
+    createEdgeId('v', 1, 2),
+  ],
+} as const;
+
+const completedLinesState = {
+  edgeStates: Object.fromEntries(
+    completedLinesPuzzle.solutionEdges.map((edge) => [edge, 'line' as const]),
+  ),
+};
+
 describe('runtime hint deductions', () => {
   it('exposes highlight, explanation, and reveal levels', () => {
-    const highlight = computeHint(puzzle, state, 1);
-    const explanation = computeHint(puzzle, state, 2);
-    const reveal = computeHint(puzzle, state, 3);
+    const highlight = computeHint(linePuzzle, lineState, 1);
+    const explanation = computeHint(linePuzzle, lineState, 2);
+    const reveal = computeHint(linePuzzle, lineState, 3);
 
     expect(highlight?.hintLevel).toBe(1);
     expect(highlight?.highlight?.edge).toBeDefined();
     expect(highlight?.explanation).toBeUndefined();
-    expect(explanation?.explanation).toContain('Cell');
+    expect(explanation?.explanation).toMatch(/Cell|Vertex/);
     expect(reveal?.reveal?.edge).toBeDefined();
-    expect(reveal?.reveal?.state).toBe('x');
+    expect(reveal?.reveal?.state).toBe('line');
   });
 
   it('reports evidence-backed direct-clue deductions as forced', () => {
@@ -57,15 +100,68 @@ describe('runtime hint deductions', () => {
   });
 
   it('does not mutate state until a caller applies a reveal', () => {
-    const before = JSON.stringify(state.edgeStates);
-    const hint = computeHint(puzzle, state, 3);
-    expect(JSON.stringify(state.edgeStates)).toBe(before);
+    const before = JSON.stringify(lineState.edgeStates);
+    const hint = computeHint(linePuzzle, lineState, 3);
+    expect(JSON.stringify(lineState.edgeStates)).toBe(before);
     expect(hint?.reveal).toBeDefined();
 
-    const updated = applyHintToEdgeStates(state.edgeStates, hint!);
-    expect(updated).not.toBe(state.edgeStates);
-    expect(updated[hint!.reveal!.edge]).toBe('x');
-    expect(state.edgeStates[hint!.reveal!.edge]).toBe('unknown');
+    const updated = applyHintToEdgeStates(lineState.edgeStates, hint!);
+    expect(updated).not.toBe(lineState.edgeStates);
+    expect(updated[hint!.reveal!.edge]).toBe('line');
+    expect(lineState.edgeStates[hint!.reveal!.edge]).toBeUndefined();
+  });
+
+  it('does not select optional X deductions as user-facing hints', () => {
+    expect(computeHint(completedLinesPuzzle, completedLinesState, 3)).toBeUndefined();
+  });
+
+  it('prioritizes the most recent incorrect mark over earlier logical X deductions', () => {
+    const solutionEdges = [
+      createEdgeId('h', 0, 0),
+      createEdgeId('h', 0, 1),
+      createEdgeId('h', 2, 0),
+      createEdgeId('h', 2, 1),
+      createEdgeId('v', 0, 0),
+      createEdgeId('v', 0, 2),
+      createEdgeId('v', 1, 0),
+      createEdgeId('v', 1, 2),
+    ];
+    const wrongEdge = createEdgeId('h', 1, 0);
+    const mistakePuzzle = {
+      width: 2,
+      height: 2,
+      clues: [[2, 2], [2, 2]],
+      solutionEdges,
+    } as const;
+    const mistakeState = {
+      edgeStates: {
+        [wrongEdge]: 'line' as const,
+        [createEdgeId('h', 0, 0)]: 'x' as const,
+      },
+      recentEdges: [wrongEdge, createEdgeId('h', 0, 0)],
+    };
+
+    const hint = computeHint(mistakePuzzle, mistakeState, 3);
+
+    expect(hint?.deductionType).toBe('player-mistake');
+    expect(hint?.targetEdge).toBe(wrongEdge);
+    expect(hint?.reveal).toEqual({ edge: wrongEdge, state: 'unknown' });
+
+    const corrected = applyHintToEdgeStates(mistakeState.edgeStates, hint!);
+    expect(corrected[wrongEdge]).toBe('unknown');
+
+    const wrongX = findDeductions(mistakePuzzle, mistakeState).deductions
+      .find((deduction) => deduction.targetEdge === createEdgeId('h', 0, 0));
+    expect(wrongX?.recommendedState).toBe('line');
+  });
+
+  it('keeps a hint near the latest move when multiple deductions are available', () => {
+    const hint = computeHint(linePuzzle, {
+      ...lineState,
+      recentEdges: [createEdgeId('h', 0, 1)],
+    }, 3);
+
+    expect(hint?.targetEdge).toBe(createEdgeId('h', 0, 1));
   });
 
   it('supports vertex, connectivity, and contradiction deduction categories', () => {
