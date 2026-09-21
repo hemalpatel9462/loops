@@ -26,9 +26,16 @@ export interface GameFlowScreenProps {
   readonly initialScreen?: Screen;
   readonly onSessionStart?: (session: GameFlowSession) => void;
   readonly onHowToPlay?: () => void;
+  readonly onGameRules?: () => void;
 }
 
-export function GameFlowScreen({ dependencies, initialScreen = 'start', onSessionStart, onHowToPlay = () => undefined }: GameFlowScreenProps) {
+export function GameFlowScreen({
+  dependencies,
+  initialScreen = 'start',
+  onSessionStart,
+  onHowToPlay = () => undefined,
+  onGameRules = () => undefined,
+}: GameFlowScreenProps) {
   const [screen, setScreen] = useState<Screen>(initialScreen);
   const [difficulty, setDifficulty] = useState<Difficulty>('beginner');
   const [mode, setMode] = useState<GameplayMode>('relaxed');
@@ -53,9 +60,9 @@ export function GameFlowScreen({ dependencies, initialScreen = 'start', onSessio
   if (screen === 'start') {
     return (
       <StartScreen
-        continueAvailable={Boolean(continueSummary)}
-        onContinue={() => setScreen('continue')}
         onDailyLoop={() => setScreen('daily')}
+        onGameRules={onGameRules}
+        onHowToPlay={onHowToPlay}
         onStart={() => setScreen('selection')}
       />
     );
@@ -75,7 +82,6 @@ export function GameFlowScreen({ dependencies, initialScreen = 'start', onSessio
       onDifficultyChange={setDifficulty}
       onPuzzleSelect={handlePuzzleSelect}
       onBack={() => setScreen('start')}
-      onHowToPlay={onHowToPlay}
       puzzleSequence={puzzleSequence}
       selectedDifficulty={difficulty}
     />

@@ -21,52 +21,36 @@ test.describe('enhanced navigation and global settings', () => {
     await expect(settings.getByRole('radio', { name: /Relaxed/ })).not.toBeChecked();
   });
 
-  test('opens How to play and reaches its controls with keyboard navigation', async ({ page }) => {
+  test('opens How to play from the start screen and shows the guide GIF', async ({ page }) => {
     await openStartScreen(page);
-    await page.getByRole('button', { name: /^Start$/ }).click();
-    await expect(page.getByRole('heading', { name: /Choose a puzzle/ })).toBeVisible();
     const trigger = page.getByRole('button', { name: 'How to play' });
     await trigger.focus();
     await page.keyboard.press('Enter');
 
     const tutorial = page.getByRole('dialog');
     await expect(tutorial).toBeVisible();
-    await expect(tutorial.getByRole('heading', { name: 'Make one perfect loop' })).toBeVisible();
+    await expect(tutorial.getByRole('heading', { name: 'How to play' })).toBeVisible();
+    await expect(tutorial.getByRole('img', { name: /animated demonstration/i })).toBeVisible();
     await expect(tutorial.getByRole('button', { name: 'Close tutorial' })).toBeFocused();
-
-    await tutorial.getByRole('button', { name: 'Skip tutorial' }).focus();
-    await expect(tutorial.getByRole('button', { name: 'Skip tutorial' })).toBeFocused();
-    await page.keyboard.press('Tab');
-    await tutorial.getByRole('button', { name: 'Next' }).focus();
-    await expect(tutorial.getByRole('button', { name: 'Next' })).toBeFocused();
-    await page.keyboard.press('Enter');
-    await expect(tutorial.getByRole('heading', { name: 'Read the clues' })).toBeVisible();
 
     await page.keyboard.press('Escape');
     await expect(tutorial).toBeHidden();
     await expect(trigger).toBeFocused();
   });
 
-  test('closes How to play through Skip and final completion without starting a puzzle', async ({ page }) => {
+  test('opens Game Rules in the shared information modal', async ({ page }) => {
     await openStartScreen(page);
-    await page.getByRole('button', { name: /^Start$/ }).click();
-    await expect(page.getByRole('heading', { name: /Choose a puzzle/ })).toBeVisible();
-    const trigger = page.getByRole('button', { name: 'How to play' });
-
+    const trigger = page.getByRole('button', { name: 'Game Rules' });
     await trigger.click();
-    let tutorial = page.getByRole('dialog');
-    await tutorial.getByRole('button', { name: 'Skip tutorial' }).click();
-    await expect(tutorial).toBeHidden();
-    await expect(page.getByRole('heading', { name: /Choose a puzzle/ })).toBeVisible();
 
-    await trigger.click();
-    tutorial = page.getByRole('dialog');
-    for (let step = 0; step < 5; step += 1) {
-      await tutorial.getByRole('button', { name: 'Next' }).click();
-    }
-    await expect(tutorial.getByRole('button', { name: 'Start puzzle' })).toBeVisible();
-    await tutorial.getByRole('button', { name: 'Start puzzle' }).click();
-    await expect(tutorial).toBeHidden();
-    await expect(page.getByRole('heading', { name: /Choose a puzzle/ })).toBeVisible();
+    const rules = page.getByRole('dialog');
+    await expect(rules).toBeVisible();
+    await expect(rules.getByRole('heading', { name: 'Game Rules' })).toBeVisible();
+    await expect(rules.getByRole('heading', { name: 'Read the clues' })).toBeVisible();
+    await expect(rules.getByRole('heading', { name: 'Keep lines continuous' })).toBeVisible();
+    await expect(rules.getByRole('heading', { name: 'Make one loop' })).toBeVisible();
+    await rules.getByRole('button', { name: 'Close game rules' }).click();
+    await expect(rules).toBeHidden();
+    await expect(trigger).toBeFocused();
   });
 });

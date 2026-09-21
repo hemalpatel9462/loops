@@ -19,7 +19,8 @@ test('renders the revised start and selection screens without viewport overflow'
   await openStartScreen(page);
   await expectNoViewportOverflow(page);
   await expect(page.getByRole('link', { name: 'Play' })).toHaveCount(0);
-  await expect(page.getByRole('button', { name: 'How to play' })).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'How to play' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Game Rules' })).toBeVisible();
   const startScreen = page.getByRole('region', { name: /Find your next loop/ });
   await expect(startScreen).toBeVisible();
   const startBox = await startScreen.boundingBox();
@@ -30,7 +31,7 @@ test('renders the revised start and selection screens without viewport overflow'
   await page.getByRole('button', { name: /^Start$/ }).click();
   await expect(page.getByRole('heading', { name: /Choose a puzzle/ })).toBeVisible();
   await expectNoViewportOverflow(page);
-  await expect(page.getByRole('button', { name: 'How to play' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'How to play' })).toHaveCount(0);
   const selectionScreen = page.getByRole('region', { name: /Choose a puzzle/ });
   await expect(selectionScreen).toBeVisible();
   const selectionBox = await selectionScreen.boundingBox();

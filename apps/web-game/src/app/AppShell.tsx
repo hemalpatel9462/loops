@@ -6,11 +6,13 @@ import { Tutorial } from '../components/tutorial';
 import { GameIntegration } from './integration';
 import { SettingsPanel } from './SettingsPanel';
 
+type InfoModal = 'how-to-play' | 'rules';
+
 export default function AppShell() {
   const repository = getPersistenceRepository();
   const [settings, setSettings] = useState<AppSettings>(() => repository.getSettings());
   const [settingsOpen, setSettingsOpen] = useState(false);
-  const [tutorialOpen, setTutorialOpen] = useState(false);
+  const [infoModal, setInfoModal] = useState<InfoModal | null>(null);
 
   useEffect(() => {
     if (typeof document === 'undefined') return undefined;
@@ -28,8 +30,8 @@ export default function AppShell() {
     setSettings(nextSettings);
   };
 
-  const closeTutorial = (): void => {
-    setTutorialOpen(false);
+  const closeInfoModal = (): void => {
+    setInfoModal(null);
   };
 
   return (
@@ -37,7 +39,15 @@ export default function AppShell() {
       <header className="app-header">
         <a className="brand" href="/" aria-label="Loops home">
           <span className="brand__mark" aria-hidden="true">
-            ◌
+            <svg
+              aria-hidden="true"
+              className="brand__mark-icon"
+              focusable="false"
+              viewBox="0 0 24 24"
+            >
+              <circle cx="12" cy="12" r="6.5" fill="none" stroke="currentColor" strokeWidth="1.75" />
+              <circle cx="12" cy="12" r="1.75" fill="currentColor" />
+            </svg>
           </span>
           <span className="brand__name">Loops</span>
         </a>
@@ -54,7 +64,11 @@ export default function AppShell() {
       </header>
 
       <main className="app-content" id="play">
-        <GameIntegration defaultMode={settings.defaultMode} onHowToPlay={() => setTutorialOpen(true)} />
+        <GameIntegration
+          defaultMode={settings.defaultMode}
+          onGameRules={() => setInfoModal('rules')}
+          onHowToPlay={() => setInfoModal('how-to-play')}
+        />
       </main>
 
       <footer className="app-footer">
@@ -69,10 +83,10 @@ export default function AppShell() {
         settings={settings}
       />
       <Tutorial
-        onClose={closeTutorial}
-        onComplete={closeTutorial}
-        onSkip={closeTutorial}
-        open={tutorialOpen}
+        onClose={closeInfoModal}
+        onComplete={closeInfoModal}
+        open={infoModal !== null}
+        variant={infoModal ?? 'how-to-play'}
       />
     </div>
   );

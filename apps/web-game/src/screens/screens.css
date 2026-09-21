@@ -34,6 +34,7 @@
 .flow-choice[aria-pressed="true"] { color: #fff; background: var(--color-accent, #087f75); border-color: var(--color-accent, #087f75); }
 .flow-actions { display: flex; flex-wrap: wrap; gap: .75rem; }
 .flow-actions--primary { margin-top: .5rem; }
+.flow-actions--secondary { margin-top: -.25rem; }
 .flow-summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr)); gap: .75rem; margin: .5rem 0; }
 .flow-summary div { padding: .9rem; background: color-mix(in srgb, currentColor 6%, transparent); border-radius: .8rem; }
 .flow-summary dt { font-size: .72rem; opacity: .68; text-transform: uppercase; letter-spacing: .08em; }

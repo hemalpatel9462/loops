@@ -25,6 +25,7 @@
   position: relative;
   align-self: center;
   justify-self: center;
+  overflow: hidden;
   width: var(--game-play-board-size);
   max-width: 100%;
   min-width: 0;

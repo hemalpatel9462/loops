@@ -91,6 +91,54 @@
   line-height: var(--leading-copy, 1.65);
 }
 
+.tutorial-how-to-play {
+  display: grid;
+  justify-items: center;
+  gap: var(--space-4, 1rem);
+}
+
+.tutorial-how-to-play p {
+  align-self: start;
+  margin-bottom: 0;
+}
+
+.tutorial-how-to-play__gif {
+  display: block;
+  width: min(100%, 25rem);
+  max-height: min(32rem, 58dvh);
+  object-fit: contain;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md, 1rem);
+}
+
+.tutorial-rules__intro {
+  margin-bottom: var(--space-5, 1.25rem);
+}
+
+.tutorial-rules__list {
+  display: grid;
+  gap: var(--space-3, 0.75rem);
+}
+
+.tutorial-rule {
+  padding: var(--space-4, 1rem);
+  background: var(--color-surface-muted);
+  border-radius: var(--radius-md, 1rem);
+}
+
+.tutorial-rule h3 {
+  margin: 0 0 var(--space-2, 0.5rem);
+  color: var(--color-ink);
+  font-size: var(--text-md, 1rem);
+}
+
+.tutorial-rule p {
+  margin: 0;
+  color: var(--color-ink-muted);
+  font-size: var(--text-sm, 0.875rem);
+  line-height: var(--leading-copy, 1.65);
+}
+
 .tutorial-dialog__prompt {
   padding: var(--space-4, 1rem);
   color: var(--color-ink-muted);

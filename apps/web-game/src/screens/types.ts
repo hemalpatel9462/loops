@@ -9,8 +9,8 @@ import type {
 export interface StartScreenProps {
   readonly onStart: () => void;
   readonly onDailyLoop: () => void;
-  readonly onContinue: () => void;
-  readonly continueAvailable: boolean;
+  readonly onHowToPlay: () => void;
+  readonly onGameRules: () => void;
 }
 
 export interface PuzzleSelectionProps {
@@ -20,7 +20,6 @@ export interface PuzzleSelectionProps {
   readonly onDifficultyChange: (difficulty: Difficulty) => void;
   readonly onPuzzleSelect: (puzzleNumber: number) => void;
   readonly onBack: () => void;
-  readonly onHowToPlay: () => void;
 }
 
 /** @deprecated Use PuzzleSelectionProps; retained for screen import compatibility. */

@@ -25,6 +25,7 @@ export interface GameIntegrationProps {
   readonly initialSession?: GameFlowSession;
   readonly defaultMode?: GameplayMode;
   readonly onHowToPlay?: () => void;
+  readonly onGameRules?: () => void;
 }
 
 function createReducerState(session: GameFlowSession): GameReducerState {
@@ -73,7 +74,7 @@ function applyGlobalDefaultMode(
  * GameFlowScreen selects bundled PuzzleDefinition data; GamePlayScreen only
  * dispatches semantic actions to gameReducer.
  */
-export function GameIntegration({ dependencies, initialSession, defaultMode, onHowToPlay }: GameIntegrationProps) {
+export function GameIntegration({ dependencies, initialSession, defaultMode, onHowToPlay, onGameRules }: GameIntegrationProps) {
   const repository = dependencies?.repository ?? getPersistenceRepository();
   const [session, setSession] = useState<GameFlowSession | undefined>(initialSession);
   const [state, setState] = useState<GameReducerState | undefined>(
@@ -196,6 +197,7 @@ export function GameIntegration({ dependencies, initialSession, defaultMode, onH
     <GameFlowScreen
       dependencies={{ ...dependencies, repository }}
       initialScreen={returnToSelection ? 'selection' : 'start'}
+      onGameRules={onGameRules}
       onHowToPlay={onHowToPlay}
       onSessionStart={startSession}
     />

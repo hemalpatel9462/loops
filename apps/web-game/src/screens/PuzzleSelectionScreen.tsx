@@ -30,7 +30,6 @@ export function PuzzleSelectionScreen({
   onDifficultyChange,
   onPuzzleSelect,
   onBack,
-  onHowToPlay,
 }: PuzzleSelectionProps) {
   return (
     <section className="flow-screen flow-screen--selection" aria-labelledby="puzzle-selection-title">
@@ -39,9 +38,6 @@ export function PuzzleSelectionScreen({
           <span aria-hidden="true">←</span>
         </button>
         <h1 id="puzzle-selection-title">Choose a puzzle</h1>
-        <button className="button button--secondary flow-screen__help" onClick={onHowToPlay} type="button">
-          How to play
-        </button>
       </header>
 
       <fieldset aria-label="Difficulty" className="flow-picker">

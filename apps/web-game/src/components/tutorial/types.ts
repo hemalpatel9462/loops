@@ -19,4 +19,5 @@ export interface TutorialProps {
   readonly onSkip?: () => void;
   readonly onClose?: () => void;
   readonly initialStep?: number;
+  readonly variant?: 'how-to-play' | 'rules';
 }

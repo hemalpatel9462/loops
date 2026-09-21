@@ -102,7 +102,7 @@ test.describe('Loops gameplay and persistence', () => {
     await expect(page.locator('[data-edge-id][data-fixed="false"][data-edge-state="line"]')).toHaveCount(0);
   });
 
-  test('resumes an unfinished selected puzzle after reload through Continue', async ({ page }) => {
+  test('does not expose Continue on the start screen after an unfinished puzzle', async ({ page }) => {
     await openPuzzleSelection(page);
     await startSelectedPuzzle(page);
 
@@ -114,13 +114,7 @@ test.describe('Loops gameplay and persistence', () => {
 
     await page.reload();
     await expect(page.getByRole('heading', { name: /Find your next loop/ })).toBeVisible();
-    const continueButton = page.getByRole('button', { name: 'Continue' });
-    await expect(continueButton).toBeEnabled();
-    await continueButton.click();
-    await expect(page.getByRole('heading', { name: /Continue your loop/ })).toBeVisible();
-    await page.getByRole('button', { name: /Resume puzzle/ }).click();
-    await expect(page.getByRole('region', { name: 'Loops puzzle', exact: true })).toBeVisible();
-    await expect(edgeLocator(page, edgeId as string)).toHaveAttribute('data-edge-state', 'line');
+    await expect(page.getByRole('button', { name: 'Continue' })).toHaveCount(0);
   });
 
   test('opens and starts the deterministic Daily Loop while Quick Play is absent', async ({ page }) => {
@@ -135,7 +129,7 @@ test.describe('Loops gameplay and persistence', () => {
     await expect(page.locator('.loop-board__svg')).toBeVisible();
   });
 
-  test('applies and preserves the saved gameplay mode for a new puzzle and Continue', async ({ page }) => {
+  test('applies the saved gameplay mode to a new puzzle', async ({ page }) => {
     await openStartScreen(page);
     await page.getByRole('button', { name: 'Open settings' }).click();
     const settings = page.getByRole('dialog', { name: 'Settings' });
@@ -148,9 +142,6 @@ test.describe('Loops gameplay and persistence', () => {
 
     const edge = editableEdgeLocator(page).first();
     await edge.click({ force: true });
-    await page.reload();
-    await page.getByRole('button', { name: 'Continue' }).click();
-    await page.getByRole('button', { name: /Resume puzzle/ }).click();
     await expect(page.getByText('beginner · assisted · 1/25', { exact: true })).toBeVisible();
   });
 });
